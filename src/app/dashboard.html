@@ -1,16 +1,31 @@
 <hy-shell-view title="Seat Booking" />
 
 <div class="container">
-  <!-- Top bar: date + stats -->
-  <div class="top-bar">
-    <mat-form-field hyFormField class="date-field">
-      <mat-label>Date</mat-label>
-      <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" />
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+  <!-- Hero section -->
+  <div class="hero">
+    <div class="hero-date">
+      <button mat-icon-button (click)="goToPreviousDay()" matTooltip="Previous day">
+        <mat-icon hyIcon>chevron_left</mat-icon>
+      </button>
+      <div class="hero-date-display" (click)="picker.open()">
+        <span class="hero-day">{{ displayDay() }}</span>
+        <div class="hero-meta">
+          <span class="hero-month-year">{{ displayMonth() }} {{ displayYear() }}</span>
+          <span class="hero-weekday">{{ displayDayOfWeek() }}</span>
+        </div>
+      </div>
+      <button mat-icon-button (click)="goToNextDay()" matTooltip="Next day">
+        <mat-icon hyIcon>chevron_right</mat-icon>
+      </button>
+      @if (!isToday()) {
+        <button mat-button hyIconLabelButton (click)="goToToday()" matTooltip="Jump to today">
+          <mat-icon hyIcon>calendar</mat-icon> Today
+        </button>
+      }
+      <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" class="hidden-input" />
       <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
-
-    <div class="stats">
+    </div>
+    <div class="hero-stats">
       <hy-tag color="red">{{ bookedCount() }} booked</hy-tag>
       <hy-tag color="green">{{ availableCount() }} available</hy-tag>
       <hy-tag color="grey">{{ totalSeats() }} total</hy-tag>

@@ -80,6 +80,28 @@ export class DashboardComponent implements OnInit {
   availableCount = computed(() => this.availability()?.available_count ?? 0);
   totalSeats = computed(() => this.availability()?.total_seats ?? 0);
 
+  displayDay = computed(() => {
+    const d = this.dateAsDate;
+    return d.getDate();
+  });
+
+  displayMonth = computed(() => {
+    const d = this.dateAsDate;
+    return d.toLocaleDateString('en-US', { month: 'short' });
+  });
+
+  displayDayOfWeek = computed(() => {
+    const d = this.dateAsDate;
+    return d.toLocaleDateString('en-US', { weekday: 'long' });
+  });
+
+  displayYear = computed(() => {
+    const d = this.dateAsDate;
+    return d.getFullYear();
+  });
+
+  isToday = computed(() => this.selectedDate() === this.todayString());
+
   allSeats = computed(() => {
     const booked = this.bookedSeats()
       .filter(b => b.type !== 'adhoc')
@@ -120,6 +142,25 @@ export class DashboardComponent implements OnInit {
 
   get dateAsDate(): Date {
     return new Date(this.selectedDate() + 'T00:00:00');
+  }
+
+  goToPreviousDay(): void {
+    const d = this.dateAsDate;
+    d.setDate(d.getDate() - 1);
+    this.selectedDate.set(this.formatDate(d));
+    this.loadAvailability();
+  }
+
+  goToNextDay(): void {
+    const d = this.dateAsDate;
+    d.setDate(d.getDate() + 1);
+    this.selectedDate.set(this.formatDate(d));
+    this.loadAvailability();
+  }
+
+  goToToday(): void {
+    this.selectedDate.set(this.todayString());
+    this.loadAvailability();
   }
 
   loadAvailability(): void {
