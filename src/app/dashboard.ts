@@ -157,8 +157,14 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  cancelBookingByRow(row: { seatId: number }): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, configureHyDialogOptions());
+  cancelBookingByRow(row: { seatId: number; label: string; personName: string }): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, configureHyDialogOptions({
+      data: {
+        personName: row.personName,
+        seatLabel: row.label,
+        date: this.selectedDate(),
+      },
+    }));
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (!confirmed) return;
