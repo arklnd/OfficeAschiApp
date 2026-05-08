@@ -87,11 +87,12 @@ mat-card {
   }
 
   &.booked {
-    border-color: var(--mat-form-field-error-text-color, #f92d18);
+    border-color: var(--mat-option-selected-state-label-text-color, #3288de);
+    background: color-mix(in srgb, var(--mat-option-selected-state-label-text-color, #3288de) 10%, transparent);
   }
 
   &.open {
-    border-color: var(--mat-option-selected-state-label-text-color, #3288de);
+    background: color-mix(in srgb, var(--mat-app-text-color, #000) 6%, transparent);
   }
 
   mat-card-header {
