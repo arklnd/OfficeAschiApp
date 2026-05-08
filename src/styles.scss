@@ -1,0 +1,12 @@
+@use '@hyland/ui' as hy;
+@use '@hyland/ui-shell' as hy-shell;
+
+@include hy.core();
+@include hy-shell.core();
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

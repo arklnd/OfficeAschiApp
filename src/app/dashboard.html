@@ -1,0 +1,109 @@
+<hy-shell-view title="Seat Booking" />
+
+<div class="container">
+  <!-- Date Picker -->
+  <div class="date-picker-row">
+    <mat-form-field hyFormField class="date-form">
+      <mat-label>Select Date</mat-label>
+      <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <span class="stat-value">{{ bookedCount() }}</span>
+      <span class="stat-label">Booked</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ availableCount() }}</span>
+      <span class="stat-label">Available</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ totalSeats() }}</span>
+      <span class="stat-label">Total Seats</span>
+    </div>
+  </div>
+
+  <!-- Booking Form -->
+  <div class="booking-form">
+    <div class="form-row">
+      <mat-form-field hyFormField>
+        <mat-label>Select Person</mat-label>
+        <mat-select [value]="selectedPersonId()" (selectionChange)="selectedPersonId.set($event.value)">
+          @for (person of notComing(); track person.id) {
+            <mat-option [value]="person.id">{{ person.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field hyFormField>
+        <mat-label>Select Seat</mat-label>
+        <mat-select [value]="selectedSeatId()" (selectionChange)="selectedSeatId.set($event.value)">
+          @for (seat of availableSeats(); track seat.id) {
+            <mat-option [value]="seat.id">{{ seat.label }} ({{ seat.type }})</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button hyIconLabelButton color="primary" (click)="bookSeat()">
+        <mat-icon>add</mat-icon>
+        Book
+      </button>
+    </div>
+  </div>
+
+  <!-- Seats Content List -->
+  <div class="section-grid">
+    <div class="section">
+      <h3 class="section-title">Seats</h3>
+      <hy-content-list [dataSource]="allSeats()" [loading]="loading()">
+        <hy-content-list-column propertyName="label" label="Seat">
+          <ng-template hyContentListCell let-row>{{ row.label }}</ng-template>
+        </hy-content-list-column>
+        <hy-content-list-column propertyName="type" label="Type" fixedWidth="100px">
+          <ng-template hyContentListCell let-row>
+            <hy-tag [color]="row.type === 'adhoc' ? 'orange' : 'blue'">{{ row.type }}</hy-tag>
+          </ng-template>
+        </hy-content-list-column>
+        <hy-content-list-column propertyName="status" label="Status" fixedWidth="140px">
+          <ng-template hyContentListCell let-row>
+            @if (row.status === 'booked') {
+              <hy-feedback-icon appearance="negative" size="small" [label]="row.personName"></hy-feedback-icon>
+            } @else {
+              <hy-feedback-icon appearance="positive" size="small" label="Available"></hy-feedback-icon>
+            }
+          </ng-template>
+        </hy-content-list-column>
+        <hy-content-list-column propertyName="actions" label="" fixedWidth="48px">
+          <ng-template hyContentListCell let-row>
+            @if (row.status === 'booked') {
+              <button mat-icon-button color="warn" (click)="cancelBookingByRow(row)" matTooltip="Cancel booking">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+          </ng-template>
+        </hy-content-list-column>
+      </hy-content-list>
+    </div>
+
+    <!-- Not Coming List -->
+    <div class="section">
+      <h3 class="section-title">Not Coming</h3>
+      @if (notComing().length === 0) {
+        <p class="everyone-coming">Everyone is coming! 🎉</p>
+      } @else {
+        <mat-list hyList>
+          @for (person of notComing(); track person.id) {
+            <mat-list-item hyListItem>
+              <mat-icon matListItemIcon>person_outline</mat-icon>
+              <span matListItemTitle>{{ person.name }}</span>
+            </mat-list-item>
+          }
+        </mat-list>
+      }
+    </div>
+  </div>
+</div>

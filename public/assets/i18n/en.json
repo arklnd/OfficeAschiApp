@@ -1,0 +1,90 @@
+{
+  "hy-shell": {
+    "about": "About",
+    "application-logo": "Hyland Software logo",
+    "aria-app-home": "Application logo.  Click to navigate home.",
+    "aria-x-home": "{{appName}} logo.  Click to navigate home.",
+    "back-button-default": "Go back",
+    "clear-search": "Clear search",
+    "close": "Close",
+    "close-keyboard-shortcut-list": "Close keyboard shortcut list",
+    "close-search": "Close search",
+    "help": "Help",
+    "home": "Home",
+    "info": "Info",
+    "keyboard-shortcuts": "Keyboard Shortcuts",
+    "licenses-button-label": "View third-party notices",
+    "licenses-link": "View third-party notices in new tab",
+    "loading": "Loading",
+    "logout": "Log Out",
+    "menu": "Menu",
+    "page-not-found": "Page not found",
+    "page-not-found-title": "Page not found",
+    "page-not-found-description": "The page you are looking for could not be found.",
+    "page-not-found-guide": "Need some assistance? Visit our help page.",
+    "privacy-policy-label": "View privacy policy",
+    "privacy-policy-link": "View privacy policy in new tab",
+    "search": "Search",
+    "search-input": "Search Input",
+    "search-button": "Search",
+    "aria-main-sidenav": "Main",
+    "aria-sidenav-list": "Navigation list",
+    "skip-to-content": "Skip To Main Content",
+    "settings": "Settings",
+    "terms-conditions-label": "View terms & conditions",
+    "terms-conditions-link": "View terms & conditions in new tab",
+    "usage-policy-label": "View usage policy",
+    "usage-policy-link": "View usage policy in new tab",
+    "user-menu": "User Menu",
+    "aria-role-button": "button",
+    "aria-role-link": "link",
+    "unable-to-reach-idp": "Could not connect to the login service.",
+    "hy-shell-auth": {
+      "session-expiring": "Session Expiring",
+      "stay-logged-in": "Stay Logged In",
+      "logged-out-in-x-minutes": "Due to inactivity, you will be logged out in {{minutes}} minutes and {{seconds}} seconds.",
+      "logged-out-in-x-seconds": "Due to inactivity, you will be logged out in {{seconds}} seconds."
+    },
+    "hy-shell-unauthenticated": {
+      "logged-out": "Logged Out",
+      "logged-out-title": "Logged Out",
+      "logged-out-text": "You are now logged out. You may close this window.",
+      "sign-in": "Sign In"
+    },
+    "hy-shell-about": {
+      "title": "About Hyland Experience",
+      "close-button": "Close",
+      "version": "Version"
+    },
+    "hy-shell-settings": {
+      "settings-title": "Settings",
+      "general": "General",
+      "general-settings": "General settings",
+      "global-settings": "Global Settings",
+      "general-settings-hint": "Language, theme and other general settings related to your account",
+      "language-selection-label": "Language",
+      "theme-selection-label": "Theme",
+      "density-selection-label": "Density",
+      "density-option-default": "Default",
+      "density-option-comfortable": "Comfortable",
+      "density-option-compact": "Compact",
+      "theme-option-light": "Light",
+      "theme-option-dark": "Dark",
+      "theme-option-default": "System Setting",
+      "language-option-default": "System Default",
+      "close-button": "Close",
+      "cancel-button": "Cancel",
+      "save-button": "Save"
+    },
+    "hy-header-env-menu": {
+      "environment-selector": "Environment Selector"
+    },
+    "hy-header-menu": {
+      "app-switcher": "App Switcher"
+    },
+    "profile-menu": {
+      "profile-image": "Profile image of {{user}}",
+      "unauthenticated": "Unauthenticated"
+    }
+  }
+}
