@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
+import { HyComboBoxModule } from '@hyland/ui/combo-box';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +22,7 @@ import { configureHyDialogOptions } from '@hyland/ui/dialog';
 
 import { BookingService } from './booking.service';
 import { ConfirmDialogComponent } from './confirm-dialog';
-import { Availability, BookedSeat } from './models';
+import { Availability, BookedSeat, Person } from './models';
 
 @Component({
   selector: 'app-dashboard',
@@ -33,7 +33,7 @@ import { Availability, BookedSeat } from './models';
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
-    MatSelectModule,
+    HyComboBoxModule,
     MatDatepickerModule,
     MatInputModule,
     MatIconModule,
@@ -57,8 +57,17 @@ export class DashboardComponent implements OnInit {
   availability = signal<Availability | null>(null);
   loading = signal(false);
 
-  selectedPersonId = signal<number | null>(null);
+  selectedPerson = signal<Person | null>(null);
   bookingSeatId = signal<number | null>(null);
+  personFilter = signal('');
+
+  displayPersonName = (person: Person): string => person?.name ?? '';
+
+  filteredPeople = computed(() => {
+    const filter = this.personFilter().toLowerCase();
+    const people = this.notComing();
+    return filter ? people.filter(p => p.name.toLowerCase().includes(filter)) : people;
+  });
 
   readonly profileColors = ['blue', 'teal', 'purple', 'green', 'orange', 'cyan', 'pink', 'red'] as const;
   readonly profileSize = 'small' as any;
@@ -128,16 +137,16 @@ export class DashboardComponent implements OnInit {
   }
 
   confirmBooking(seatId: number): void {
-    const personId = this.selectedPersonId();
-    if (!personId) {
+    const person = this.selectedPerson();
+    if (!person) {
       this.showToast('Select a person to assign', true);
       return;
     }
 
-    this.bookingService.createBooking(this.selectedDate(), personId, seatId).subscribe({
+    this.bookingService.createBooking(this.selectedDate(), person.id, seatId).subscribe({
       next: () => {
         this.showToast('Seat booked!');
-        this.selectedPersonId.set(null);
+        this.selectedPerson.set(null);
         this.bookingSeatId.set(null);
         this.loadAvailability();
       },

@@ -51,11 +51,13 @@
               <div class="inline-book">
                 <mat-form-field hyFormField class="person-select">
                   <mat-label>Person</mat-label>
-                  <mat-select [value]="selectedPersonId()" (selectionChange)="selectedPersonId.set($event.value)">
-                    @for (person of notComing(); track person.id) {
-                      <mat-option [value]="person.id">{{ person.name }}</mat-option>
-                    }
-                  </mat-select>
+                  <hy-combo-box
+                    [options]="filteredPeople()"
+                    [displayWith]="displayPersonName"
+                    [value]="selectedPerson()"
+                    (valueChange)="selectedPerson.set($event)"
+                    (filterChange)="personFilter.set($event)"
+                  ></hy-combo-box>
                 </mat-form-field>
                 <mat-card-actions>
                   <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId)">

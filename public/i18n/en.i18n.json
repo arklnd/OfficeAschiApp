@@ -96,6 +96,11 @@
     },
     "hy-user-profile-group": {
       "users": "Users"
+    },
+    "hy-combo-box": {
+      "no-results": "No Results Found",
+      "loading-text": "Looking For Results",
+      "aria-show-options": "Show Options"
     }
   }
 }
