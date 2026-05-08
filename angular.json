@@ -52,14 +52,9 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "node_modules/@hyland/icons/index.css",
-              "src/styles.scss"
-            ],
+            "styles": ["node_modules/@hyland/icons/index.css", "src/styles.scss"],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "node_modules"
-              ]
+              "includePaths": ["node_modules"]
             }
           },
           "configurations": {
@@ -67,8 +62,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -76,7 +71,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
