@@ -86,5 +86,16 @@
       "profile-image": "Profile image of {{user}}",
       "unauthenticated": "Unauthenticated"
     }
+  },
+  "hy": {
+    "hy-dialog": {
+      "close-dialog": "Close Dialog"
+    },
+    "hy-toast": {
+      "close-toast": "Close Toast"
+    },
+    "hy-user-profile-group": {
+      "users": "Users"
+    }
   }
 }

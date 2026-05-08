@@ -17,8 +17,11 @@ import { HyFeedbackIconModule } from '@hyland/ui/feedback-icon';
 import { HyUserProfileModule } from '@hyland/ui/user-profile';
 import { HyGhostModule } from '@hyland/ui/ghost';
 import { HyShellModule } from '@hyland/ui-shell';
+import { MatDialog } from '@angular/material/dialog';
+import { configureHyDialogOptions } from '@hyland/ui/dialog';
 
 import { BookingService } from './booking.service';
+import { ConfirmDialogComponent } from './confirm-dialog';
 import { Availability, BookedSeat } from './models';
 
 @Component({
@@ -91,6 +94,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private bookingService: BookingService,
     private toastService: HyToastService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -145,21 +149,27 @@ export class DashboardComponent implements OnInit {
   }
 
   cancelBookingByRow(row: { seatId: number }): void {
-    this.bookingService.getBookings(this.selectedDate()).subscribe({
-      next: (bookings) => {
-        const booking = bookings.find((b) => b.seat_id === row.seatId);
-        if (!booking) {
-          this.showToast('Booking not found', true);
-          return;
-        }
-        this.bookingService.deleteBooking(booking.id).subscribe({
-          next: () => {
-            this.showToast('Booking cancelled');
-            this.loadAvailability();
-          },
-          error: () => this.showToast('Failed to cancel booking', true),
-        });
-      },
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, configureHyDialogOptions());
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (!confirmed) return;
+
+      this.bookingService.getBookings(this.selectedDate()).subscribe({
+        next: (bookings) => {
+          const booking = bookings.find((b) => b.seat_id === row.seatId);
+          if (!booking) {
+            this.showToast('Booking not found', true);
+            return;
+          }
+          this.bookingService.deleteBooking(booking.id).subscribe({
+            next: () => {
+              this.showToast('Booking cancelled');
+              this.loadAvailability();
+            },
+            error: () => this.showToast('Failed to cancel booking', true),
+          });
+        },
+      });
     });
   }
 

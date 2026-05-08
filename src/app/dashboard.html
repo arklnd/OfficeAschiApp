@@ -36,7 +36,7 @@
           <mat-card-header>
             <mat-card-title>{{ seat.label }}</mat-card-title>
             @if (seat.status === 'booked') {
-              <button mat-icon-button class="cancel-btn" (click)="cancelBookingByRow(seat)" matTooltip="Cancel booking">
+              <button mat-icon-button (click)="cancelBookingByRow(seat)" matTooltip="Cancel booking">
                 <mat-icon hyIcon>close</mat-icon>
               </button>
             }
@@ -61,7 +61,9 @@
                   <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId)">
                     <mat-icon hyIcon>check</mat-icon> Assign
                   </button>
-                  <button mat-button (click)="bookingSeatId.set(null)">Cancel</button>
+                  <button mat-button hyIconLabelButton (click)="bookingSeatId.set(null)">
+                    <mat-icon hyIcon>close</mat-icon> Cancel
+                  </button>
                 </mat-card-actions>
               </div>
             } @else {
