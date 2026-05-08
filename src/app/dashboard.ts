@@ -2,6 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -9,16 +10,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatListModule } from '@angular/material/list';
 import { HyToastService, HyToastModule } from '@hyland/ui/toast';
-import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialListModule } from '@hyland/ui/material';
-import { HyContentListModule } from '@hyland/ui/content-list';
+import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule } from '@hyland/ui/material';
 import { HyTagModule } from '@hyland/ui/tag';
 import { HyFeedbackIconModule } from '@hyland/ui/feedback-icon';
+import { HyUserProfileModule } from '@hyland/ui/user-profile';
+import { HyGhostModule } from '@hyland/ui/ghost';
 import { HyShellModule } from '@hyland/ui-shell';
 
 import { BookingService } from './booking.service';
-import { Availability, BookedSeat, Seat } from './models';
+import { Availability, BookedSeat } from './models';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,6 +28,7 @@ import { Availability, BookedSeat, Seat } from './models';
     CommonModule,
     FormsModule,
     MatButtonModule,
+    MatCardModule,
     MatFormFieldModule,
     MatSelectModule,
     MatDatepickerModule,
@@ -34,14 +36,14 @@ import { Availability, BookedSeat, Seat } from './models';
     MatIconModule,
     MatNativeDateModule,
     MatTooltipModule,
-    MatListModule,
     HyToastModule,
     HyMaterialFormFieldModule,
     HyMaterialButtonModule,
-    HyMaterialListModule,
-    HyContentListModule,
+    HyMaterialIconModule,
     HyTagModule,
     HyFeedbackIconModule,
+    HyUserProfileModule,
+    HyGhostModule,
     HyShellModule,
   ],
   templateUrl: './dashboard.html',
@@ -53,7 +55,11 @@ export class DashboardComponent implements OnInit {
   loading = signal(false);
 
   selectedPersonId = signal<number | null>(null);
-  selectedSeatId = signal<number | null>(null);
+  bookingSeatId = signal<number | null>(null);
+
+  readonly profileColors = ['blue', 'teal', 'purple', 'green', 'orange', 'cyan', 'pink', 'red'] as const;
+  readonly profileSize = 'small' as any;
+  readonly profileGroupSize = 'small' as any;
 
   bookedSeats = computed(() => this.availability()?.booked ?? []);
   availableSeats = computed(() => this.availability()?.available_seats ?? []);
@@ -63,20 +69,22 @@ export class DashboardComponent implements OnInit {
   totalSeats = computed(() => this.availability()?.total_seats ?? 0);
 
   allSeats = computed(() => {
-    const booked = this.bookedSeats().map(b => ({
-      label: b.label,
-      type: b.type,
-      status: 'booked' as const,
-      personName: b.person_name,
-      seatId: b.seat_id,
-    }));
-    const available = this.availableSeats().map(s => ({
-      label: s.label,
-      type: s.type,
-      status: 'available' as const,
-      personName: '',
-      seatId: s.id,
-    }));
+    const booked = this.bookedSeats()
+      .filter(b => b.type !== 'adhoc')
+      .map(b => ({
+        label: b.label,
+        status: 'booked' as const,
+        personName: b.person_name,
+        seatId: b.seat_id,
+      }));
+    const available = this.availableSeats()
+      .filter(s => s.type !== 'adhoc')
+      .map(s => ({
+        label: s.label,
+        status: 'available' as const,
+        personName: '',
+        seatId: s.id,
+      }));
     return [...booked, ...available];
   });
 
@@ -115,11 +123,10 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  bookSeat(): void {
+  confirmBooking(seatId: number): void {
     const personId = this.selectedPersonId();
-    const seatId = this.selectedSeatId();
-    if (!personId || !seatId) {
-      this.showToast('Select a person and seat', true);
+    if (!personId) {
+      this.showToast('Select a person to assign', true);
       return;
     }
 
@@ -127,31 +134,12 @@ export class DashboardComponent implements OnInit {
       next: () => {
         this.showToast('Seat booked!');
         this.selectedPersonId.set(null);
-        this.selectedSeatId.set(null);
+        this.bookingSeatId.set(null);
         this.loadAvailability();
       },
       error: (err) => {
         const msg = err.error?.error ?? 'Failed to book seat';
         this.showToast(msg, true);
-      },
-    });
-  }
-
-  cancelBooking(seat: BookedSeat): void {
-    this.bookingService.getBookings(this.selectedDate()).subscribe({
-      next: (bookings) => {
-        const booking = bookings.find((b) => b.seat_id === seat.seat_id);
-        if (!booking) {
-          this.showToast('Booking not found', true);
-          return;
-        }
-        this.bookingService.deleteBooking(booking.id).subscribe({
-          next: () => {
-            this.showToast('Booking cancelled');
-            this.loadAvailability();
-          },
-          error: () => this.showToast('Failed to cancel booking', true),
-        });
       },
     });
   }

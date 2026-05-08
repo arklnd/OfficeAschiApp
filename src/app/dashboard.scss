@@ -3,85 +3,81 @@
 }
 
 .container {
-  max-width: 960px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 24px 16px;
 }
 
-.date-picker-row {
+.top-bar {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
 
-  mat-form-field {
-    width: 240px;
-  }
-}
-
-.stats-row {
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-  margin-bottom: 24px;
-
-  .stat-item {
-    text-align: center;
-    padding: 12px 24px;
-    border-radius: 8px;
-    background: var(--mat-sys-surface-container);
+  .date-field {
+    width: 200px;
+    flex-shrink: 0;
   }
 
-  .stat-value {
-    display: block;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--mat-sys-primary);
-  }
-
-  .stat-label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--mat-sys-on-surface-variant);
-  }
-}
-
-.booking-form {
-  margin-bottom: 24px;
-
-  .form-row {
+  .stats {
     display: flex;
-    gap: 12px;
-    align-items: center;
+    gap: 8px;
     flex-wrap: wrap;
+  }
+}
 
-    mat-form-field {
-      flex: 1;
-      min-width: 200px;
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+mat-card {
+  &.booked {
+    border-color: var(--mat-sys-error, #b3261e);
+  }
+
+  &.open {
+    border-color: var(--mat-sys-primary);
+  }
+
+  mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .cancel-btn {
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
     }
   }
 }
 
-.section-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
+.person-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
 
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
+.book-btn {
+  width: 100%;
+}
+
+.inline-book {
+  .person-select {
+    width: 100%;
   }
 }
 
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 12px;
-  color: var(--mat-sys-on-surface);
+.unassigned-card {
+  margin-bottom: 24px;
 }
 
-.everyone-coming {
+.all-assigned {
   text-align: center;
-  padding: 16px;
-  color: var(--mat-sys-tertiary);
-  font-size: 16px;
+  padding: 16px 0;
 }

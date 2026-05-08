@@ -6,7 +6,7 @@ export interface Person {
 export interface Seat {
   id: number;
   label: string;
-  type: 'regular' | 'adhoc';
+  type: string;
 }
 
 export interface Booking {
