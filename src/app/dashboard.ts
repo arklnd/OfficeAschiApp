@@ -136,7 +136,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  confirmBooking(seatId: number): void {
+  confirmBooking(seatId: number, seatLabel: string): void {
     const person = this.selectedPerson();
     if (!person) {
       this.showToast('Select a person to assign', true);
@@ -145,7 +145,7 @@ export class DashboardComponent implements OnInit {
 
     this.bookingService.createBooking(this.selectedDate(), person.id, seatId).subscribe({
       next: () => {
-        this.showToast('Seat booked!');
+        this.showToast(`Booked ${person.name} → ${seatLabel} on ${this.selectedDate()}`);
         this.selectedPerson.set(null);
         this.bookingSeatId.set(null);
         this.loadAvailability();
@@ -178,7 +178,7 @@ export class DashboardComponent implements OnInit {
           }
           this.bookingService.deleteBooking(booking.id).subscribe({
             next: () => {
-              this.showToast('Booking cancelled');
+              this.showToast(`Cancelled ${row.personName}'s booking on ${row.label} for ${this.selectedDate()}`);
               this.loadAvailability();
             },
             error: () => this.showToast('Failed to cancel booking', true),

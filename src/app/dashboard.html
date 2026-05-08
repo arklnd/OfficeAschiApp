@@ -60,7 +60,7 @@
                   ></hy-combo-box>
                 </mat-form-field>
                 <mat-card-actions>
-                  <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId)">
+                  <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId, seat.label)">
                     <mat-icon hyIcon>check</mat-icon> Assign
                   </button>
                   <button mat-button hyIconLabelButton (click)="bookingSeatId.set(null)">
