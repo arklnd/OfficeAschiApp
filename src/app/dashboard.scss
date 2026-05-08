@@ -35,6 +35,12 @@
 }
 
 mat-card {
+  padding: 12px;
+
+  mat-card-header, mat-card-content, mat-card-actions {
+    padding: 0;
+  }
+
   &.booked {
     border-color: var(--mat-sys-error, #b3261e);
   }
@@ -64,6 +70,12 @@ mat-card {
 .inline-book {
   .person-select {
     width: 100%;
+  }
+
+  mat-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }
 
