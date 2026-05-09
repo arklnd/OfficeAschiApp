@@ -45,6 +45,7 @@ import * as QRCode from 'qrcode';
 
           @if (step() === 1) {
             <div class="totp-setup">
+              <h3>{{ qrLabel() }}</h3>
               <p>Scan this QR code with your authenticator app, or save the secret key.</p>
               <div class="qr-container">
                 @if (qrDataUrl()) {
@@ -102,6 +103,7 @@ export class TeamCreateComponent {
   creating = signal(false);
   secret = signal('');
   qrDataUrl = signal('');
+  qrLabel = signal('');
   verifyCode = '';
   verifyError = signal('');
 
@@ -116,6 +118,7 @@ export class TeamCreateComponent {
     const secret = this.totpService.generateSecret();
     this.secret.set(secret);
     const label = this.teamName || `Team-${Date.now()}`;
+    this.qrLabel.set(label);
     const uri = this.totpService.getOtpAuthUri(secret, `${label} (Manager)`);
     QRCode.toDataURL(uri, { width: 200, margin: 1 }).then(url => this.qrDataUrl.set(url));
   }
