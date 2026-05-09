@@ -57,7 +57,7 @@
             </button>
             @if (!isToday()) {
               <button mat-button hyIconLabelButton (click)="goToToday()" matTooltip="Jump to today">
-                <mat-icon hyIcon>calendar_today</mat-icon> Today
+                <mat-icon>calendar_today</mat-icon> Today
               </button>
             }
             <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" class="hidden-input" />
