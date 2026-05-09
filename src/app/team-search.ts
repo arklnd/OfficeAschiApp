@@ -4,13 +4,16 @@ import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { HyMaterialButtonModule, HyMaterialIconModule } from '@hyland/ui/material';
 import { HyShellModule } from '@hyland/ui-shell';
 import { HyTagModule } from '@hyland/ui/tag';
 import { HyGhostModule } from '@hyland/ui/ghost';
 import { HySearchInputModule } from '@hyland/ui/search-input';
+import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { ApiService } from './booking.service';
-import { TeamSearchResult } from './models';
+import { TeamSearchResult, TeamResponse } from './models';
+import { TeamCreateDialogComponent } from './team-create';
 
 @Component({
   selector: 'app-team-search',
@@ -31,7 +34,7 @@ import { TeamSearchResult } from './models';
           (search)="onSearch()"
           (valueChange)="onSearch()"
         ></hy-search-input>
-        <button mat-flat-button hyIconLabelButton color="primary" (click)="router.navigate(['/team/create'])">
+        <button mat-flat-button hyIconLabelButton color="primary" (click)="openCreateDialog()">
           <mat-icon hyIcon>add</mat-icon> Create Team
         </button>
       </div>
@@ -89,11 +92,19 @@ export class TeamSearchComponent implements OnInit {
   constructor(
     private api: ApiService,
     public router: Router,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void { this.loadTeams(); }
 
   onSearch(): void { this.loadTeams(); }
+
+  openCreateDialog(): void {
+    const dialogRef = this.dialog.open(TeamCreateDialogComponent, configureHyDialogOptions({ width: '500px' }));
+    dialogRef.afterClosed().subscribe((team: TeamResponse | null) => {
+      if (team) this.router.navigate(['/team', team.id]);
+    });
+  }
 
   loadTeams(): void {
     this.loading.set(true);

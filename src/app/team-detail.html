@@ -27,7 +27,7 @@
     </div>
     <div class="team-actions">
       @if (!currentReporteeId()) {
-        <button mat-stroked-button hyIconLabelButton (click)="router.navigate(['/team', teamId, 'join'])">
+        <button mat-stroked-button hyIconLabelButton (click)="openJoinDialog()">
           <mat-icon hyIcon>person_add</mat-icon> Join Team
         </button>
       }

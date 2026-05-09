@@ -29,6 +29,7 @@ import {
   AvailabilityResponse, BookingResponse, WaitlistInfo,
 } from './models';
 import { ConfirmDialogComponent } from './confirm-dialog';
+import { JoinTeamDialogComponent } from './join-team';
 import { TotpService } from './totp.service';
 
 @Component({
@@ -255,6 +256,24 @@ export class TeamDetailComponent implements OnInit {
         this.loadAvailability();
       },
       error: err => this.toastService.error(err.error?.error || 'Waitlist failed'),
+    });
+  }
+
+  openJoinDialog(): void {
+    const savedId = localStorage.getItem(`reportee_${this.teamId}`);
+    if (savedId) {
+      this.toastService.info('You have already joined this team');
+      return;
+    }
+    const dialogRef = this.dialog.open(JoinTeamDialogComponent, configureHyDialogOptions({
+      data: { teamId: this.teamId, teamName: this.team()?.name ?? 'Team' },
+      width: '500px',
+    }));
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.currentReporteeId.set(result.id);
+        this.loadAll();
+      }
     });
   }
 

@@ -1,42 +1,41 @@
 import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule } from '@hyland/ui/material';
-import { HyShellModule } from '@hyland/ui-shell';
+import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyToastService, HyToastModule } from '@hyland/ui/toast';
 import { HyTagModule } from '@hyland/ui/tag';
-import { HyFormContainerModule } from '@hyland/ui/form-container';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from './booking.service';
+import { TeamResponse } from './models';
 import { TotpService } from './totp.service';
 import * as QRCode from 'qrcode';
 
 @Component({
-  selector: 'app-team-create',
+  selector: 'app-team-create-dialog',
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, MatButtonModule,
     MatFormFieldModule, MatInputModule, MatIconModule,
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule,
-    HyShellModule, HyToastModule, HyTagModule, HyFormContainerModule,
+    HyDialogModule, HyToastModule, HyTagModule,
   ],
   template: `
-    <hy-shell-view title="Create Team" />
-    <div class="form-wrapper">
-      <hy-form-container
-        [formGroup]="form"
-        formTitle="New Team"
-        submitLabel="Create Team"
-        [submitting]="creating()"
-        (onSubmit)="createTeam()"
-      >
-        <mat-form-field hyFormField>
+    <hy-dialog
+      header="Create Team"
+      [confirmLabel]="creating() ? 'Creating...' : 'Create Team'"
+      dismissLabel="Cancel"
+      (confirmed)="createTeam()"
+      (dismissed)="dialogRef.close(null)"
+    >
+      <form [formGroup]="form">
+        <mat-form-field hyFormField class="full-width">
           <mat-label>Team Name (optional)</mat-label>
           <input matInput formControlName="teamName" placeholder="Leave blank for auto-generated name" />
         </mat-form-field>
@@ -57,7 +56,7 @@ import * as QRCode from 'qrcode';
               <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
             </button>
           </div>
-          <mat-form-field hyFormField>
+          <mat-form-field hyFormField class="full-width">
             <mat-label>Enter 6-digit code to verify</mat-label>
             <input matInput formControlName="verifyCode" maxlength="6" placeholder="000000" autocomplete="off" />
             @if (verifyError()) {
@@ -65,19 +64,17 @@ import * as QRCode from 'qrcode';
             }
           </mat-form-field>
         </div>
-
-        <button mat-button hySecondaryFormButton type="button" (click)="router.navigate(['/'])">Cancel</button>
-      </hy-form-container>
-    </div>
+      </form>
+    </hy-dialog>
   `,
   styles: [`
-    .form-wrapper { max-width: 500px; margin: 0 auto; padding: 24px 16px; }
+    .full-width { width: 100%; }
     .totp-section { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
     .qr-container { padding: 12px; background: white; border-radius: 8px; }
     .qr-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
   `],
 })
-export class TeamCreateComponent implements OnInit, OnDestroy {
+export class TeamCreateDialogComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     teamName: new FormControl(`Team-${Date.now()}`),
     verifyCode: new FormControl(''),
@@ -89,8 +86,8 @@ export class TeamCreateComponent implements OnInit, OnDestroy {
   private nameSub?: Subscription;
 
   constructor(
+    public dialogRef: MatDialogRef<TeamCreateDialogComponent>,
     private api: ApiService,
-    public router: Router,
     private toastService: HyToastService,
     private totpService: TotpService,
   ) {}
@@ -128,6 +125,7 @@ export class TeamCreateComponent implements OnInit, OnDestroy {
   }
 
   createTeam(): void {
+    if (this.creating()) return;
     const code = this.form.get('verifyCode')!.value ?? '';
     if (!code || code.length !== 6) {
       this.verifyError.set('Enter a 6-digit code');
@@ -148,7 +146,7 @@ export class TeamCreateComponent implements OnInit, OnDestroy {
       next: team => {
         this.totpService.storeSecret('manager', team.id, this.secret());
         this.toastService.success(`Team "${team.name}" created!`);
-        this.router.navigate(['/team', team.id]);
+        this.dialogRef.close(team);
       },
       error: err => {
         this.toastService.error(err.error?.error || 'Failed to create team');

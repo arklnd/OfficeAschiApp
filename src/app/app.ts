@@ -22,7 +22,6 @@ import { ApiService } from './booking.service';
     <hy-shell toolbarTitle="OfficeAschi" homeRoute="/">
       <hy-shell-nav [mode]="sideNavMode">
         <hy-shell-nav-item name="Teams" route="/"></hy-shell-nav-item>
-        <hy-shell-nav-item name="Create Team" route="/team/create"></hy-shell-nav-item>
       </hy-shell-nav>
       <router-outlet />
     </hy-shell>

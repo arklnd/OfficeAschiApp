@@ -1,43 +1,45 @@
-import { Component, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule } from '@hyland/ui/material';
-import { HyShellModule } from '@hyland/ui-shell';
+import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyToastService, HyToastModule } from '@hyland/ui/toast';
 import { HyTagModule } from '@hyland/ui/tag';
-import { HyFormContainerModule } from '@hyland/ui/form-container';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from './booking.service';
-import { TeamResponse } from './models';
 import { TotpService } from './totp.service';
 import * as QRCode from 'qrcode';
 
+export interface JoinTeamDialogData {
+  teamId: number;
+  teamName: string;
+}
+
 @Component({
-  selector: 'app-join-team',
+  selector: 'app-join-team-dialog',
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, MatButtonModule,
     MatFormFieldModule, MatInputModule, MatIconModule,
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule,
-    HyShellModule, HyToastModule, HyTagModule, HyFormContainerModule,
+    HyDialogModule, HyToastModule, HyTagModule,
   ],
   template: `
-    <hy-shell-view [title]="'Join ' + (team()?.name ?? 'Team')" />
-    <div class="form-wrapper">
-      <hy-form-container
-        [formGroup]="form"
-        [formTitle]="'Join ' + (team()?.name ?? 'Team')"
-        submitLabel="Join Team"
-        [submitting]="joining()"
-        (onSubmit)="joinTeam()"
-      >
-        <mat-form-field hyFormField>
+    <hy-dialog
+      [header]="'Join ' + data.teamName"
+      [confirmLabel]="joining() ? 'Joining...' : 'Join Team'"
+      dismissLabel="Cancel"
+      (confirmed)="joinTeam()"
+      (dismissed)="dialogRef.close(null)"
+    >
+      <form [formGroup]="form">
+        <mat-form-field hyFormField class="full-width">
           <mat-label>Your Friendly Name</mat-label>
           <input matInput formControlName="friendlyName" placeholder="How the team knows you" />
         </mat-form-field>
@@ -58,7 +60,7 @@ import * as QRCode from 'qrcode';
               <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
             </button>
           </div>
-          <mat-form-field hyFormField>
+          <mat-form-field hyFormField class="full-width">
             <mat-label>Enter 6-digit code to verify</mat-label>
             <input matInput formControlName="verifyCode" maxlength="6" placeholder="000000" autocomplete="off" />
             @if (verifyError()) {
@@ -66,21 +68,17 @@ import * as QRCode from 'qrcode';
             }
           </mat-form-field>
         </div>
-
-        <button mat-button hySecondaryFormButton type="button" (click)="router.navigate(['/team', teamId])">Cancel</button>
-      </hy-form-container>
-    </div>
+      </form>
+    </hy-dialog>
   `,
   styles: [`
-    .form-wrapper { max-width: 500px; margin: 0 auto; padding: 24px 16px; }
+    .full-width { width: 100%; }
     .totp-section { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
     .qr-container { padding: 12px; background: white; border-radius: 8px; }
     .qr-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
   `],
 })
-export class JoinTeamComponent implements OnInit, OnDestroy {
-  teamId = 0;
-  team = signal<TeamResponse | null>(null);
+export class JoinTeamDialogComponent implements OnInit, OnDestroy {
   form = new FormGroup({
     friendlyName: new FormControl(`Member-${Date.now()}`, Validators.required),
     verifyCode: new FormControl(''),
@@ -92,22 +90,14 @@ export class JoinTeamComponent implements OnInit, OnDestroy {
   private nameSub?: Subscription;
 
   constructor(
-    private route: ActivatedRoute,
-    public router: Router,
+    public dialogRef: MatDialogRef<JoinTeamDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: JoinTeamDialogData,
     private api: ApiService,
     private toastService: HyToastService,
     private totpService: TotpService,
   ) {}
 
   ngOnInit(): void {
-    this.teamId = Number(this.route.snapshot.paramMap.get('id'));
-    const savedId = localStorage.getItem(`reportee_${this.teamId}`);
-    if (savedId) {
-      this.toastService.info('You have already joined this team');
-      this.router.navigate(['/team', this.teamId]);
-      return;
-    }
-    this.api.getTeam(this.teamId).subscribe(t => this.team.set(t));
     this.generateSecret();
     this.nameSub = this.form.get('friendlyName')!.valueChanges
       .pipe(debounceTime(400))
@@ -124,7 +114,7 @@ export class JoinTeamComponent implements OnInit, OnDestroy {
     this.form.get('verifyCode')!.reset('');
     this.verifyError.set('');
     const name = this.form.get('friendlyName')!.value || `Member-${Date.now()}`;
-    const uri = this.totpService.getOtpAuthUri(secret, `${name} @ ${this.team()?.name ?? 'Team'}`);
+    const uri = this.totpService.getOtpAuthUri(secret, `${this.data.teamName} - ${name}`);
     QRCode.toDataURL(uri, { width: 200, margin: 1 }).then(url => this.qrDataUrl.set(url));
   }
 
@@ -140,6 +130,7 @@ export class JoinTeamComponent implements OnInit, OnDestroy {
   }
 
   joinTeam(): void {
+    if (this.joining()) return;
     const name = this.form.get('friendlyName')!.value?.trim();
     if (!name) { this.toastService.error('Name is required'); return; }
 
@@ -155,16 +146,16 @@ export class JoinTeamComponent implements OnInit, OnDestroy {
     this.verifyError.set('');
     this.joining.set(true);
 
-    this.api.joinTeam(this.teamId, {
+    this.api.joinTeam(this.data.teamId, {
       friendlyName: name,
       secretKey: this.secret(),
       totpCode: code,
     }).subscribe({
       next: r => {
         this.totpService.storeSecret('reportee', r.id, this.secret());
-        localStorage.setItem(`reportee_${this.teamId}`, String(r.id));
+        localStorage.setItem(`reportee_${this.data.teamId}`, String(r.id));
         this.toastService.success(`Joined as ${r.friendlyName}!`);
-        this.router.navigate(['/team', this.teamId]);
+        this.dialogRef.close(r);
       },
       error: err => {
         this.toastService.error(err.error?.error || 'Failed to join');
