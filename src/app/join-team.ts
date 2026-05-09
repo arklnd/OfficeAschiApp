@@ -139,10 +139,6 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
       this.verifyError.set('Enter a 6-digit code');
       return;
     }
-    if (!this.totpService.validate(this.secret(), code)) {
-      this.verifyError.set('Invalid code. Please try again.');
-      return;
-    }
     this.verifyError.set('');
     this.joining.set(true);
 
