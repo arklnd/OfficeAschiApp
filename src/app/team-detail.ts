@@ -23,7 +23,7 @@ import { HyFeedbackIconModule } from '@hyland/ui/feedback-icon';
 import { HyErrorLayoutModule } from '@hyland/ui/error-layout';
 import { HyComboBoxModule } from '@hyland/ui/combo-box';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
-import { forkJoin } from 'rxjs';
+import { forkJoin, finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from './booking.service';
 import {
@@ -187,16 +187,16 @@ export class TeamDetailComponent implements OnInit {
     const label = input.value.trim();
     if (!label) return;
     this.addingSeat.set(true);
-    this.api.addSeat(this.teamId, { label }, this.team()?.name).subscribe({
+    this.api.addSeat(this.teamId, { label }, this.team()?.name).pipe(
+      finalize(() => this.addingSeat.set(false)),
+    ).subscribe({
       next: seat => {
         this.toastService.success(`Seat "${seat.label}" added`);
         input.value = '';
-        this.addingSeat.set(false);
         this.loadAll();
       },
       error: err => {
         this.toastService.error(err.error?.error || 'Failed to add seat');
-        this.addingSeat.set(false);
       },
     });
   }
