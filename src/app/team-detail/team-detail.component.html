@@ -200,6 +200,7 @@
             <mat-card-content>
               <mat-list hyList>
                 @for (r of pendingReportees(); track r.id) {
+                  <div class="list-item-pad">
                   <mat-list-item hyListItem>
                     <hy-user-profile matListItemAvatar [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
                     <span matListItemTitle>{{ r.friendlyName }}</span>
@@ -207,6 +208,7 @@
                       <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
                     </span>
                   </mat-list-item>
+                  </div>
                 }
               </mat-list>
             </mat-card-content>
@@ -219,6 +221,7 @@
           <mat-card-content>
               <mat-list hyList>
                 @for (r of approvedReportees(); track r.id) {
+                  <div class="list-item-pad">
                   <mat-list-item hyListItem>
                     <hy-user-profile matListItemAvatar [name]="r.friendlyName" [size]="profileSize"
                       [bgColor]="profileColors[r.id % profileColors.length]"></hy-user-profile>
@@ -226,6 +229,7 @@
                     <span matListItemMeta>
                     </span>
                   </mat-list-item>
+                  </div>
                 }
               </mat-list>
               @if (approvedReportees().length === 0) {
