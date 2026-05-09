@@ -17,7 +17,7 @@ import { ApiService } from './services/booking.service';
     @if (api.backendDown()) {
       <hy-feedback-banner type="error" message="Backend is unreachable. Some features may not work."></hy-feedback-banner>
     }
-    <hy-shell toolbarTitle="OfficeAschi" homeRoute="/">
+    <hy-shell toolbarTitle="OfficeAschi" homeRoute="/" logo="icons/icon-96x96.png">
       <hy-shell-nav [mode]="sideNavMode">
         <hy-shell-nav-item name="Teams" route="/"></hy-shell-nav-item>
         @if (devMode) {
