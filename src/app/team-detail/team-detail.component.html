@@ -114,10 +114,10 @@
           @if (availableCount() === 0 && totalSeats() > 0) {
             <mat-card appearance="outlined" class="waitlist-section">
               <mat-card-header>
-                <mat-card-title>All seats booked — Waitlist</mat-card-title>
+                <mat-card-title>All seats booked — Waiting list</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p>All seats are taken. You can waitlist for a specific seat.</p>
+                <p>All seats are taken. You can wait for a specific seat.</p>
                 <div class="seat-grid">
                   @for (b of bookedSeats(); track b.id) {
                     <mat-card appearance="outlined">
