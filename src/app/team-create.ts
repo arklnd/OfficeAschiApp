@@ -115,7 +115,7 @@ export class TeamCreateComponent {
   generateSecret(): void {
     const secret = this.totpService.generateSecret();
     this.secret.set(secret);
-    const label = this.teamName || 'NewTeam';
+    const label = this.teamName || `Team-${Date.now()}`;
     const uri = this.totpService.getOtpAuthUri(secret, `${label} (Manager)`);
     QRCode.toDataURL(uri, { width: 200, margin: 1 }).then(url => this.qrDataUrl.set(url));
   }
