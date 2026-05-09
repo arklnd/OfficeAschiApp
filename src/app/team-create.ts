@@ -30,55 +30,45 @@ import * as QRCode from 'qrcode';
       <mat-card appearance="outlined" class="form-card">
         <mat-card-header><mat-card-title>New Team</mat-card-title></mat-card-header>
         <mat-card-content>
-          @if (step() === 0) {
-            <mat-form-field hyFormField class="full-width">
-              <mat-label>Team Name (optional)</mat-label>
-              <input matInput [(ngModel)]="teamName" placeholder="Leave blank for auto-generated name" />
-            </mat-form-field>
-            <div class="actions">
-              <button mat-button (click)="router.navigate(['/'])">Cancel</button>
-              <button mat-flat-button color="primary" (click)="step.set(1); generateSecret()">
-                Next: Setup TOTP
+          <mat-form-field hyFormField class="full-width">
+            <mat-label>Team Name (optional)</mat-label>
+            <input matInput [(ngModel)]="teamName" (ngModelChange)="onNameChange()" placeholder="Leave blank for auto-generated name" />
+          </mat-form-field>
+
+          <div class="totp-setup">
+            <p>Scan this QR code with your authenticator app, or save the secret key.</p>
+            <div class="qr-container">
+              @if (qrDataUrl()) {
+                <img [src]="qrDataUrl()" alt="TOTP QR Code" width="200" height="200" />
+              }
+            </div>
+            <div class="secret-display">
+              <hy-tag color="blue">{{ secret() }}</hy-tag>
+            </div>
+            <div class="qr-actions">
+              <button mat-stroked-button hyIconLabelButton (click)="downloadQr()">
+                <mat-icon hyIcon>download</mat-icon> Download QR
+              </button>
+              <button mat-stroked-button hyIconLabelButton (click)="copySecret()">
+                <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
               </button>
             </div>
-          }
+            <mat-form-field hyFormField class="full-width">
+              <mat-label>Enter 6-digit code to verify</mat-label>
+              <input matInput [(ngModel)]="verifyCode" maxlength="6" placeholder="000000"
+                     (keydown.enter)="createTeam()" autocomplete="off" />
+            </mat-form-field>
+            @if (verifyError()) {
+              <p class="error">{{ verifyError() }}</p>
+            }
+          </div>
 
-          @if (step() === 1) {
-            <div class="totp-setup">
-              <h3>{{ qrLabel() }}</h3>
-              <p>Scan this QR code with your authenticator app, or save the secret key.</p>
-              <div class="qr-container">
-                @if (qrDataUrl()) {
-                  <img [src]="qrDataUrl()" alt="TOTP QR Code" width="200" height="200" />
-                }
-              </div>
-              <div class="secret-display">
-                <hy-tag color="blue">{{ secret() }}</hy-tag>
-              </div>
-              <div class="qr-actions">
-                <button mat-stroked-button hyIconLabelButton (click)="downloadQr()">
-                  <mat-icon hyIcon>download</mat-icon> Download QR
-                </button>
-                <button mat-stroked-button hyIconLabelButton (click)="copySecret()">
-                  <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
-                </button>
-              </div>
-              <mat-form-field hyFormField class="full-width">
-                <mat-label>Enter 6-digit code to verify</mat-label>
-                <input matInput [(ngModel)]="verifyCode" maxlength="6" placeholder="000000"
-                       (keydown.enter)="createTeam()" autocomplete="off" />
-              </mat-form-field>
-              @if (verifyError()) {
-                <p class="error">{{ verifyError() }}</p>
-              }
-              <div class="actions">
-                <button mat-button (click)="step.set(0)">Back</button>
-                <button mat-flat-button color="primary" (click)="createTeam()" [disabled]="creating()">
-                  Create Team
-                </button>
-              </div>
-            </div>
-          }
+          <div class="actions">
+            <button mat-button (click)="router.navigate(['/'])">Cancel</button>
+            <button mat-flat-button color="primary" (click)="createTeam()" [disabled]="creating()">
+              Create Team
+            </button>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>
@@ -97,13 +87,11 @@ import * as QRCode from 'qrcode';
     .error { color: var(--mat-sys-error, #d32f2f); margin: 0; }
   `],
 })
-export class TeamCreateComponent {
+export class TeamCreateComponent implements OnInit {
   teamName = `Team-${Date.now()}`;
-  step = signal(0);
   creating = signal(false);
   secret = signal('');
   qrDataUrl = signal('');
-  qrLabel = signal('');
   verifyCode = '';
   verifyError = signal('');
 
@@ -114,11 +102,20 @@ export class TeamCreateComponent {
     private totpService: TotpService,
   ) {}
 
-  generateSecret(): void {
+  ngOnInit(): void {
+    this.generateSecret();
+  }
+
+  onNameChange(): void {
+    this.generateSecret();
+  }
+
+  private generateSecret(): void {
     const secret = this.totpService.generateSecret();
     this.secret.set(secret);
+    this.verifyCode = '';
+    this.verifyError.set('');
     const label = this.teamName || `Team-${Date.now()}`;
-    this.qrLabel.set(label);
     const uri = this.totpService.getOtpAuthUri(secret, `${label} (Manager)`);
     QRCode.toDataURL(uri, { width: 200, margin: 1 }).then(url => this.qrDataUrl.set(url));
   }
