@@ -56,22 +56,11 @@ mat-card {
 }
 
 .waitlist-section, .waitlist-info { margin-bottom: 24px; }
-.waitlist-list { display: flex; flex-direction: column; gap: 12px; }
-.waitlist-item { display: flex; align-items: center; gap: 8px; }
-.waitlist-detail { display: flex; flex-direction: column; }
-.waitlist-seat { font-size: 12px; opacity: 0.7; }
 
 .manage-card { margin-bottom: 16px; }
 .inline-form { display: flex; gap: 8px; align-items: center; }
 .flex-field { flex: 1; }
 .existing-seats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-
-.approval-row, .member-row {
-  display: flex; align-items: center; gap: 8px; padding: 8px 0;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.15);
-  &:last-child { border-bottom: none; }
-}
-.member-name { flex: 1; }
 
 .empty {
   text-align: center; padding: 48px 0; opacity: 0.6;

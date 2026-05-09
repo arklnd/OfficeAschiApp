@@ -11,8 +11,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatListModule } from '@angular/material/list';
 import { MatDialog } from '@angular/material/dialog';
-import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule, HyMaterialTabsModule } from '@hyland/ui/material';
+import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule, HyMaterialTabsModule, HyMaterialListModule } from '@hyland/ui/material';
 import { HyShellModule } from '@hyland/ui-shell';
 import { HyTagModule } from '@hyland/ui/tag';
 import { HyGhostModule } from '@hyland/ui/ghost';
@@ -39,8 +40,8 @@ import { TotpService } from './totp.service';
   imports: [
     CommonModule, FormsModule, MatButtonModule, MatCardModule,
     MatFormFieldModule, MatInputModule, MatIconModule,
-    MatDatepickerModule, MatNativeDateModule, MatTooltipModule, MatTabsModule,
-    HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule, HyMaterialTabsModule,
+    MatDatepickerModule, MatNativeDateModule, MatTooltipModule, MatTabsModule, MatListModule,
+    HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule, HyMaterialTabsModule, HyMaterialListModule,
     HyShellModule, HyTagModule, HyGhostModule, HyToastModule,
     HyUserProfileModule, HyFeedbackIconModule, HyErrorLayoutModule, HyComboBoxModule,
   ],

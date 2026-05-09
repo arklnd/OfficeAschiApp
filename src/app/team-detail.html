@@ -177,17 +177,15 @@
             <mat-card appearance="outlined" class="waitlist-info">
               <mat-card-header><mat-card-title>Waitlist</mat-card-title></mat-card-header>
               <mat-card-content>
-                <div class="waitlist-list">
+                <mat-list hyList>
                   @for (w of waitlist(); track w.bookingId) {
-                    <div class="waitlist-item">
-                      <hy-user-profile [name]="w.reporteeName" [size]="profileSize" bgColor="orange"></hy-user-profile>
-                      <div class="waitlist-detail">
-                        <span>{{ w.reporteeName }}</span>
-                        <span class="waitlist-seat">waiting for {{ w.desiredSeatLabel }}</span>
-                      </div>
-                    </div>
+                    <mat-list-item hyListItem>
+                      <hy-user-profile matListItemAvatar [name]="w.reporteeName" [size]="profileSize" bgColor="orange"></hy-user-profile>
+                      <span matListItemTitle>{{ w.reporteeName }}</span>
+                      <span matListItemLine>waiting for {{ w.desiredSeatLabel }}</span>
+                    </mat-list-item>
                   }
-                </div>
+                </mat-list>
               </mat-card-content>
             </mat-card>
           }
@@ -224,16 +222,20 @@
           <mat-card appearance="outlined" class="manage-card">
             <mat-card-header><mat-card-title>Pending Approvals</mat-card-title></mat-card-header>
             <mat-card-content>
-              @for (r of pendingReportees(); track r.id) {
-                <div class="approval-row">
-                  <hy-user-profile [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
-                  <span class="member-name">{{ r.friendlyName }}</span>
-                  @if (!r.hasTotpSetup) {
-                    <hy-tag color="red">No TOTP</hy-tag>
-                  }
-                  <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
-                </div>
-              }
+              <mat-list hyList>
+                @for (r of pendingReportees(); track r.id) {
+                  <mat-list-item hyListItem>
+                    <hy-user-profile matListItemAvatar [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
+                    <span matListItemTitle>{{ r.friendlyName }}</span>
+                    <span matListItemMeta>
+                      @if (!r.hasTotpSetup) {
+                        <hy-tag color="red">No TOTP</hy-tag>
+                      }
+                      <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
+                    </span>
+                  </mat-list-item>
+                }
+              </mat-list>
             </mat-card-content>
           </mat-card>
         }
@@ -242,22 +244,26 @@
         <mat-card appearance="outlined" class="manage-card">
           <mat-card-header><mat-card-title>Members</mat-card-title></mat-card-header>
           <mat-card-content>
-            @for (r of approvedReportees(); track r.id) {
-              <div class="member-row">
-                <hy-user-profile [name]="r.friendlyName" [size]="profileSize"
-                  [bgColor]="profileColors[r.id % profileColors.length]"></hy-user-profile>
-                <span class="member-name">{{ r.friendlyName }}</span>
-                @if (r.hasTotpSetup) {
-                  <hy-tag color="green">TOTP ✓</hy-tag>
-                } @else {
-                  <hy-tag color="red">No TOTP</hy-tag>
+              <mat-list hyList>
+                @for (r of approvedReportees(); track r.id) {
+                  <mat-list-item hyListItem>
+                    <hy-user-profile matListItemAvatar [name]="r.friendlyName" [size]="profileSize"
+                      [bgColor]="profileColors[r.id % profileColors.length]"></hy-user-profile>
+                    <span matListItemTitle>{{ r.friendlyName }}</span>
+                    <span matListItemMeta>
+                      @if (r.hasTotpSetup) {
+                        <hy-tag color="green">TOTP ✓</hy-tag>
+                      } @else {
+                        <hy-tag color="red">No TOTP</hy-tag>
+                      }
+                    </span>
+                  </mat-list-item>
                 }
-              </div>
-            }
-            @if (approvedReportees().length === 0) {
-              <p class="muted">No approved members yet.</p>
-            }
-          </mat-card-content>
+              </mat-list>
+              @if (approvedReportees().length === 0) {
+                <p class="muted">No approved members yet.</p>
+              }
+            </mat-card-content>
         </mat-card>
       </div>
     </mat-tab>
