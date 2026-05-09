@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, OnDestroy } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import {
   TeamSearchResult, TeamResponse, CreateTeamRequest,
   SeatResponse, AddSeatRequest, ReporteeResponse, JoinTeamRequest,
@@ -9,9 +9,37 @@ import {
 import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME } from './totp.context';
 
 @Injectable({ providedIn: 'root' })
-export class ApiService {
+export class ApiService implements OnDestroy {
   private base = '/api';
-  constructor(private http: HttpClient) {}
+
+  /** Reactive health state — components can read this signal */
+  readonly backendDown = signal(false);
+
+  /** Emits when backend transitions from down → up */
+  readonly backendRecovered$ = new Subject<void>();
+
+  private healthTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor(private http: HttpClient) {
+    this.pollHealth();
+  }
+
+  ngOnDestroy(): void {
+    if (this.healthTimer) clearTimeout(this.healthTimer);
+  }
+
+  private pollHealth(): void {
+    this.checkHealth().subscribe({
+      next: () => {
+        const wasDown = this.backendDown();
+        this.backendDown.set(false);
+        if (wasDown) this.backendRecovered$.next();
+      },
+      error: () => this.backendDown.set(true),
+    });
+    const delay = this.backendDown() ? 10_000 : 30_000;
+    this.healthTimer = setTimeout(() => this.pollHealth(), delay);
+  }
 
   private managerCtx(teamId: number, teamName = ''): { context: HttpContext } {
     return { context: new HttpContext().set(TOTP_ENTITY_TYPE, 'manager').set(TOTP_ENTITY_ID, teamId).set(TOTP_ENTITY_NAME, teamName) };

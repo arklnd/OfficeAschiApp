@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
@@ -14,7 +14,7 @@ import { ApiService } from './booking.service';
     HyFeedbackBannerModule,
   ],
   template: `
-    @if (backendDown()) {
+    @if (api.backendDown()) {
       <hy-feedback-banner type="error" message="Backend is unreachable. Some features may not work."></hy-feedback-banner>
     }
     <hy-shell toolbarTitle="OfficeAschi" homeRoute="/">
@@ -31,35 +31,7 @@ import { ApiService } from './booking.service';
     }
   `,
 })
-export class App implements OnInit, OnDestroy {
+export class App {
   sideNavMode = HyShellSideNavModes.Side;
-  backendDown = signal(false);
-  private healthTimer: ReturnType<typeof setTimeout> | null = null;
-
-  constructor(private api: ApiService) {}
-
-  ngOnInit(): void {
-    this.checkHealth();
-    this.scheduleNext();
-  }
-
-  ngOnDestroy(): void {
-    if (this.healthTimer) clearTimeout(this.healthTimer);
-  }
-
-  private scheduleNext(): void {
-    // Poll faster (10s) when backend is down, slower (30s) when healthy
-    const delay = this.backendDown() ? 10_000 : 30_000;
-    this.healthTimer = setTimeout(() => {
-      this.checkHealth();
-      this.scheduleNext();
-    }, delay);
-  }
-
-  private checkHealth(): void {
-    this.api.checkHealth().subscribe({
-      next: () => this.backendDown.set(false),
-      error: () => this.backendDown.set(true),
-    });
-  }
+  constructor(public api: ApiService) {}
 }

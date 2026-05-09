@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +23,7 @@ import { HyErrorLayoutModule } from '@hyland/ui/error-layout';
 import { HyComboBoxModule } from '@hyland/ui/combo-box';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { forkJoin } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from './booking.service';
 import {
   TeamResponse, SeatResponse, ReporteeResponse,
@@ -71,6 +72,7 @@ export class TeamDetailComponent implements OnInit {
 
   readonly profileColors = ['blue', 'teal', 'purple', 'green', 'orange', 'cyan', 'pink', 'red'] as const;
   readonly profileSize = 'small' as any;
+  private destroyRef = inject(DestroyRef);
 
   approvedReportees = computed(() => this.reportees().filter(r => r.isApproved));
   pendingReportees = computed(() => this.reportees().filter(r => !r.isApproved));
@@ -127,6 +129,7 @@ export class TeamDetailComponent implements OnInit {
     const savedId = localStorage.getItem(`reportee_${this.teamId}`);
     if (savedId) this.currentReporteeId.set(Number(savedId));
     this.loadAll();
+    this.api.backendRecovered$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAll());
   }
 
   loadAll(): void {

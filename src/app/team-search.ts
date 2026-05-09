@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { ApiService } from './booking.service';
 import { TeamSearchResult, TeamResponse } from './models';
 import { TeamCreateDialogComponent } from './team-create';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-team-search',
@@ -88,6 +89,7 @@ export class TeamSearchComponent implements OnInit {
   searchQuery = '';
   teams = signal<TeamSearchResult[]>([]);
   loading = signal(false);
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private api: ApiService,
@@ -95,7 +97,10 @@ export class TeamSearchComponent implements OnInit {
     private dialog: MatDialog,
   ) {}
 
-  ngOnInit(): void { this.loadTeams(); }
+  ngOnInit(): void {
+    this.loadTeams();
+    this.api.backendRecovered$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadTeams());
+  }
 
   onSearch(): void { this.loadTeams(); }
 
