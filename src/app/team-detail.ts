@@ -216,7 +216,7 @@ export class TeamDetailComponent implements OnInit {
 
     this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
       next: b => {
-        this.toastService.success(`Booked: ${resolvedName} → ${seatLabel}`);
+        this.toastService.success(`Booked ${resolvedName} on ${seatLabel} for ${this.selectedDate()}`);
         this.selectedReportee.set(null);
         this.bookingSeatId.set(null);
         this.loadAvailability();
@@ -232,7 +232,7 @@ export class TeamDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.cancelBooking(booking.id, booking.reporteeId, booking.reporteeName).subscribe({
-        next: () => { this.toastService.success('Booking cancelled'); this.loadAvailability(); },
+        next: () => { this.toastService.success(`Cancelled ${booking.reporteeName}'s booking on ${booking.seatLabel} for ${booking.date}`); this.loadAvailability(); },
         error: err => this.toastService.error(err.error?.error || 'Cancel failed'),
       });
     });
