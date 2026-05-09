@@ -12,9 +12,9 @@ import { HyToastService, HyToastModule } from '@hyland/ui/toast';
 import { HyTagModule } from '@hyland/ui/tag';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { ApiService } from './booking.service';
-import { TotpService } from './totp.service';
-import { TotpCodeInputComponent } from './totp-code-input';
+import { ApiService } from '../services/booking.service';
+import { TotpService } from '../totp/totp.service';
+import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
 import * as QRCode from 'qrcode';
 
 export interface JoinTeamDialogData {

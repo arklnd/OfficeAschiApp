@@ -4,7 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyMaterialFormFieldModule } from '@hyland/ui/material';
 import { HyComboBoxModule } from '@hyland/ui/combo-box';
-import { ReporteeResponse } from './models';
+import { ReporteeResponse } from '../models';
 
 export interface BookSeatDialogData {
   seatLabel: string;

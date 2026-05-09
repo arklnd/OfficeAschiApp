@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HyDialogModule } from '@hyland/ui/dialog';
-import { TotpCodeInputComponent } from './totp-code-input';
+import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
 
 export interface TotpPromptDialogData {
   entityType: string;
@@ -17,7 +17,7 @@ export interface TotpPromptDialogData {
   imports: [FormsModule, HyDialogModule, TotpCodeInputComponent],
   template: `
     <hy-dialog
-      [header]="data.actionReason ? data.actionReason + ' — TOTP Required' : 'TOTP Code Required'"
+      [header]="data.actionReason ? data.actionReason + ' - TOTP Required' : 'TOTP Code Required'"
       confirmLabel="Submit"
       dismissLabel="Cancel"
       (confirmed)="onSubmit()"

@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HyMaterialButtonModule, HyMaterialIconModule } from '@hyland/ui/material';
 import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyUserProfileModule } from '@hyland/ui/user-profile';
-import { ReporteeResponse } from './models';
+import { ReporteeResponse } from '../models';
 
 export interface ReporteePickerData {
   reportees: ReporteeResponse[];

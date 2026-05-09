@@ -25,15 +25,15 @@ import { HyComboBoxModule } from '@hyland/ui/combo-box';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { forkJoin, finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ApiService } from './booking.service';
+import { ApiService } from '../services/booking.service';
 import {
   TeamResponse, SeatResponse, ReporteeResponse,
   AvailabilityResponse, BookingResponse, WaitlistInfo,
-} from './models';
-import { ConfirmDialogComponent } from './confirm-dialog';
-import { JoinTeamDialogComponent } from './join-team';
-import { BookSeatDialogComponent, BookSeatDialogData } from './book-seat-dialog';
-import { TotpService } from './totp.service';
+} from '../models';
+import { CancelBookConfirmDialogComponent } from '../dialogs/cancel-book-confirm-dialog.component';
+import { JoinTeamDialogComponent } from '../dialogs/join-team-dialog.component';
+import { BookSeatDialogComponent, BookSeatDialogData } from '../dialogs/book-seat-dialog.component';
+import { TotpService } from '../totp/totp.service';
 
 @Component({
   selector: 'app-team-detail',
@@ -46,8 +46,8 @@ import { TotpService } from './totp.service';
     HyShellModule, HyTagModule, HyGhostModule, HyToastModule,
     HyUserProfileModule, HyFeedbackIconModule, HyErrorLayoutModule, HyComboBoxModule,
   ],
-  templateUrl: './team-detail.html',
-  styleUrl: './team-detail.scss',
+  templateUrl: './team-detail.component.html',
+  styleUrl: './team-detail.component.scss',
 })
 export class TeamDetailComponent implements OnInit {
   teamId = 0;
@@ -244,7 +244,7 @@ export class TeamDetailComponent implements OnInit {
   }
 
   cancelBooking(booking: BookingResponse): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, configureHyDialogOptions({
+    const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
       data: { personName: booking.reporteeName, seatLabel: booking.seatLabel, date: booking.date },
     }));
     dialogRef.afterClosed().subscribe(confirmed => {

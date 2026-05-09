@@ -5,8 +5,8 @@ import {
   TeamSearchResult, TeamResponse, CreateTeamRequest,
   SeatResponse, AddSeatRequest, ReporteeResponse, JoinTeamRequest,
   BookSeatRequest, BookingResponse, AvailabilityResponse,
-} from './models';
-import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from './totp.context';
+} from '../models';
+import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from '../totp/totp.context';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService implements OnDestroy {

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { TeamSearchComponent } from './team-search';
-import { TeamDetailComponent } from './team-detail';
+import { TeamSearchComponent } from './team-search/team-search.component';
+import { TeamDetailComponent } from './team-detail/team-detail.component';
 
 export const routes: Routes = [
   { path: '', component: TeamSearchComponent },

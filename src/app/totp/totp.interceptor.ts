@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EMPTY, switchMap } from 'rxjs';
 import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from './totp.context';
 import { TotpService } from './totp.service';
-import { TotpPromptDialogComponent } from './totp-prompt-dialog';
+import { TotpPromptDialogComponent } from '../dialogs/totp-prompt-dialog.component';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
 
 export const totpInterceptor: HttpInterceptorFn = (req, next) => {

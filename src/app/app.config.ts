@@ -10,11 +10,11 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { HyShellModule, HY_SHELL_CONFIG_INITIALIZER } from '@hyland/ui-shell';
 import { HyAuthService } from '@hyland/ui/auth';
-import { NoopAuthService } from './noop-auth.service';
+import { NoopAuthService } from './services/noop-auth.service';
 
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
-import { totpInterceptor } from './totp.interceptor';
+import { totpInterceptor } from './totp/totp.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

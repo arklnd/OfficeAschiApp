@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
 import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
-import { ApiService } from './booking.service';
+import { ApiService } from './services/booking.service';
 
 @Component({
   selector: 'app-root',

@@ -11,9 +11,9 @@ import { HyTagModule } from '@hyland/ui/tag';
 import { HyGhostModule } from '@hyland/ui/ghost';
 import { HySearchInputModule } from '@hyland/ui/search-input';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
-import { ApiService } from './booking.service';
-import { TeamSearchResult, TeamResponse } from './models';
-import { TeamCreateDialogComponent } from './team-create';
+import { ApiService } from '../services/booking.service';
+import { TeamSearchResult, TeamResponse } from '../models';
+import { TeamCreateDialogComponent } from '../dialogs/team-create-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
