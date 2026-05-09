@@ -235,9 +235,6 @@
                     <hy-user-profile matListItemAvatar [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
                     <span matListItemTitle>{{ r.friendlyName }}</span>
                     <span matListItemMeta>
-                      @if (!r.hasTotpSetup) {
-                        <hy-tag color="red">No TOTP</hy-tag>
-                      }
                       <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
                     </span>
                   </mat-list-item>
@@ -258,11 +255,6 @@
                       [bgColor]="profileColors[r.id % profileColors.length]"></hy-user-profile>
                     <span matListItemTitle>{{ r.friendlyName }}</span>
                     <span matListItemMeta>
-                      @if (r.hasTotpSetup) {
-                        <hy-tag color="green">TOTP ✓</hy-tag>
-                      } @else {
-                        <hy-tag color="red">No TOTP</hy-tag>
-                      }
                     </span>
                   </mat-list-item>
                 }
