@@ -6,7 +6,7 @@ import {
   SeatResponse, AddSeatRequest, ReporteeResponse, JoinTeamRequest,
   BookSeatRequest, BookingResponse, AvailabilityResponse,
 } from './models';
-import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME } from './totp.context';
+import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from './totp.context';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService implements OnDestroy {
@@ -41,12 +41,12 @@ export class ApiService implements OnDestroy {
     this.healthTimer = setTimeout(() => this.pollHealth(), delay);
   }
 
-  private managerCtx(teamId: number, teamName = ''): { context: HttpContext } {
-    return { context: new HttpContext().set(TOTP_ENTITY_TYPE, 'manager').set(TOTP_ENTITY_ID, teamId).set(TOTP_ENTITY_NAME, teamName) };
+  private managerCtx(teamId: number, teamName = '', reason = ''): { context: HttpContext } {
+    return { context: new HttpContext().set(TOTP_ENTITY_TYPE, 'manager').set(TOTP_ENTITY_ID, teamId).set(TOTP_ENTITY_NAME, teamName).set(TOTP_ACTION_REASON, reason) };
   }
 
-  private reporteeCtx(reporteeId: number, reporteeName = ''): { context: HttpContext } {
-    return { context: new HttpContext().set(TOTP_ENTITY_TYPE, 'reportee').set(TOTP_ENTITY_ID, reporteeId).set(TOTP_ENTITY_NAME, reporteeName) };
+  private reporteeCtx(reporteeId: number, reporteeName = '', reason = ''): { context: HttpContext } {
+    return { context: new HttpContext().set(TOTP_ENTITY_TYPE, 'reportee').set(TOTP_ENTITY_ID, reporteeId).set(TOTP_ENTITY_NAME, reporteeName).set(TOTP_ACTION_REASON, reason) };
   }
 
   // Teams
@@ -65,10 +65,10 @@ export class ApiService implements OnDestroy {
     return this.http.get<SeatResponse[]>(`${this.base}/teams/${teamId}/seats`);
   }
   addSeat(teamId: number, req: AddSeatRequest, teamName = ''): Observable<SeatResponse> {
-    return this.http.post<SeatResponse>(`${this.base}/teams/${teamId}/seats`, req, this.managerCtx(teamId, teamName));
+    return this.http.post<SeatResponse>(`${this.base}/teams/${teamId}/seats`, req, this.managerCtx(teamId, teamName, 'Add seat'));
   }
   deleteSeat(teamId: number, seatId: number, teamName = ''): Observable<unknown> {
-    return this.http.delete(`${this.base}/teams/${teamId}/seats/${seatId}`, this.managerCtx(teamId, teamName));
+    return this.http.delete(`${this.base}/teams/${teamId}/seats/${seatId}`, this.managerCtx(teamId, teamName, 'Delete seat'));
   }
 
   // Reportees
@@ -79,7 +79,7 @@ export class ApiService implements OnDestroy {
     return this.http.post<ReporteeResponse>(`${this.base}/teams/${teamId}/reportees`, req);
   }
   approveReportee(teamId: number, reporteeId: number, teamName = ''): Observable<ReporteeResponse> {
-    return this.http.put<ReporteeResponse>(`${this.base}/teams/${teamId}/reportees/${reporteeId}/approve`, {}, this.managerCtx(teamId, teamName));
+    return this.http.put<ReporteeResponse>(`${this.base}/teams/${teamId}/reportees/${reporteeId}/approve`, {}, this.managerCtx(teamId, teamName, 'Approve member'));
   }
 
   // Bookings
@@ -87,10 +87,10 @@ export class ApiService implements OnDestroy {
     return this.http.get<AvailabilityResponse>(`${this.base}/bookings/availability/${teamId}`, { params: { date } });
   }
   bookSeat(req: BookSeatRequest, reporteeId: number, reporteeName = ''): Observable<BookingResponse> {
-    return this.http.post<BookingResponse>(`${this.base}/bookings`, req, this.reporteeCtx(reporteeId, reporteeName));
+    return this.http.post<BookingResponse>(`${this.base}/bookings`, req, this.reporteeCtx(reporteeId, reporteeName, 'Book seat'));
   }
   cancelBooking(bookingId: number, reporteeId: number, reporteeName = ''): Observable<any> {
-    return this.http.delete(`${this.base}/bookings/${bookingId}`, this.reporteeCtx(reporteeId, reporteeName));
+    return this.http.delete(`${this.base}/bookings/${bookingId}`, this.reporteeCtx(reporteeId, reporteeName, 'Cancel booking'));
   }
 
   // Health

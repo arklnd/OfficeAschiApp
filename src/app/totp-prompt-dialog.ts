@@ -10,6 +10,7 @@ export interface TotpPromptDialogData {
   entityType: string;
   entityId: number;
   entityName?: string;
+  actionReason?: string;
 }
 
 @Component({
@@ -18,13 +19,13 @@ export interface TotpPromptDialogData {
   imports: [FormsModule, MatFormFieldModule, MatInputModule, HyDialogModule, HyMaterialFormFieldModule],
   template: `
     <hy-dialog
-      header="TOTP Code Required"
+      [header]="data.actionReason ? data.actionReason + ' — TOTP Required' : 'TOTP Code Required'"
       confirmLabel="Submit"
       dismissLabel="Cancel"
       (confirmed)="onSubmit()"
       (dismissed)="onCancel()"
     >
-      <p>Enter the 6-digit TOTP code for <strong>{{ data.entityName || data.entityType }} (ID: {{ data.entityId }})</strong>.</p>
+      <p>Enter the 6-digit TOTP code for <strong>{{ data.entityName || data.entityType }}</strong> to {{ data.actionReason?.toLowerCase() || 'authorize this action' }}.</p>
       <mat-form-field hyFormField>
         <mat-label>TOTP Code</mat-label>
         <input matInput [(ngModel)]="code" maxlength="6" placeholder="000000"

@@ -2,7 +2,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { EMPTY, switchMap } from 'rxjs';
-import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME } from './totp.context';
+import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from './totp.context';
 import { TotpService } from './totp.service';
 import { TotpPromptDialogComponent } from './totp-prompt-dialog';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
@@ -29,8 +29,9 @@ export const totpInterceptor: HttpInterceptorFn = (req, next) => {
   // No secret in localStorage — prompt user for manual code entry
   const dialog = inject(MatDialog);
   const entityName = req.context.get(TOTP_ENTITY_NAME);
+  const actionReason = req.context.get(TOTP_ACTION_REASON);
   const dialogRef = dialog.open(TotpPromptDialogComponent, configureHyDialogOptions({
-    data: { entityType, entityId, entityName },
+    data: { entityType, entityId, entityName, actionReason },
   }));
 
   return dialogRef.afterClosed().pipe(
