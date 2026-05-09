@@ -100,42 +100,8 @@
                       <hy-user-profile [name]="seat.personName" [size]="profileSize" bgColor="blue"></hy-user-profile>
                       <span>{{ seat.personName }}</span>
                     </div>
-                  } @else if (bookingSeatId() === seat.seatId) {
-                    <div class="inline-book">
-                      @if (currentReporteeId()) {
-                        <!-- User has a stored identity — book directly -->
-                        <mat-card-actions>
-                          <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId, seat.label)">
-                            <mat-icon hyIcon>check</mat-icon> Confirm
-                          </button>
-                          <button mat-button hyIconLabelButton (click)="bookingSeatId.set(null)">
-                            <mat-icon hyIcon>close</mat-icon> Cancel
-                          </button>
-                        </mat-card-actions>
-                      } @else {
-                        <!-- No stored identity — pick a member -->
-                        <mat-form-field hyFormField class="person-select">
-                          <mat-label>Member</mat-label>
-                          <hy-combo-box
-                            [options]="filteredReportees()"
-                            [displayWith]="displayReporteeName"
-                            [value]="selectedReportee()"
-                            (valueChange)="selectedReportee.set($event)"
-                            (filterChange)="reporteeFilter.set($event)"
-                          ></hy-combo-box>
-                        </mat-form-field>
-                        <mat-card-actions>
-                          <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId, seat.label)">
-                            <mat-icon hyIcon>check</mat-icon> Assign
-                          </button>
-                          <button mat-button hyIconLabelButton (click)="bookingSeatId.set(null)">
-                            <mat-icon hyIcon>close</mat-icon> Cancel
-                          </button>
-                        </mat-card-actions>
-                      }
-                    </div>
                   } @else {
-                    <button mat-stroked-button hyIconLabelButton class="book-btn" (click)="bookingSeatId.set(seat.seatId)">
+                    <button mat-stroked-button hyIconLabelButton class="book-btn" (click)="openBookDialog(seat.seatId, seat.label)">
                       <mat-icon hyIcon>add</mat-icon> Book
                     </button>
                   }

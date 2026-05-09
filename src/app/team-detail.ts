@@ -32,6 +32,7 @@ import {
 } from './models';
 import { ConfirmDialogComponent } from './confirm-dialog';
 import { JoinTeamDialogComponent } from './join-team';
+import { BookSeatDialogComponent, BookSeatDialogData } from './book-seat-dialog';
 import { TotpService } from './totp.service';
 
 @Component({
@@ -64,11 +65,7 @@ export class TeamDetailComponent implements OnInit {
   // Reportee identity (from localStorage)
   currentReporteeId = signal<number | null>(null);
 
-  // Inline booking state
-  bookingSeatId = signal<number | null>(null);
-  selectedReportee = signal<ReporteeResponse | null>(null);
-  reporteeFilter = signal('');
-  displayReporteeName = (r: ReporteeResponse): string => r?.friendlyName ?? '';
+
 
   readonly profileColors = ['blue', 'teal', 'purple', 'green', 'orange', 'cyan', 'pink', 'red'] as const;
   readonly profileSize = 'small' as any;
@@ -102,12 +99,7 @@ export class TeamDetailComponent implements OnInit {
     return [...booked, ...available];
   });
 
-  filteredReportees = computed(() => {
-    const filter = this.reporteeFilter().toLowerCase();
-    const bookedIds = new Set(this.bookedSeats().map(b => b.reporteeId));
-    const available = this.approvedReportees().filter(r => !bookedIds.has(r.id));
-    return filter ? available.filter(r => r.friendlyName.toLowerCase().includes(filter)) : available;
-  });
+
 
   displayDay = computed(() => new Date(this.selectedDate() + 'T00:00:00').getDate());
   displayMonth = computed(() => new Date(this.selectedDate() + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' }));
@@ -219,24 +211,35 @@ export class TeamDetailComponent implements OnInit {
   }
 
   // --- Reportee actions ---
-  confirmBooking(seatId: number, seatLabel: string): void {
+  openBookDialog(seatId: number, seatLabel: string): void {
     const rid = this.currentReporteeId();
-    const reportee = this.selectedReportee();
-    const resolvedId = rid ?? reportee?.id;
-    const resolvedName = rid
-      ? (this.reportees().find(r => r.id === rid)?.friendlyName ?? '')
-      : (reportee?.friendlyName ?? '');
+    const currentName = rid ? (this.reportees().find(r => r.id === rid)?.friendlyName ?? null) : null;
+    const bookedIds = new Set(this.bookedSeats().map(b => b.reporteeId));
+    const availableReportees = this.approvedReportees().filter(r => !bookedIds.has(r.id));
 
-    if (!resolvedId) { this.toastService.error('Select a member to assign'); return; }
+    const dialogRef = this.dialog.open(BookSeatDialogComponent, configureHyDialogOptions({
+      data: {
+        seatLabel,
+        date: this.selectedDate(),
+        currentReporteeName: currentName,
+        reportees: availableReportees,
+      } as BookSeatDialogData,
+      width: '380px',
+    }));
 
-    this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
-      next: b => {
-        this.toastService.success(`Booked ${resolvedName} on ${seatLabel} for ${this.selectedDate()}`);
-        this.selectedReportee.set(null);
-        this.bookingSeatId.set(null);
-        this.loadAvailability();
-      },
-      error: err => this.toastService.error(err.error?.error || 'Booking failed'),
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      const resolvedId = rid ?? result.reportee?.id;
+      const resolvedName = currentName ?? result.reportee?.friendlyName ?? '';
+      if (!resolvedId) return;
+
+      this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
+        next: () => {
+          this.toastService.success(`Booked ${resolvedName} on ${seatLabel} for ${this.selectedDate()}`);
+          this.loadAvailability();
+        },
+        error: err => this.toastService.error(err.error?.error || 'Booking failed'),
+      });
     });
   }
 
@@ -255,18 +258,12 @@ export class TeamDetailComponent implements OnInit {
 
   waitlistSeat(seatId: number): void {
     const rid = this.currentReporteeId();
-    const reportee = this.selectedReportee();
-    const resolvedId = rid ?? reportee?.id;
-    const resolvedName = rid
-      ? (this.reportees().find(r => r.id === rid)?.friendlyName ?? '')
-      : (reportee?.friendlyName ?? '');
+    if (!rid) { this.toastService.error('Join the team first'); return; }
+    const resolvedName = this.reportees().find(r => r.id === rid)?.friendlyName ?? '';
 
-    if (!resolvedId) { this.toastService.error('Select a member'); return; }
-
-    this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
+    this.api.bookSeat({ reporteeId: rid, seatId, date: this.selectedDate() }, rid, resolvedName).subscribe({
       next: b => {
         this.toastService.success(`Waitlisted ${resolvedName} for ${b.seatLabel}`);
-        this.selectedReportee.set(null);
         this.loadAvailability();
       },
       error: err => this.toastService.error(err.error?.error || 'Waitlist failed'),
