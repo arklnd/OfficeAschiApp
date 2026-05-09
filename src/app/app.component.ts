@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
@@ -20,6 +20,9 @@ import { ApiService } from './services/booking.service';
     <hy-shell toolbarTitle="OfficeAschi" homeRoute="/">
       <hy-shell-nav [mode]="sideNavMode">
         <hy-shell-nav-item name="Teams" route="/"></hy-shell-nav-item>
+        @if (devMode) {
+          <hy-shell-nav-item name="Dev Menu" route="/dev"></hy-shell-nav-item>
+        }
       </hy-shell-nav>
       <router-outlet />
     </hy-shell>
@@ -33,5 +36,6 @@ import { ApiService } from './services/booking.service';
 })
 export class App {
   sideNavMode = HyShellSideNavModes.Side;
+  devMode = isDevMode();
   constructor(public api: ApiService) {}
 }
