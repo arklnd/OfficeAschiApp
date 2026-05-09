@@ -57,6 +57,17 @@ mat-card {
 
 .waitlist-section, .waitlist-info { margin-bottom: 24px; }
 
+.waitlist-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  &:not(:last-child) { border-bottom: 1px solid rgba(128, 128, 128, 0.2); }
+}
+.waitlist-detail {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.waitlist-title { font-weight: 500; }
+.waitlist-sub { font-size: 13px; opacity: 0.7; }
+
 .manage-card { margin-bottom: 16px; }
 .seat-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 .add-seat-row { display: flex; gap: 8px; align-items: center; }

@@ -256,17 +256,35 @@ export class TeamDetailComponent implements OnInit {
     });
   }
 
-  waitlistSeat(seatId: number): void {
+  waitlistSeat(seatId: number, seatLabel: string): void {
     const rid = this.currentReporteeId();
-    if (!rid) { this.toastService.error('Join the team first'); return; }
-    const resolvedName = this.reportees().find(r => r.id === rid)?.friendlyName ?? '';
+    const currentName = rid ? (this.reportees().find(r => r.id === rid)?.friendlyName ?? null) : null;
+    const bookedIds = new Set(this.bookedSeats().map(b => b.reporteeId));
+    const availableReportees = this.approvedReportees().filter(r => !bookedIds.has(r.id));
 
-    this.api.bookSeat({ reporteeId: rid, seatId, date: this.selectedDate() }, rid, resolvedName).subscribe({
-      next: b => {
-        this.toastService.success(`Waitlisted ${resolvedName} for ${b.seatLabel}`);
-        this.loadAvailability();
-      },
-      error: err => this.toastService.error(err.error?.error || 'Waitlist failed'),
+    const dialogRef = this.dialog.open(BookSeatDialogComponent, configureHyDialogOptions({
+      data: {
+        seatLabel,
+        date: this.selectedDate(),
+        currentReporteeName: currentName,
+        reportees: availableReportees,
+      } as BookSeatDialogData,
+      width: '380px',
+    }));
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+      const resolvedId = rid ?? result.reportee?.id;
+      const resolvedName = currentName ?? result.reportee?.friendlyName ?? '';
+      if (!resolvedId) return;
+
+      this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
+        next: b => {
+          this.toastService.success(`Waitlisted ${resolvedName} for ${b.seatLabel}`);
+          this.loadAvailability();
+        },
+        error: err => this.toastService.error(err.error?.error || 'Waitlist failed'),
+      });
     });
   }
 

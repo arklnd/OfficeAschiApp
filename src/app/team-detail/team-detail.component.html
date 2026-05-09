@@ -114,21 +114,21 @@
           @if (availableCount() === 0 && totalSeats() > 0) {
             <mat-card appearance="outlined" class="waitlist-section">
               <mat-card-header>
-                <mat-card-title>All seats booked — Waiting list</mat-card-title>
+                <mat-card-title>All seats are booked</mat-card-title>
               </mat-card-header>
               <mat-card-content>
                 <p>All seats are taken. You can wait for a specific seat.</p>
                 <div class="seat-grid">
                   @for (b of bookedSeats(); track b.id) {
                     <mat-card appearance="outlined">
-                      <mat-card-header><mat-card-title>{{ b.seatLabel }}</mat-card-title></mat-card-header>
+                      <mat-card-header><mat-card-title>{{ b.seatLabel }} by</mat-card-title></mat-card-header>
                       <mat-card-content>
                         <div class="person-info">
                           <hy-user-profile [name]="b.reporteeName" [size]="profileSize" bgColor="teal"></hy-user-profile>
                           <span>{{ b.reporteeName }}</span>
                         </div>
-                        <button mat-stroked-button hyIconLabelButton class="full-width mt-8" (click)="waitlistSeat(b.seatId)">
-                          <mat-icon hyIcon>clock</mat-icon> Waitlist
+                        <button mat-stroked-button hyIconLabelButton class="full-width mt-8" (click)="waitlistSeat(b.seatId, b.seatLabel)">
+                          <mat-icon hyIcon>clock</mat-icon> Wait for it
                         </button>
                       </mat-card-content>
                     </mat-card>
@@ -143,15 +143,15 @@
             <mat-card appearance="outlined" class="waitlist-info">
               <mat-card-header><mat-card-title>Waitlist</mat-card-title></mat-card-header>
               <mat-card-content>
-                <mat-list hyList>
-                  @for (w of waitlist(); track w.bookingId) {
-                    <mat-list-item hyListItem>
-                      <hy-user-profile matListItemAvatar [name]="w.reporteeName" [size]="profileSize" bgColor="orange"></hy-user-profile>
-                      <span matListItemTitle>{{ w.reporteeName }}</span>
-                      <span matListItemLine>waiting for {{ w.desiredSeatLabel }}</span>
-                    </mat-list-item>
-                  }
-                </mat-list>
+                @for (w of waitlist(); track w.bookingId; let i = $index) {
+                  <div class="waitlist-row">
+                    <hy-user-profile [name]="w.reporteeName" [size]="profileSize" bgColor="orange"></hy-user-profile>
+                    <div class="waitlist-detail">
+                      <span class="waitlist-title">#{{ i + 1 }} — {{ w.reporteeName }}</span>
+                      <span class="waitlist-sub">waiting for seat {{ w.desiredSeatLabel }} · since {{ w.waitlistedSince | date:'short' }}</span>
+                    </div>
+                  </div>
+                }
               </mat-card-content>
             </mat-card>
           }
