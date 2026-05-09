@@ -57,7 +57,7 @@ export interface TotpSetupDialogResult {
               <mat-icon hyIcon>download</mat-icon> Download QR
             </button>
             <button mat-stroked-button hyIconLabelButton (click)="copySecret()">
-              <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
+              <mat-icon hyIcon>copy</mat-icon> Copy Secret
             </button>
           </div>
           <div class="next-action">
@@ -90,7 +90,7 @@ export interface TotpSetupDialogResult {
 
       @if (step() === 2) {
         <div class="setup-step success">
-          <mat-icon hyIcon class="success-icon">check_circle</mat-icon>
+          <mat-icon hyIcon class="success-icon">circle_check</mat-icon>
           <p>TOTP setup complete! Your secret has been saved.</p>
         </div>
       }

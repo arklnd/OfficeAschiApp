@@ -50,7 +50,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         </div>
       } @else if (teams().length === 0) {
         <div class="empty">
-          <mat-icon hyIcon class="empty-icon">groups</mat-icon>
+          <mat-icon hyIcon class="empty-icon">group_work</mat-icon>
           <p>No teams found. Create one or adjust your search.</p>
         </div>
       } @else {

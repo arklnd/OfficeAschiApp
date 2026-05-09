@@ -53,7 +53,7 @@ import * as QRCode from 'qrcode';
               <mat-icon hyIcon>download</mat-icon> Download QR
             </button>
             <button mat-stroked-button hyIconLabelButton type="button" (click)="copySecret()">
-              <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
+              <mat-icon hyIcon>copy</mat-icon> Copy Secret
             </button>
           </div>
           <mat-form-field hyFormField class="full-width">

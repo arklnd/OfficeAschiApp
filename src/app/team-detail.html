@@ -28,14 +28,14 @@
     <div class="team-actions">
       @if (!currentReporteeId()) {
         <button mat-stroked-button hyIconLabelButton (click)="openJoinDialog()">
-          <mat-icon hyIcon>person_add</mat-icon> Join Team
+          <mat-icon hyIcon>add_user</mat-icon> Join Team
         </button>
       }
     </div>
   </div>
 
   <!-- Tabs -->
-  <mat-tab-group>
+  <mat-tab-group hyTabGroup>
     <!-- Booking Tab -->
     <mat-tab label="Bookings">
       <div class="tab-content">
@@ -57,7 +57,7 @@
             </button>
             @if (!isToday()) {
               <button mat-button hyIconLabelButton (click)="goToToday()" matTooltip="Jump to today">
-                <mat-icon>calendar_today</mat-icon> Today
+                <mat-icon hyIcon>calendar</mat-icon> Today
               </button>
             }
             <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" class="hidden-input" />
@@ -162,7 +162,7 @@
                           <span>{{ b.reporteeName }}</span>
                         </div>
                         <button mat-stroked-button hyIconLabelButton class="full-width mt-8" (click)="waitlistSeat(b.seatId)">
-                          <mat-icon hyIcon>hourglass_top</mat-icon> Waitlist
+                          <mat-icon hyIcon>clock</mat-icon> Waitlist
                         </button>
                       </mat-card-content>
                     </mat-card>
