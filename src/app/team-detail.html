@@ -196,23 +196,30 @@
     <!-- Manage Tab (Manager) -->
     <mat-tab label="Manage">
       <div class="tab-content">
-        <!-- Add seats -->
+        <!-- Seats -->
         <mat-card appearance="outlined" class="manage-card">
-          <mat-card-header><mat-card-title>Add Seats</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>Seats</mat-card-title></mat-card-header>
           <mat-card-content>
-            <div class="inline-form">
-              <mat-form-field hyFormField class="flex-field">
-                <mat-label>Seat Label</mat-label>
-                <input matInput [(ngModel)]="newSeatLabel" placeholder="e.g. S1, Window-1" (keydown.enter)="addSeat()" />
+            <div class="seat-chips">
+              @for (s of seats(); track s.id) {
+                <mat-chip-row hyTag [removable]="false">
+                  {{ s.label }}
+                  <button matChipRemove matTooltip="Delete seat" (click)="deleteSeat(s)">
+                    <mat-icon hyIcon>close</mat-icon>
+                  </button>
+                </mat-chip-row>
+              }
+            </div>
+            <div class="add-seat-row">
+              <mat-form-field hyFormField class="add-seat-field">
+                <mat-label>Add seat</mat-label>
+                <input matInput #seatInput placeholder="e.g. S1, Window-1"
+                  (keydown.enter)="addSeatFromInput(seatInput)" />
               </mat-form-field>
-              <button mat-flat-button hyIconLabelButton color="primary" (click)="addSeat()" [disabled]="addingSeat()">
+              <button mat-flat-button hyIconLabelButton color="primary"
+                (click)="addSeatFromInput(seatInput)" [disabled]="addingSeat()">
                 <mat-icon hyIcon>add</mat-icon> Add
               </button>
-            </div>
-            <div class="existing-seats">
-              @for (s of seats(); track s.id) {
-                <hy-tag color="blue">{{ s.label }}</hy-tag>
-              }
             </div>
           </mat-card-content>
         </mat-card>

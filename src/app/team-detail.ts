@@ -1,12 +1,12 @@
 import { Component, signal, computed, OnInit, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -38,8 +38,8 @@ import { TotpService } from './totp.service';
   selector: 'app-team-detail',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatButtonModule, MatCardModule,
-    MatFormFieldModule, MatInputModule, MatIconModule,
+    CommonModule, MatButtonModule, MatCardModule,
+    MatFormFieldModule, MatInputModule, MatIconModule, MatChipsModule,
     MatDatepickerModule, MatNativeDateModule, MatTooltipModule, MatTabsModule, MatListModule,
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule, HyMaterialTabsModule, HyMaterialListModule,
     HyShellModule, HyTagModule, HyGhostModule, HyToastModule,
@@ -59,7 +59,6 @@ export class TeamDetailComponent implements OnInit {
   selectedDate = signal<string>(this.todayString());
 
   // Manager actions
-  newSeatLabel = '';
   addingSeat = signal(false);
 
   // Reportee identity (from localStorage)
@@ -184,13 +183,14 @@ export class TeamDetailComponent implements OnInit {
   goToToday(): void { this.selectedDate.set(this.todayString()); this.loadAvailability(); }
 
   // --- Manager actions ---
-  addSeat(): void {
-    if (!this.newSeatLabel.trim()) return;
+  addSeatFromInput(input: HTMLInputElement): void {
+    const label = input.value.trim();
+    if (!label) return;
     this.addingSeat.set(true);
-    this.api.addSeat(this.teamId, { label: this.newSeatLabel.trim() }, this.team()?.name).subscribe({
+    this.api.addSeat(this.teamId, { label }, this.team()?.name).subscribe({
       next: seat => {
         this.toastService.success(`Seat "${seat.label}" added`);
-        this.newSeatLabel = '';
+        input.value = '';
         this.addingSeat.set(false);
         this.loadAll();
       },
@@ -198,6 +198,16 @@ export class TeamDetailComponent implements OnInit {
         this.toastService.error(err.error?.error || 'Failed to add seat');
         this.addingSeat.set(false);
       },
+    });
+  }
+
+  deleteSeat(seat: SeatResponse): void {
+    this.api.deleteSeat(this.teamId, seat.id, this.team()?.name).subscribe({
+      next: () => {
+        this.toastService.success(`Seat "${seat.label}" deleted`);
+        this.loadAll();
+      },
+      error: err => this.toastService.error(err.error?.error || 'Failed to delete seat'),
     });
   }
 

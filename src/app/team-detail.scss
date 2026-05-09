@@ -58,9 +58,9 @@ mat-card {
 .waitlist-section, .waitlist-info { margin-bottom: 24px; }
 
 .manage-card { margin-bottom: 16px; }
-.inline-form { display: flex; gap: 8px; align-items: center; }
-.flex-field { flex: 1; }
-.existing-seats { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.seat-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.add-seat-row { display: flex; gap: 8px; align-items: center; }
+.add-seat-field { width: 200px; }
 
 .empty {
   text-align: center; padding: 48px 0; opacity: 0.6;

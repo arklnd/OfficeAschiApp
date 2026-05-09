@@ -67,6 +67,9 @@ export class ApiService implements OnDestroy {
   addSeat(teamId: number, req: AddSeatRequest, teamName = ''): Observable<SeatResponse> {
     return this.http.post<SeatResponse>(`${this.base}/teams/${teamId}/seats`, req, this.managerCtx(teamId, teamName));
   }
+  deleteSeat(teamId: number, seatId: number, teamName = ''): Observable<unknown> {
+    return this.http.delete(`${this.base}/teams/${teamId}/seats/${seatId}`, this.managerCtx(teamId, teamName));
+  }
 
   // Reportees
   listReportees(teamId: number): Observable<ReporteeResponse[]> {
