@@ -312,12 +312,18 @@ export class TeamDetailComponent implements OnInit {
       this.toastService.error('Cannot identify reportee for TOTP authorization');
       return;
     }
-    this.api.cancelBooking(w.bookingId, reporteeId, w.reporteeName).subscribe({
-      next: () => {
-        this.toastService.success(`Removed ${w.reporteeName} from waitlist for ${w.desiredSeatLabel}`);
-        this.loadAvailability();
-      },
-      error: err => this.toastService.error(err.error?.error || 'Failed to cancel waitlist'),
+    const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
+      data: { personName: w.reporteeName, seatLabel: w.desiredSeatLabel, date: this.selectedDate() },
+    }));
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.api.cancelBooking(w.bookingId, reporteeId, w.reporteeName).subscribe({
+        next: () => {
+          this.toastService.success(`Removed ${w.reporteeName} from waitlist for ${w.desiredSeatLabel}`);
+          this.loadAvailability();
+        },
+        error: err => this.toastService.error(err.error?.error || 'Failed to cancel waitlist'),
+      });
     });
   }
 
