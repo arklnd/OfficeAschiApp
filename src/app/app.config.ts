@@ -5,7 +5,7 @@ import {
   isDevMode,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { HyShellModule, HY_SHELL_CONFIG_INITIALIZER } from '@hyland/ui-shell';
@@ -14,12 +14,13 @@ import { NoopAuthService } from './noop-auth.service';
 
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
+import { totpInterceptor } from './totp.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([totpInterceptor])),
     provideAnimationsAsync(),
     provideNativeDateAdapter(),
     importProvidersFrom(HyShellModule.forRoot()),

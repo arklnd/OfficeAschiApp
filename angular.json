@@ -55,7 +55,8 @@
             "styles": ["node_modules/@hyland/icons/index.css", "src/styles.scss"],
             "stylePreprocessorOptions": {
               "includePaths": ["node_modules"]
-            }
+            },
+            "allowedCommonJsDependencies": ["qrcode"]
           },
           "configurations": {
             "production": {

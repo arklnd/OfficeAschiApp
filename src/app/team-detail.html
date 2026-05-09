@@ -1,0 +1,267 @@
+<hy-shell-view [title]="notFound() ? 'Not Found' : (team()?.name ?? 'Team')" />
+
+@if (notFound()) {
+  <hy-error-layout>
+    <hy-error-layout-title>Team not found</hy-error-layout-title>
+    <hy-error-layout-content>The team you're looking for doesn't exist or may have been removed.</hy-error-layout-content>
+    <hy-error-layout-actions>
+      <button mat-flat-button hyIconLabelButton color="primary" (click)="router.navigate(['/'])">
+        <mat-icon hyIcon>arrow_back</mat-icon> Back to Teams
+      </button>
+    </hy-error-layout-actions>
+  </hy-error-layout>
+} @else {
+
+<div class="container">
+  <!-- Team header -->
+  <div class="team-header">
+    <div class="team-info">
+      <h2>{{ team()?.name }}</h2>
+      <div class="team-tags">
+        <hy-tag color="blue">{{ seats().length }} seats</hy-tag>
+        <hy-tag color="green">{{ approvedReportees().length }} members</hy-tag>
+        @if (pendingReportees().length > 0) {
+          <hy-tag color="orange">{{ pendingReportees().length }} pending</hy-tag>
+        }
+      </div>
+    </div>
+    <div class="team-actions">
+      @if (!currentReporteeId()) {
+        <button mat-stroked-button hyIconLabelButton (click)="router.navigate(['/team', teamId, 'join'])">
+          <mat-icon hyIcon>person_add</mat-icon> Join Team
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <mat-tab-group>
+    <!-- Booking Tab -->
+    <mat-tab label="Bookings">
+      <div class="tab-content">
+        <!-- Date selector -->
+        <div class="hero">
+          <div class="hero-date">
+            <button mat-icon-button (click)="goToPreviousDay()" matTooltip="Previous day">
+              <mat-icon hyIcon>chevron_left</mat-icon>
+            </button>
+            <div class="hero-date-display" (click)="picker.open()">
+              <span class="hero-day">{{ displayDay() }}</span>
+              <div class="hero-meta">
+                <span class="hero-month-year">{{ displayMonth() }} {{ displayYear() }}</span>
+                <span class="hero-weekday">{{ displayDayOfWeek() }}</span>
+              </div>
+            </div>
+            <button mat-icon-button (click)="goToNextDay()" matTooltip="Next day">
+              <mat-icon hyIcon>chevron_right</mat-icon>
+            </button>
+            @if (!isToday()) {
+              <button mat-button hyIconLabelButton (click)="goToToday()" matTooltip="Jump to today">
+                <mat-icon hyIcon>calendar_today</mat-icon> Today
+              </button>
+            }
+            <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" class="hidden-input" />
+            <mat-datepicker #picker></mat-datepicker>
+          </div>
+          <div class="hero-stats">
+            <hy-tag color="blue">{{ bookedCount() }} booked</hy-tag>
+            <hy-tag color="green">{{ availableCount() }} available</hy-tag>
+            @if (waitlistedCount() > 0) {
+              <hy-tag color="orange">{{ waitlistedCount() }} waitlisted</hy-tag>
+            }
+            <hy-tag color="grey">{{ totalSeats() }} total</hy-tag>
+          </div>
+        </div>
+
+        @if (loading()) {
+          <div class="seat-grid">
+            @for (i of [1,2,3,4]; track i) {
+              <mat-card appearance="outlined"><mat-card-content>
+                <hy-ghost-block style="height: 80px;"></hy-ghost-block>
+              </mat-card-content></mat-card>
+            }
+          </div>
+        } @else {
+          <!-- Seat Grid (merged booked + available) -->
+          <div class="seat-grid">
+            @for (seat of allSeats(); track seat.seatId) {
+              <mat-card [class.booked]="seat.status === 'booked'" [class.open]="seat.status === 'available'" appearance="outlined">
+                <mat-card-header>
+                  <mat-card-title>{{ seat.label }}</mat-card-title>
+                  @if (seat.status === 'booked') {
+                    <button mat-icon-button (click)="cancelBooking(seat.booking!)" matTooltip="Cancel booking">
+                      <mat-icon hyIcon>close</mat-icon>
+                    </button>
+                  }
+                </mat-card-header>
+                <mat-card-content>
+                  @if (seat.status === 'booked') {
+                    <div class="person-info">
+                      <hy-user-profile [name]="seat.personName" [size]="profileSize" bgColor="blue"></hy-user-profile>
+                      <span>{{ seat.personName }}</span>
+                    </div>
+                  } @else if (bookingSeatId() === seat.seatId) {
+                    <div class="inline-book">
+                      @if (currentReporteeId()) {
+                        <!-- User has a stored identity — book directly -->
+                        <mat-card-actions>
+                          <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId, seat.label)">
+                            <mat-icon hyIcon>check</mat-icon> Confirm
+                          </button>
+                          <button mat-button hyIconLabelButton (click)="bookingSeatId.set(null)">
+                            <mat-icon hyIcon>close</mat-icon> Cancel
+                          </button>
+                        </mat-card-actions>
+                      } @else {
+                        <!-- No stored identity — pick a member -->
+                        <mat-form-field hyFormField class="person-select">
+                          <mat-label>Member</mat-label>
+                          <hy-combo-box
+                            [options]="filteredReportees()"
+                            [displayWith]="displayReporteeName"
+                            [value]="selectedReportee()"
+                            (valueChange)="selectedReportee.set($event)"
+                            (filterChange)="reporteeFilter.set($event)"
+                          ></hy-combo-box>
+                        </mat-form-field>
+                        <mat-card-actions>
+                          <button mat-flat-button hyIconLabelButton color="primary" (click)="confirmBooking(seat.seatId, seat.label)">
+                            <mat-icon hyIcon>check</mat-icon> Assign
+                          </button>
+                          <button mat-button hyIconLabelButton (click)="bookingSeatId.set(null)">
+                            <mat-icon hyIcon>close</mat-icon> Cancel
+                          </button>
+                        </mat-card-actions>
+                      }
+                    </div>
+                  } @else {
+                    <button mat-stroked-button hyIconLabelButton class="book-btn" (click)="bookingSeatId.set(seat.seatId)">
+                      <mat-icon hyIcon>add</mat-icon> Book
+                    </button>
+                  }
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+
+          <!-- All seats taken — show waitlist option -->
+          @if (availableCount() === 0 && totalSeats() > 0) {
+            <mat-card appearance="outlined" class="waitlist-section">
+              <mat-card-header>
+                <mat-card-title>All seats booked — Waitlist</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <p>All seats are taken. You can waitlist for a specific seat.</p>
+                <div class="seat-grid">
+                  @for (b of bookedSeats(); track b.id) {
+                    <mat-card appearance="outlined">
+                      <mat-card-header><mat-card-title>{{ b.seatLabel }}</mat-card-title></mat-card-header>
+                      <mat-card-content>
+                        <div class="person-info">
+                          <hy-user-profile [name]="b.reporteeName" [size]="profileSize" bgColor="teal"></hy-user-profile>
+                          <span>{{ b.reporteeName }}</span>
+                        </div>
+                        <button mat-stroked-button hyIconLabelButton class="full-width mt-8" (click)="waitlistSeat(b.seatId)">
+                          <mat-icon hyIcon>hourglass_top</mat-icon> Waitlist
+                        </button>
+                      </mat-card-content>
+                    </mat-card>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+
+          <!-- Current waitlist -->
+          @if (waitlist().length > 0) {
+            <mat-card appearance="outlined" class="waitlist-info">
+              <mat-card-header><mat-card-title>Waitlist</mat-card-title></mat-card-header>
+              <mat-card-content>
+                <div class="waitlist-list">
+                  @for (w of waitlist(); track w.bookingId) {
+                    <div class="waitlist-item">
+                      <hy-user-profile [name]="w.reporteeName" [size]="profileSize" bgColor="orange"></hy-user-profile>
+                      <div class="waitlist-detail">
+                        <span>{{ w.reporteeName }}</span>
+                        <span class="waitlist-seat">waiting for {{ w.desiredSeatLabel }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Manage Tab (Manager) -->
+    <mat-tab label="Manage">
+      <div class="tab-content">
+        <!-- Add seats -->
+        <mat-card appearance="outlined" class="manage-card">
+          <mat-card-header><mat-card-title>Add Seats</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <div class="inline-form">
+              <mat-form-field hyFormField class="flex-field">
+                <mat-label>Seat Label</mat-label>
+                <input matInput [(ngModel)]="newSeatLabel" placeholder="e.g. S1, Window-1" (keydown.enter)="addSeat()" />
+              </mat-form-field>
+              <button mat-flat-button hyIconLabelButton color="primary" (click)="addSeat()" [disabled]="addingSeat()">
+                <mat-icon hyIcon>add</mat-icon> Add
+              </button>
+            </div>
+            <div class="existing-seats">
+              @for (s of seats(); track s.id) {
+                <hy-tag color="blue">{{ s.label }}</hy-tag>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Pending approvals -->
+        @if (pendingReportees().length > 0) {
+          <mat-card appearance="outlined" class="manage-card">
+            <mat-card-header><mat-card-title>Pending Approvals</mat-card-title></mat-card-header>
+            <mat-card-content>
+              @for (r of pendingReportees(); track r.id) {
+                <div class="approval-row">
+                  <hy-user-profile [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
+                  <span class="member-name">{{ r.friendlyName }}</span>
+                  @if (!r.hasTotpSetup) {
+                    <hy-tag color="red">No TOTP</hy-tag>
+                  }
+                  <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+
+        <!-- Members list -->
+        <mat-card appearance="outlined" class="manage-card">
+          <mat-card-header><mat-card-title>Members</mat-card-title></mat-card-header>
+          <mat-card-content>
+            @for (r of approvedReportees(); track r.id) {
+              <div class="member-row">
+                <hy-user-profile [name]="r.friendlyName" [size]="profileSize"
+                  [bgColor]="profileColors[r.id % profileColors.length]"></hy-user-profile>
+                <span class="member-name">{{ r.friendlyName }}</span>
+                @if (r.hasTotpSetup) {
+                  <hy-tag color="green">TOTP ✓</hy-tag>
+                } @else {
+                  <hy-tag color="red">No TOTP</hy-tag>
+                }
+              </div>
+            }
+            @if (approvedReportees().length === 0) {
+              <p class="muted">No approved members yet.</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+}
