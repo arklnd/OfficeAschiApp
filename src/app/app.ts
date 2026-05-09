@@ -2,7 +2,7 @@ import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
-import { HyFeedbackIconModule } from '@hyland/ui/feedback-icon';
+import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
 import { ApiService } from './booking.service';
 
 @Component({
@@ -11,13 +11,11 @@ import { ApiService } from './booking.service';
     CommonModule,
     RouterOutlet,
     HyShellModule,
-    HyFeedbackIconModule,
+    HyFeedbackBannerModule,
   ],
   template: `
     @if (backendDown()) {
-      <div class="backend-down">
-        <hy-feedback-icon appearance="negative" size="small" label="Backend is unreachable. Some features may not work."></hy-feedback-icon>
-      </div>
+      <hy-feedback-banner type="error" message="Backend is unreachable. Some features may not work."></hy-feedback-banner>
     }
     <hy-shell toolbarTitle="OfficeAschi" homeRoute="/">
       <hy-shell-nav [mode]="sideNavMode">
@@ -30,13 +28,6 @@ import { ApiService } from './booking.service';
     :host {
       display: block;
       height: 100vh;
-    }
-    .backend-down {
-      display: flex;
-      justify-content: center;
-      padding: 8px 16px;
-      background: var(--mat-sys-error-container, #fce4ec);
-      z-index: 1000;
     }
   `,
 })
