@@ -113,7 +113,36 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
     this.verifyError.set('');
     const name = this.form.get('friendlyName')!.value || `Member-${Date.now()}`;
     const uri = this.totpService.getOtpAuthUri(secret, `${this.data.teamName} - ${name}`);
-    QRCode.toDataURL(uri, { width: 200, margin: 1 }).then(url => this.qrDataUrl.set(url));
+    this.generateQrWithLogo(uri).then(url => this.qrDataUrl.set(url));
+  }
+
+  private generateQrWithLogo(data: string): Promise<string> {
+    const canvas = document.createElement('canvas');
+    return QRCode.toCanvas(canvas, data, {
+      width: 200,
+      margin: 1,
+      errorCorrectionLevel: 'H',
+      color: { dark: '#1a237e', light: '#ffffff' },
+    }).then(() => {
+      const ctx = canvas.getContext('2d')!;
+      const logo = new Image();
+      logo.src = 'icons/icon-96x96.png';
+      return new Promise<string>((resolve) => {
+        logo.onload = () => {
+          const size = canvas.width * 0.22;
+          const x = (canvas.width - size) / 2;
+          const y = (canvas.height - size) / 2;
+          const pad = 4;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.roundRect(x - pad, y - pad, size + pad * 2, size + pad * 2, 6);
+          ctx.fill();
+          ctx.drawImage(logo, x, y, size, size);
+          resolve(canvas.toDataURL());
+        };
+        logo.onerror = () => resolve(canvas.toDataURL());
+      });
+    });
   }
 
   downloadQr(): void {
