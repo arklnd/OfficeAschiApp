@@ -1,10 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { HyDialogModule } from '@hyland/ui/dialog';
-import { HyMaterialFormFieldModule } from '@hyland/ui/material';
+import { TotpCodeInputComponent } from './totp-code-input';
 
 export interface TotpPromptDialogData {
   entityType: string;
@@ -16,7 +14,7 @@ export interface TotpPromptDialogData {
 @Component({
   selector: 'app-totp-prompt-dialog',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, HyDialogModule, HyMaterialFormFieldModule],
+  imports: [FormsModule, HyDialogModule, TotpCodeInputComponent],
   template: `
     <hy-dialog
       [header]="data.actionReason ? data.actionReason + ' — TOTP Required' : 'TOTP Code Required'"
@@ -26,11 +24,7 @@ export interface TotpPromptDialogData {
       (dismissed)="onCancel()"
     >
       <p>Enter the 6-digit TOTP code for <strong>{{ data.entityName || data.entityType }}</strong> to {{ data.actionReason?.toLowerCase() || 'authorize this action' }}.</p>
-      <mat-form-field hyFormField>
-        <mat-label>TOTP Code</mat-label>
-        <input matInput [(ngModel)]="code" maxlength="6" placeholder="000000"
-               (keydown.enter)="onSubmit()" autocomplete="off" />
-      </mat-form-field>
+      <app-totp-code-input [(ngModel)]="code" (submitted)="onSubmit()"></app-totp-code-input>
     </hy-dialog>
   `,
 })

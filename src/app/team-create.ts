@@ -15,6 +15,7 @@ import { debounceTime } from 'rxjs/operators';
 import { ApiService } from './booking.service';
 import { TeamResponse } from './models';
 import { TotpService } from './totp.service';
+import { TotpCodeInputComponent } from './totp-code-input';
 import * as QRCode from 'qrcode';
 
 @Component({
@@ -24,7 +25,7 @@ import * as QRCode from 'qrcode';
     CommonModule, ReactiveFormsModule, MatButtonModule,
     MatFormFieldModule, MatInputModule, MatIconModule,
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule,
-    HyDialogModule, HyToastModule, HyTagModule,
+    HyDialogModule, HyToastModule, HyTagModule, TotpCodeInputComponent,
   ],
   template: `
     <hy-dialog
@@ -56,13 +57,10 @@ import * as QRCode from 'qrcode';
               <mat-icon hyIcon>copy</mat-icon> Copy Secret
             </button>
           </div>
-          <mat-form-field hyFormField class="full-width">
-            <mat-label>Enter 6-digit code to verify</mat-label>
-            <input matInput formControlName="verifyCode" maxlength="6" placeholder="000000" autocomplete="off" />
+          <app-totp-code-input formControlName="verifyCode" label="Enter 6-digit code to verify" fieldClass="full-width"></app-totp-code-input>
             @if (verifyError()) {
               <mat-error>{{ verifyError() }}</mat-error>
             }
-          </mat-form-field>
         </div>
       </form>
     </hy-dialog>
