@@ -150,6 +150,9 @@
                       <span class="waitlist-title">#{{ i + 1 }} — {{ w.reporteeName }}</span>
                       <span class="waitlist-sub">waiting for seat {{ w.desiredSeatLabel }} · since {{ w.waitlistedSince | date:'short' }}</span>
                     </div>
+                    <button mat-icon-button (click)="cancelWaitlist(w)" matTooltip="Cancel waitlist">
+                      <mat-icon hyIcon>close</mat-icon>
+                    </button>
                   </div>
                 }
               </mat-card-content>

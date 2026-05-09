@@ -19,7 +19,7 @@ export interface BookingResponse {
 }
 
 // --- Availability ---
-export interface WaitlistInfo { bookingId: number; reporteeName: string; desiredSeatLabel: string; waitlistedSince: string; }
+export interface WaitlistInfo { bookingId: number; reporteeId: number; reporteeName: string; desiredSeatLabel: string; waitlistedSince: string; }
 export interface AvailabilityResponse {
   date: string; totalSeats: number; bookedCount: number;
   availableCount: number; waitlistedCount: number;

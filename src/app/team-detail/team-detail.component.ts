@@ -306,6 +306,21 @@ export class TeamDetailComponent implements OnInit {
     });
   }
 
+  cancelWaitlist(w: WaitlistInfo): void {
+    const reporteeId = w.reporteeId || this.reportees().find(r => r.friendlyName === w.reporteeName)?.id;
+    if (!reporteeId) {
+      this.toastService.error('Cannot identify reportee for TOTP authorization');
+      return;
+    }
+    this.api.cancelBooking(w.bookingId, reporteeId, w.reporteeName).subscribe({
+      next: () => {
+        this.toastService.success(`Removed ${w.reporteeName} from waitlist for ${w.desiredSeatLabel}`);
+        this.loadAvailability();
+      },
+      error: err => this.toastService.error(err.error?.error || 'Failed to cancel waitlist'),
+    });
+  }
+
   private todayString(): string { return this.formatDate(new Date()); }
   private formatDate(date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;

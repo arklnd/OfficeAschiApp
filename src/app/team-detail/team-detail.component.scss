@@ -63,7 +63,7 @@ mat-card {
   &:not(:last-child) { border-bottom: 1px solid rgba(128, 128, 128, 0.2); }
 }
 .waitlist-detail {
-  display: flex; flex-direction: column; gap: 2px;
+  display: flex; flex-direction: column; gap: 2px; flex: 1;
 }
 .waitlist-title { font-weight: 500; }
 .waitlist-sub { font-size: 13px; opacity: 0.7; }
