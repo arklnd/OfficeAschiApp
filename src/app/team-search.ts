@@ -105,7 +105,7 @@ export class TeamSearchComponent implements OnInit {
   onSearch(): void { this.loadTeams(); }
 
   openCreateDialog(): void {
-    const dialogRef = this.dialog.open(TeamCreateDialogComponent, configureHyDialogOptions({ width: '500px' }));
+    const dialogRef = this.dialog.open(TeamCreateDialogComponent, configureHyDialogOptions({ width: '360px' }));
     dialogRef.afterClosed().subscribe((team: TeamResponse | null) => {
       if (team) this.router.navigate(['/team', team.id]);
     });

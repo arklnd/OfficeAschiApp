@@ -281,7 +281,7 @@ export class TeamDetailComponent implements OnInit {
     }
     const dialogRef = this.dialog.open(JoinTeamDialogComponent, configureHyDialogOptions({
       data: { teamId: this.teamId, teamName: this.team()?.name ?? 'Team' },
-      width: '500px',
+      width: '360px',
     }));
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
