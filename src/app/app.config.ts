@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
       useValue: {
         appInfo: {
           name: 'OfficeAschi',
-          version: '1.0.0',
+          version: '2.0.0',
           copyrightYear: 2026,
         },
       },
