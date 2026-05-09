@@ -1,8 +1,8 @@
 import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
+import { HyFeedbackIconModule } from '@hyland/ui/feedback-icon';
 import { ApiService } from './booking.service';
 
 @Component({
@@ -10,14 +10,13 @@ import { ApiService } from './booking.service';
   imports: [
     CommonModule,
     RouterOutlet,
-    MatIconModule,
     HyShellModule,
+    HyFeedbackIconModule,
   ],
   template: `
     @if (backendDown()) {
       <div class="backend-down">
-        <mat-icon>cloud_off</mat-icon>
-        <span>Backend is unreachable. Some features may not work.</span>
+        <hy-feedback-icon appearance="negative" size="small" label="Backend is unreachable. Some features may not work."></hy-feedback-icon>
       </div>
     }
     <hy-shell toolbarTitle="OfficeAschi" homeRoute="/">
@@ -35,20 +34,10 @@ import { ApiService } from './booking.service';
     }
     .backend-down {
       display: flex;
-      align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 10px 16px;
-      background: #d32f2f;
-      color: white;
-      font-weight: 500;
-      font-size: 14px;
+      padding: 8px 16px;
+      background: var(--mat-sys-error-container, #fce4ec);
       z-index: 1000;
-    }
-    .backend-down mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
     }
   `,
 })

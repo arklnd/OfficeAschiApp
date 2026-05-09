@@ -1,9 +1,8 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +10,9 @@ import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule
 import { HyShellModule } from '@hyland/ui-shell';
 import { HyToastService, HyToastModule } from '@hyland/ui/toast';
 import { HyTagModule } from '@hyland/ui/tag';
+import { HyFormContainerModule } from '@hyland/ui/form-container';
+import { Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { ApiService } from './booking.service';
 import { TotpService } from './totp.service';
 import * as QRCode from 'qrcode';
@@ -19,81 +21,72 @@ import * as QRCode from 'qrcode';
   selector: 'app-team-create',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatButtonModule, MatCardModule,
+    CommonModule, ReactiveFormsModule, MatButtonModule,
     MatFormFieldModule, MatInputModule, MatIconModule,
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule,
-    HyShellModule, HyToastModule, HyTagModule,
+    HyShellModule, HyToastModule, HyTagModule, HyFormContainerModule,
   ],
   template: `
     <hy-shell-view title="Create Team" />
-    <div class="container">
-      <mat-card appearance="outlined" class="form-card">
-        <mat-card-header><mat-card-title>New Team</mat-card-title></mat-card-header>
-        <mat-card-content>
-          <mat-form-field hyFormField class="full-width">
-            <mat-label>Team Name (optional)</mat-label>
-            <input matInput [(ngModel)]="teamName" (ngModelChange)="onNameChange()" placeholder="Leave blank for auto-generated name" />
-          </mat-form-field>
+    <div class="form-wrapper">
+      <hy-form-container
+        [formGroup]="form"
+        formTitle="New Team"
+        submitLabel="Create Team"
+        [submitting]="creating()"
+        (onSubmit)="createTeam()"
+      >
+        <mat-form-field hyFormField>
+          <mat-label>Team Name (optional)</mat-label>
+          <input matInput formControlName="teamName" placeholder="Leave blank for auto-generated name" />
+        </mat-form-field>
 
-          <div class="totp-setup">
-            <p>Scan this QR code with your authenticator app, or save the secret key.</p>
-            <div class="qr-container">
-              @if (qrDataUrl()) {
-                <img [src]="qrDataUrl()" alt="TOTP QR Code" width="200" height="200" />
-              }
-            </div>
-            <div class="secret-display">
-              <hy-tag color="blue">{{ secret() }}</hy-tag>
-            </div>
-            <div class="qr-actions">
-              <button mat-stroked-button hyIconLabelButton (click)="downloadQr()">
-                <mat-icon hyIcon>download</mat-icon> Download QR
-              </button>
-              <button mat-stroked-button hyIconLabelButton (click)="copySecret()">
-                <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
-              </button>
-            </div>
-            <mat-form-field hyFormField class="full-width">
-              <mat-label>Enter 6-digit code to verify</mat-label>
-              <input matInput [(ngModel)]="verifyCode" maxlength="6" placeholder="000000"
-                     (keydown.enter)="createTeam()" autocomplete="off" />
-            </mat-form-field>
-            @if (verifyError()) {
-              <p class="error">{{ verifyError() }}</p>
+        <div class="totp-section">
+          <p>Scan this QR code with your authenticator app, or save the secret key.</p>
+          <div class="qr-container">
+            @if (qrDataUrl()) {
+              <img [src]="qrDataUrl()" alt="TOTP QR Code" width="200" height="200" />
             }
           </div>
-
-          <div class="actions">
-            <button mat-button (click)="router.navigate(['/'])">Cancel</button>
-            <button mat-flat-button color="primary" (click)="createTeam()" [disabled]="creating()">
-              Create Team
+          <hy-tag color="blue">{{ secret() }}</hy-tag>
+          <div class="qr-actions">
+            <button mat-stroked-button hyIconLabelButton type="button" (click)="downloadQr()">
+              <mat-icon hyIcon>download</mat-icon> Download QR
+            </button>
+            <button mat-stroked-button hyIconLabelButton type="button" (click)="copySecret()">
+              <mat-icon hyIcon>content_copy</mat-icon> Copy Secret
             </button>
           </div>
-        </mat-card-content>
-      </mat-card>
+          <mat-form-field hyFormField>
+            <mat-label>Enter 6-digit code to verify</mat-label>
+            <input matInput formControlName="verifyCode" maxlength="6" placeholder="000000" autocomplete="off" />
+            @if (verifyError()) {
+              <mat-error>{{ verifyError() }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <button mat-button hySecondaryFormButton type="button" (click)="router.navigate(['/'])">Cancel</button>
+      </hy-form-container>
     </div>
   `,
   styles: [`
-    .container { max-width: 500px; margin: 0 auto; padding: 24px 16px; }
-    .form-card { padding: 24px; }
-    .full-width { width: 100%; }
-    .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
-    mat-card-header, mat-card-content { padding: 0; }
-    mat-card-header { margin-bottom: 16px; }
-    .totp-setup { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .form-wrapper { max-width: 500px; margin: 0 auto; padding: 24px 16px; }
+    .totp-section { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; }
     .qr-container { padding: 12px; background: white; border-radius: 8px; }
-    .secret-display { word-break: break-all; text-align: center; }
     .qr-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-    .error { color: var(--mat-sys-error, #d32f2f); margin: 0; }
   `],
 })
-export class TeamCreateComponent implements OnInit {
-  teamName = `Team-${Date.now()}`;
+export class TeamCreateComponent implements OnInit, OnDestroy {
+  form = new FormGroup({
+    teamName: new FormControl(`Team-${Date.now()}`),
+    verifyCode: new FormControl(''),
+  });
   creating = signal(false);
   secret = signal('');
   qrDataUrl = signal('');
-  verifyCode = '';
   verifyError = signal('');
+  private nameSub?: Subscription;
 
   constructor(
     private api: ApiService,
@@ -104,18 +97,21 @@ export class TeamCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.generateSecret();
+    this.nameSub = this.form.get('teamName')!.valueChanges
+      .pipe(debounceTime(400))
+      .subscribe(() => this.generateSecret());
   }
 
-  onNameChange(): void {
-    this.generateSecret();
+  ngOnDestroy(): void {
+    this.nameSub?.unsubscribe();
   }
 
   private generateSecret(): void {
     const secret = this.totpService.generateSecret();
     this.secret.set(secret);
-    this.verifyCode = '';
+    this.form.get('verifyCode')!.reset('');
     this.verifyError.set('');
-    const label = this.teamName || `Team-${Date.now()}`;
+    const label = this.form.get('teamName')!.value || `Team-${Date.now()}`;
     const uri = this.totpService.getOtpAuthUri(secret, `${label} (Manager)`);
     QRCode.toDataURL(uri, { width: 200, margin: 1 }).then(url => this.qrDataUrl.set(url));
   }
@@ -123,7 +119,7 @@ export class TeamCreateComponent implements OnInit {
   downloadQr(): void {
     const link = document.createElement('a');
     link.href = this.qrDataUrl();
-    link.download = `totp-${this.teamName || 'team'}-manager.png`;
+    link.download = `totp-${this.form.get('teamName')!.value || 'team'}-manager.png`;
     link.click();
   }
 
@@ -132,11 +128,12 @@ export class TeamCreateComponent implements OnInit {
   }
 
   createTeam(): void {
-    if (!this.verifyCode || this.verifyCode.length !== 6) {
+    const code = this.form.get('verifyCode')!.value ?? '';
+    if (!code || code.length !== 6) {
       this.verifyError.set('Enter a 6-digit code');
       return;
     }
-    if (!this.totpService.validate(this.secret(), this.verifyCode)) {
+    if (!this.totpService.validate(this.secret(), code)) {
       this.verifyError.set('Invalid code. Please try again.');
       return;
     }
@@ -144,9 +141,9 @@ export class TeamCreateComponent implements OnInit {
     this.creating.set(true);
 
     this.api.createTeam({
-      name: this.teamName || undefined,
+      name: this.form.get('teamName')!.value || undefined,
       secretKey: this.secret(),
-      totpCode: this.verifyCode,
+      totpCode: code,
     }).subscribe({
       next: team => {
         this.totpService.storeSecret('manager', team.id, this.secret());
