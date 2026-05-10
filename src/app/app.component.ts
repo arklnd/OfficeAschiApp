@@ -1,6 +1,8 @@
-import { Component, isDevMode } from '@angular/core';
+import { Component, inject, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
+import { filter } from 'rxjs';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
 import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
 import { HyTranslateModule } from '@hyland/ui/language';
@@ -39,5 +41,16 @@ import { ApiService } from './services/booking.service';
 export class App {
   sideNavMode = HyShellSideNavModes.Side;
   devMode = isDevMode();
-  constructor(public api: ApiService) {}
+  private swUpdate = inject(SwUpdate);
+
+  constructor(public api: ApiService) {
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates
+        .pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))
+        .subscribe(() => document.location.reload());
+
+      // Check for updates every 5 minutes for long-running sessions
+      setInterval(() => this.swUpdate.checkForUpdate(), 5 * 60 * 1000);
+    }
+  }
 }
