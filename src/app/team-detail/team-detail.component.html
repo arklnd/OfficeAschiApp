@@ -1,4 +1,4 @@
-<hy-shell-view [title]="notFound() ? 'Not Found' : (team()?.name ?? 'Team')" />
+<hy-shell-view [title]="notFound() ? 'Not Found' : (team()?.name ?? 'Team')" backRoute="/" backTitle="Teams" />
 
 @if (notFound()) {
   <hy-error-layout>
