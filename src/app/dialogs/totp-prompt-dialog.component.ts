@@ -1,7 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { HyDialogModule } from '@hyland/ui/dialog';
+import { HyMaterialIconModule } from '@hyland/ui/material';
 import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
 
 export interface TotpPromptDialogData {
@@ -14,7 +16,7 @@ export interface TotpPromptDialogData {
 @Component({
   selector: 'app-totp-prompt-dialog',
   standalone: true,
-  imports: [FormsModule, HyDialogModule, TotpCodeInputComponent],
+  imports: [FormsModule, HyDialogModule, MatIconModule, HyMaterialIconModule, TotpCodeInputComponent],
   template: `
     <hy-dialog
       [header]="'TOTP Code Required'"
@@ -23,10 +25,35 @@ export interface TotpPromptDialogData {
       (confirmed)="onSubmit()"
       (dismissed)="onCancel()"
     >
-      <p>Enter the 6-digit TOTP code for <strong>{{ data.entityName || data.entityType }}</strong> to {{ data.actionReason?.toLowerCase() || 'authorize this action' }}.</p>
-      <app-totp-code-input [(ngModel)]="code" (submitted)="onSubmit()"></app-totp-code-input>
+      <div class="totp-prompt">
+        <div class="totp-prompt-header">
+          <mat-icon hyIcon class="totp-prompt-icon">lock</mat-icon>
+          <p>Enter the 6-digit TOTP code for <strong>{{ data.entityName || data.entityType }}</strong> to {{ data.actionReason?.toLowerCase() || 'authorize this action' }}.</p>
+        </div>
+        <app-totp-code-input [(ngModel)]="code" (submitted)="onSubmit()"></app-totp-code-input>
+      </div>
     </hy-dialog>
   `,
+  styles: [`
+    .totp-prompt {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .totp-prompt-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .totp-prompt-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+    .totp-prompt-header p {
+      margin: 0;
+    }
+  `],
 })
 export class TotpPromptDialogComponent {
   code = '';
