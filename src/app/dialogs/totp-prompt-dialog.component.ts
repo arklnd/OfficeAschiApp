@@ -17,8 +17,8 @@ export interface TotpPromptDialogData {
   imports: [FormsModule, HyDialogModule, TotpCodeInputComponent],
   template: `
     <hy-dialog
-      [header]="data.actionReason ? data.actionReason + ' - TOTP Required' : 'TOTP Code Required'"
-      confirmLabel="Submit"
+      [header]="'TOTP Code Required'"
+      [confirmLabel]="data.actionReason?.toUpperCase() || 'Authorize'"
       dismissLabel="Cancel"
       (confirmed)="onSubmit()"
       (dismissed)="onCancel()"
