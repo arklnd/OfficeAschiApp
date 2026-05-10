@@ -331,6 +331,13 @@ export class TeamDetailComponent implements OnInit {
     });
   }
 
+  copyTeamUrl(): void {
+    const url = `${location.origin}/team/${this.teamId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      this.toastService.success('Team link copied to clipboard');
+    });
+  }
+
   openJoinDialog(): void {
     const savedId = localStorage.getItem(`reportee_${this.teamId}`);
     if (savedId) {

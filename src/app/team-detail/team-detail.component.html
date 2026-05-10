@@ -26,6 +26,9 @@
       </div>
     </div>
     <div class="team-actions">
+      <button mat-stroked-button hyIconLabelButton (click)="copyTeamUrl()" matTooltip="Copy team link">
+        <mat-icon hyIcon>share</mat-icon> Share
+      </button>
       @if (!currentReporteeId()) {
         <button mat-stroked-button hyIconLabelButton (click)="openJoinDialog()">
           <mat-icon hyIcon>add_user</mat-icon> Join Team
