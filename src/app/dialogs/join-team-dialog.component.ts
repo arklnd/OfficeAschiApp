@@ -115,7 +115,7 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
     this.form.get('verifyCode')!.reset('');
     this.verifyError.set('');
     const name = this.form.get('friendlyName')!.value || `Member-${Date.now()}`;
-    const uri = this.totpService.getOtpAuthUri(secret, `${this.data.teamName} - ${name}`);
+    const uri = this.totpService.getOtpAuthUri(secret, `${name} @ ${this.data.teamName}`);
     this.generateQrWithLogo(uri).then(url => this.qrDataUrl.set(url));
   }
 
