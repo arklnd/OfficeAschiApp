@@ -59,6 +59,9 @@ export class ApiService implements OnDestroy {
   createTeam(req: CreateTeamRequest): Observable<TeamResponse> {
     return this.http.post<TeamResponse>(`${this.base}/teams`, req);
   }
+  deleteTeam(id: number, teamName = ''): Observable<unknown> {
+    return this.http.delete(`${this.base}/teams/${id}`, this.managerCtx(id, teamName, 'Delete team'));
+  }
 
   // Seats
   listSeats(teamId: number): Observable<SeatResponse[]> {
@@ -80,6 +83,12 @@ export class ApiService implements OnDestroy {
   }
   approveReportee(teamId: number, reporteeId: number, teamName = ''): Observable<ReporteeResponse> {
     return this.http.put<ReporteeResponse>(`${this.base}/teams/${teamId}/reportees/${reporteeId}/approve`, {}, this.managerCtx(teamId, teamName, 'Approve member'));
+  }
+  denyReportee(teamId: number, reporteeId: number, teamName = ''): Observable<unknown> {
+    return this.http.delete(`${this.base}/teams/${teamId}/reportees/${reporteeId}/deny`, this.managerCtx(teamId, teamName, 'Deny join request'));
+  }
+  removeReportee(teamId: number, reporteeId: number, teamName = ''): Observable<unknown> {
+    return this.http.delete(`${this.base}/teams/${teamId}/reportees/${reporteeId}`, this.managerCtx(teamId, teamName, 'Remove member'));
   }
 
   // Bookings

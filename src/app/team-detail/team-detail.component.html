@@ -206,6 +206,7 @@
                     <span matListItemTitle>{{ r.friendlyName }}</span>
                     <span matListItemMeta>
                       <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
+                      <button mat-stroked-button color="warn" (click)="denyReportee(r)" style="margin-left: 8px;">Deny</button>
                     </span>
                   </mat-list-item>
                   </div>
@@ -227,6 +228,9 @@
                       [bgColor]="profileColors[r.id % profileColors.length]"></hy-user-profile>
                     <span matListItemTitle>{{ r.friendlyName }}</span>
                     <span matListItemMeta>
+                      <button mat-icon-button color="warn" (click)="removeReportee(r)" matTooltip="Remove member">
+                        <mat-icon hyIcon>delete</mat-icon>
+                      </button>
                     </span>
                   </mat-list-item>
                   </div>
@@ -236,6 +240,17 @@
                 <p class="muted">No approved members yet.</p>
               }
             </mat-card-content>
+        </mat-card>
+
+        <!-- Delete team -->
+        <mat-card appearance="outlined" class="manage-card">
+          <mat-card-header><mat-card-title>Danger Zone</mat-card-title></mat-card-header>
+          <mat-card-content>
+            <p>Permanently delete this team and all its members, seats, and bookings.</p>
+            <button mat-flat-button color="warn" hyIconLabelButton (click)="deleteTeam()">
+              <mat-icon hyIcon>delete</mat-icon> Delete Team
+            </button>
+          </mat-card-content>
         </mat-card>
       </div>
     </mat-tab>

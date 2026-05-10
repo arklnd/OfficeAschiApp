@@ -6,6 +6,10 @@ export interface CancelBookConfirmDialogData {
   personName: string;
   seatLabel: string;
   date: string;
+  confirmTitle?: string;
+  confirmMessage?: string;
+  confirmLabel?: string;
+  dismissLabel?: string;
 }
 
 @Component({
@@ -14,16 +18,20 @@ export interface CancelBookConfirmDialogData {
   imports: [HyDialogModule],
   template: `
     <hy-dialog
-      header="Cancel Booking"
-      confirmLabel="Yes, Cancel"
-      dismissLabel="No, Keep"
+      [header]="data.confirmTitle ?? 'Cancel Booking'"
+      [confirmLabel]="data.confirmLabel ?? 'Yes, Cancel'"
+      [dismissLabel]="data.dismissLabel ?? 'No, Keep'"
       [destructive]="true"
       (confirmed)="onConfirm()"
       (dismissed)="onDismiss()"
     >
-      Cancel <strong>{{ data.personName }}</strong>'s booking on
-      <strong>{{ data.seatLabel }}</strong> for
-      <strong>{{ data.date }}</strong>?
+      @if (data.confirmMessage) {
+        <span [innerHTML]="data.confirmMessage"></span>
+      } @else {
+        Cancel <strong>{{ data.personName }}</strong>'s booking on
+        <strong>{{ data.seatLabel }}</strong> for
+        <strong>{{ data.date }}</strong>?
+      }
     </hy-dialog>
   `,
 })

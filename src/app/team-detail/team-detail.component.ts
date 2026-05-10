@@ -210,6 +210,49 @@ export class TeamDetailComponent implements OnInit {
     });
   }
 
+  denyReportee(reportee: ReporteeResponse): void {
+    const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
+      data: { personName: reportee.friendlyName, seatLabel: '', date: '', confirmTitle: 'Deny Join Request', confirmMessage: `Deny <strong>${reportee.friendlyName}</strong>'s request to join this team?`, confirmLabel: 'Yes, Deny', dismissLabel: 'No, Keep' },
+    }));
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.api.denyReportee(this.teamId, reportee.id, this.team()?.name).subscribe({
+        next: () => { this.toastService.success(`Denied ${reportee.friendlyName}'s join request`); this.loadAll(); },
+        error: err => this.toastService.error(err.error?.error || 'Failed to deny'),
+      });
+    });
+  }
+
+  removeReportee(reportee: ReporteeResponse): void {
+    const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
+      data: { personName: reportee.friendlyName, seatLabel: '', date: '', confirmTitle: 'Remove Member', confirmMessage: `Remove <strong>${reportee.friendlyName}</strong> from this team? All their bookings will be cancelled.`, confirmLabel: 'Yes, Remove', dismissLabel: 'No, Keep' },
+    }));
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.api.removeReportee(this.teamId, reportee.id, this.team()?.name).subscribe({
+        next: () => { this.toastService.success(`Removed ${reportee.friendlyName} from team`); this.loadAll(); },
+        error: err => this.toastService.error(err.error?.error || 'Failed to remove member'),
+      });
+    });
+  }
+
+  deleteTeam(): void {
+    const teamName = this.team()?.name ?? 'this team';
+    const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
+      data: { personName: teamName, seatLabel: '', date: '', confirmTitle: 'Delete Team', confirmMessage: `Delete <strong>${teamName}</strong>? All members, seats, and bookings will be permanently removed.`, confirmLabel: 'Yes, Delete', dismissLabel: 'No, Keep' },
+    }));
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) return;
+      this.api.deleteTeam(this.teamId, teamName).subscribe({
+        next: () => {
+          this.toastService.success(`Team "${teamName}" deleted`);
+          this.router.navigate(['/']);
+        },
+        error: err => this.toastService.error(err.error?.error || 'Failed to delete team'),
+      });
+    });
+  }
+
   // --- Reportee actions ---
   openBookDialog(seatId: number, seatLabel: string): void {
     const rid = this.currentReporteeId();
