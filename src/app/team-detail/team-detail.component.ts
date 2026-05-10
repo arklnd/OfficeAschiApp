@@ -27,6 +27,9 @@ import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { forkJoin, finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../services/booking.service';
+import { SignalRService } from '../services/signalr.service';
+import { NotificationService } from '../services/notification.service';
+import { PushNotificationService } from '../services/push-notification.service';
 import {
   TeamResponse, SeatResponse, ReporteeResponse,
   AvailabilityResponse, BookingResponse, WaitlistInfo,
@@ -66,6 +69,10 @@ export class TeamDetailComponent implements OnInit {
 
   // Reportee identity (from localStorage)
   currentReporteeId = signal<number | null>(null);
+
+  // Push notification state
+  pushSupported = signal(false);
+  pushEnabled = signal(false);
 
 
 
@@ -115,8 +122,11 @@ export class TeamDetailComponent implements OnInit {
     private api: ApiService,
     private toastService: HyToastService,
     private dialog: MatDialog,
-    private totpService: TotpService,
+    public totpService: TotpService,
     private t: HyTranslateService,
+    private signalRService: SignalRService,
+    private notificationService: NotificationService,
+    private pushService: PushNotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -125,6 +135,55 @@ export class TeamDetailComponent implements OnInit {
     if (savedId) this.currentReporteeId.set(Number(savedId));
     this.loadAll();
     this.api.backendRecovered$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAll());
+
+    // Connect SignalR for real-time notifications
+    this.connectSignalR();
+
+    // Check push notification support and state
+    this.pushSupported.set(this.pushService.isSupported);
+    this.pushService.isSubscribed().then(subscribed => this.pushEnabled.set(subscribed));
+  }
+
+  private connectSignalR(): void {
+    // Connect as manager if we have manager TOTP
+    const managerSecret = this.totpService.getSecret('manager', this.teamId);
+    if (managerSecret) {
+      this.signalRService.connect('manager', this.teamId);
+    }
+    // Also connect as reportee if we have reportee identity
+    const rid = this.currentReporteeId();
+    if (rid) {
+      const reporteeSecret = this.totpService.getSecret('reportee', rid);
+      if (reporteeSecret) {
+        this.signalRService.connect('reportee', rid);
+      }
+    }
+  }
+
+  async togglePushNotifications(): Promise<void> {
+    const entityType = this.totpService.getSecret('manager', this.teamId) ? 'manager' : 'reportee';
+    const entityId = entityType === 'manager' ? this.teamId : this.currentReporteeId()!;
+    const entityName = entityType === 'manager'
+      ? (this.team()?.name ?? 'Team')
+      : (this.reportees().find(r => r.id === entityId)?.friendlyName ?? 'Member');
+
+    if (!entityId) return;
+
+    if (this.pushEnabled()) {
+      const ok = await this.pushService.unsubscribe(entityType, entityId, entityName);
+      if (ok) {
+        this.pushEnabled.set(false);
+        this.toastService.info(this.t.get('app.notifications.disabled'));
+      }
+    } else {
+      const ok = await this.pushService.subscribe(entityType, entityId, entityName);
+      if (ok) {
+        this.pushEnabled.set(true);
+        this.toastService.success(this.t.get('app.notifications.enabled'));
+      } else {
+        this.toastService.error(this.t.get('app.notifications.failed'));
+      }
+    }
   }
 
   loadAll(): void {

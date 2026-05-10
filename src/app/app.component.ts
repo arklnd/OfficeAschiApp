@@ -7,6 +7,7 @@ import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
 import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
 import { HyTranslateModule } from '@hyland/ui/language';
 import { ApiService } from './services/booking.service';
+import { NotificationService } from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +44,7 @@ export class App {
   devMode = isDevMode();
   private swUpdate = inject(SwUpdate);
 
-  constructor(public api: ApiService) {
+  constructor(public api: ApiService, _notificationService: NotificationService) {
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates
         .pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))

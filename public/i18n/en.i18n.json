@@ -255,6 +255,15 @@
       "joined-as": "Joined as {{name}}!",
       "failed-join": "Failed to join",
       "totp-code-label": "TOTP Code"
+    },
+    "notifications": {
+      "reason-subscribe": "Enable push notifications",
+      "reason-unsubscribe": "Disable push notifications",
+      "enabled": "Push notifications enabled",
+      "disabled": "Push notifications disabled",
+      "failed": "Failed to enable push notifications. Check browser permissions.",
+      "enable-tooltip": "Enable push notifications",
+      "disable-tooltip": "Disable push notifications"
     }
   }
 }

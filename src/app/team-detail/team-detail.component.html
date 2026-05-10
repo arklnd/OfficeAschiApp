@@ -26,6 +26,12 @@
       </div>
     </div>
     <div class="team-actions">
+      @if (pushSupported() && (currentReporteeId() || totpService.getSecret('manager', teamId))) {
+        <button mat-icon-button (click)="togglePushNotifications()"
+          [matTooltip]="pushEnabled() ? ('app.notifications.disable-tooltip' | transloco) : ('app.notifications.enable-tooltip' | transloco)">
+          <mat-icon hyIcon>{{ pushEnabled() ? 'notifications_active' : 'notifications_none' }}</mat-icon>
+        </button>
+      }
       <button mat-stroked-button hyIconLabelButton (click)="copyTeamUrl()" [matTooltip]="'app.team-detail.copy-team-link' | transloco">
         <mat-icon hyIcon>share</mat-icon> {{ 'app.common.share' | transloco }}
       </button>
