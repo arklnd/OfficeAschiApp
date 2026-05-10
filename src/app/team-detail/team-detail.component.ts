@@ -22,6 +22,7 @@ import { HyUserProfileModule } from '@hyland/ui/user-profile';
 import { HyFeedbackIconModule } from '@hyland/ui/feedback-icon';
 import { HyErrorLayoutModule } from '@hyland/ui/error-layout';
 import { HyComboBoxModule } from '@hyland/ui/combo-box';
+import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { forkJoin, finalize } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -45,6 +46,7 @@ import { TotpService } from '../totp/totp.service';
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule, HyMaterialTabsModule, HyMaterialListModule,
     HyShellModule, HyTagModule, HyGhostModule, HyToastModule,
     HyUserProfileModule, HyFeedbackIconModule, HyErrorLayoutModule, HyComboBoxModule,
+    HyTranslateModule,
   ],
   templateUrl: './team-detail.component.html',
   styleUrl: './team-detail.component.scss',
@@ -102,8 +104,8 @@ export class TeamDetailComponent implements OnInit {
 
 
   displayDay = computed(() => new Date(this.selectedDate() + 'T00:00:00').getDate());
-  displayMonth = computed(() => new Date(this.selectedDate() + 'T00:00:00').toLocaleDateString('en-US', { month: 'short' }));
-  displayDayOfWeek = computed(() => new Date(this.selectedDate() + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' }));
+  displayMonth = computed(() => new Date(this.selectedDate() + 'T00:00:00').toLocaleDateString(document.documentElement.lang || 'en', { month: 'short' }));
+  displayDayOfWeek = computed(() => new Date(this.selectedDate() + 'T00:00:00').toLocaleDateString(document.documentElement.lang || 'en', { weekday: 'long' }));
   displayYear = computed(() => new Date(this.selectedDate() + 'T00:00:00').getFullYear());
   isToday = computed(() => this.selectedDate() === this.todayString());
 
@@ -114,6 +116,7 @@ export class TeamDetailComponent implements OnInit {
     private toastService: HyToastService,
     private dialog: MatDialog,
     private totpService: TotpService,
+    private t: HyTranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -142,7 +145,7 @@ export class TeamDetailComponent implements OnInit {
         if (err.status === 404) {
           this.notFound.set(true);
         } else {
-          this.toastService.error('Failed to load team data');
+          this.toastService.error(this.t.get('app.toasts.failed-load-team'));
         }
       },
     });
@@ -151,7 +154,7 @@ export class TeamDetailComponent implements OnInit {
   loadAvailability(): void {
     this.api.getAvailability(this.teamId, this.selectedDate()).subscribe({
       next: a => { this.availability.set(a); this.loading.set(false); },
-      error: () => { this.toastService.error('Failed to load availability'); this.loading.set(false); },
+      error: () => { this.toastService.error(this.t.get('app.toasts.failed-load-availability')); this.loading.set(false); },
     });
   }
 
@@ -183,12 +186,12 @@ export class TeamDetailComponent implements OnInit {
       finalize(() => this.addingSeat.set(false)),
     ).subscribe({
       next: seat => {
-        this.toastService.success(`Seat "${seat.label}" added`);
+        this.toastService.success(this.t.get('app.toasts.seat-added', { label: seat.label }));
         input.value = '';
         this.loadAll();
       },
       error: err => {
-        this.toastService.error(err.error?.error || 'Failed to add seat');
+        this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-add-seat'));
       },
     });
   }
@@ -196,42 +199,42 @@ export class TeamDetailComponent implements OnInit {
   deleteSeat(seat: SeatResponse): void {
     this.api.deleteSeat(this.teamId, seat.id, this.team()?.name).subscribe({
       next: () => {
-        this.toastService.success(`Seat "${seat.label}" deleted`);
+        this.toastService.success(this.t.get('app.toasts.seat-deleted', { label: seat.label }));
         this.loadAll();
       },
-      error: err => this.toastService.error(err.error?.error || 'Failed to delete seat'),
+      error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-delete-seat')),
     });
   }
 
   approveReportee(reporteeId: number): void {
     this.api.approveReportee(this.teamId, reporteeId, this.team()?.name).subscribe({
-      next: () => { this.toastService.success('Reportee approved'); this.loadAll(); },
-      error: err => this.toastService.error(err.error?.error || 'Failed to approve'),
+      next: () => { this.toastService.success(this.t.get('app.toasts.reportee-approved')); this.loadAll(); },
+      error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-approve')),
     });
   }
 
   denyReportee(reportee: ReporteeResponse): void {
     const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
-      data: { personName: reportee.friendlyName, seatLabel: '', date: '', confirmTitle: 'Deny Join Request', confirmMessage: `Deny <strong>${reportee.friendlyName}</strong>'s request to join this team?`, confirmLabel: 'Yes, Deny', dismissLabel: 'No, Keep' },
+      data: { personName: reportee.friendlyName, seatLabel: '', date: '', confirmTitle: this.t.get('app.dialogs.deny-join-title'), confirmMessage: this.t.get('app.dialogs.deny-join-msg', { name: reportee.friendlyName }), confirmLabel: this.t.get('app.dialogs.deny-confirm'), dismissLabel: this.t.get('app.dialogs.cancel-booking-dismiss') },
     }));
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.denyReportee(this.teamId, reportee.id, this.team()?.name).subscribe({
-        next: () => { this.toastService.success(`Denied ${reportee.friendlyName}'s join request`); this.loadAll(); },
-        error: err => this.toastService.error(err.error?.error || 'Failed to deny'),
+        next: () => { this.toastService.success(this.t.get('app.toasts.denied-join', { name: reportee.friendlyName })); this.loadAll(); },
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-deny')),
       });
     });
   }
 
   removeReportee(reportee: ReporteeResponse): void {
     const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
-      data: { personName: reportee.friendlyName, seatLabel: '', date: '', confirmTitle: 'Remove Member', confirmMessage: `Remove <strong>${reportee.friendlyName}</strong> from this team? All their bookings will be cancelled.`, confirmLabel: 'Yes, Remove', dismissLabel: 'No, Keep' },
+      data: { personName: reportee.friendlyName, seatLabel: '', date: '', confirmTitle: this.t.get('app.dialogs.remove-member-title'), confirmMessage: this.t.get('app.dialogs.remove-member-msg', { name: reportee.friendlyName }), confirmLabel: this.t.get('app.dialogs.remove-confirm'), dismissLabel: this.t.get('app.dialogs.cancel-booking-dismiss') },
     }));
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.removeReportee(this.teamId, reportee.id, this.team()?.name).subscribe({
-        next: () => { this.toastService.success(`Removed ${reportee.friendlyName} from team`); this.loadAll(); },
-        error: err => this.toastService.error(err.error?.error || 'Failed to remove member'),
+        next: () => { this.toastService.success(this.t.get('app.toasts.removed-member', { name: reportee.friendlyName })); this.loadAll(); },
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-remove')),
       });
     });
   }
@@ -239,16 +242,16 @@ export class TeamDetailComponent implements OnInit {
   deleteTeam(): void {
     const teamName = this.team()?.name ?? 'this team';
     const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
-      data: { personName: teamName, seatLabel: '', date: '', confirmTitle: 'Delete Team', confirmMessage: `Delete <strong>${teamName}</strong>? All members, seats, and bookings will be permanently removed.`, confirmLabel: 'Yes, Delete', dismissLabel: 'No, Keep' },
+      data: { personName: teamName, seatLabel: '', date: '', confirmTitle: this.t.get('app.dialogs.delete-team-title'), confirmMessage: this.t.get('app.dialogs.delete-team-msg', { name: teamName }), confirmLabel: this.t.get('app.dialogs.delete-confirm'), dismissLabel: this.t.get('app.dialogs.cancel-booking-dismiss') },
     }));
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.deleteTeam(this.teamId, teamName).subscribe({
         next: () => {
-          this.toastService.success(`Team "${teamName}" deleted`);
+          this.toastService.success(this.t.get('app.toasts.team-deleted', { name: teamName }));
           this.router.navigate(['/']);
         },
-        error: err => this.toastService.error(err.error?.error || 'Failed to delete team'),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-delete-team')),
       });
     });
   }
@@ -278,23 +281,29 @@ export class TeamDetailComponent implements OnInit {
 
       this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
         next: () => {
-          this.toastService.success(`Booked ${resolvedName} on ${seatLabel} for ${this.selectedDate()}`);
+          this.toastService.success(this.t.get('app.toasts.booked-success', { name: resolvedName, seat: seatLabel, date: this.selectedDate() }));
           this.loadAvailability();
         },
-        error: err => this.toastService.error(err.error?.error || 'Booking failed'),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.booking-failed')),
       });
     });
   }
 
   cancelBooking(booking: BookingResponse): void {
     const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
-      data: { personName: booking.reporteeName, seatLabel: booking.seatLabel, date: booking.date },
+      data: {
+        personName: booking.reporteeName, seatLabel: booking.seatLabel, date: booking.date,
+        confirmTitle: this.t.get('app.dialogs.cancel-booking-title'),
+        confirmMessage: this.t.get('app.dialogs.cancel-booking-msg', { name: booking.reporteeName, seat: booking.seatLabel, date: booking.date }),
+        confirmLabel: this.t.get('app.dialogs.cancel-booking-confirm'),
+        dismissLabel: this.t.get('app.dialogs.cancel-booking-dismiss'),
+      },
     }));
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.cancelBooking(booking.id, booking.reporteeId, booking.reporteeName).subscribe({
-        next: () => { this.toastService.success(`Cancelled ${booking.reporteeName}'s booking on ${booking.seatLabel} for ${booking.date}`); this.loadAvailability(); },
-        error: err => this.toastService.error(err.error?.error || 'Cancel failed'),
+        next: () => { this.toastService.success(this.t.get('app.toasts.cancelled-booking', { name: booking.reporteeName, seat: booking.seatLabel, date: booking.date })); this.loadAvailability(); },
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.cancel-failed')),
       });
     });
   }
@@ -323,10 +332,10 @@ export class TeamDetailComponent implements OnInit {
 
       this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
         next: b => {
-          this.toastService.success(`Waitlisted ${resolvedName} for ${b.seatLabel}`);
+          this.toastService.success(this.t.get('app.toasts.waitlisted', { name: resolvedName, seat: b.seatLabel }));
           this.loadAvailability();
         },
-        error: err => this.toastService.error(err.error?.error || 'Waitlist failed'),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.booking-failed')),
       });
     });
   }
@@ -334,14 +343,14 @@ export class TeamDetailComponent implements OnInit {
   copyTeamUrl(): void {
     const url = `${location.origin}/team/${this.teamId}`;
     navigator.clipboard.writeText(url).then(() => {
-      this.toastService.success('Team link copied to clipboard');
+      this.toastService.success(this.t.get('app.toasts.team-link-copied'));
     });
   }
 
   openJoinDialog(): void {
     const savedId = localStorage.getItem(`reportee_${this.teamId}`);
     if (savedId) {
-      this.toastService.info('You have already joined this team');
+      this.toastService.info(this.t.get('app.toasts.already-joined'));
       return;
     }
     const dialogRef = this.dialog.open(JoinTeamDialogComponent, configureHyDialogOptions({
@@ -359,20 +368,26 @@ export class TeamDetailComponent implements OnInit {
   cancelWaitlist(w: WaitlistInfo): void {
     const reporteeId = w.reporteeId || this.reportees().find(r => r.friendlyName === w.reporteeName)?.id;
     if (!reporteeId) {
-      this.toastService.error('Cannot identify reportee for TOTP authorization');
+      this.toastService.error(this.t.get('app.toasts.cannot-identify-reportee'));
       return;
     }
     const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
-      data: { personName: w.reporteeName, seatLabel: w.desiredSeatLabel, date: this.selectedDate() },
+      data: {
+        personName: w.reporteeName, seatLabel: w.desiredSeatLabel, date: this.selectedDate(),
+        confirmTitle: this.t.get('app.dialogs.cancel-booking-title'),
+        confirmMessage: this.t.get('app.dialogs.cancel-booking-msg', { name: w.reporteeName, seat: w.desiredSeatLabel, date: this.selectedDate() }),
+        confirmLabel: this.t.get('app.dialogs.cancel-booking-confirm'),
+        dismissLabel: this.t.get('app.dialogs.cancel-booking-dismiss'),
+      },
     }));
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.cancelBooking(w.bookingId, reporteeId, w.reporteeName).subscribe({
         next: () => {
-          this.toastService.success(`Removed ${w.reporteeName} from waitlist for ${w.desiredSeatLabel}`);
+          this.toastService.success(this.t.get('app.toasts.removed-waitlist', { name: w.reporteeName, seat: w.desiredSeatLabel }));
           this.loadAvailability();
         },
-        error: err => this.toastService.error(err.error?.error || 'Failed to cancel waitlist'),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-cancel-waitlist')),
       });
     });
   }

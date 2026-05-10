@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyMaterialIconModule } from '@hyland/ui/material';
+import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
 
 export interface TotpPromptDialogData {
@@ -16,21 +17,21 @@ export interface TotpPromptDialogData {
 @Component({
   selector: 'app-totp-prompt-dialog',
   standalone: true,
-  imports: [FormsModule, HyDialogModule, MatIconModule, HyMaterialIconModule, TotpCodeInputComponent],
+  imports: [FormsModule, HyDialogModule, MatIconModule, HyMaterialIconModule, TotpCodeInputComponent, HyTranslateModule],
   template: `
     <hy-dialog
-      [header]="'TOTP Code Required'"
-      [confirmLabel]="data.actionReason?.toUpperCase() || 'Authorize'"
-      dismissLabel="Cancel"
+      [header]="t.get('app.dialogs.totp-required')"
+      [confirmLabel]="resolvedReason.toUpperCase() || t.get('app.dialogs.authorize')"
+      [dismissLabel]="t.get('app.common.cancel')"
       (confirmed)="onSubmit()"
       (dismissed)="onCancel()"
     >
       <div class="totp-prompt">
         <div class="totp-prompt-header">
           <mat-icon hyIcon class="totp-prompt-icon">lock</mat-icon>
-          <p>Enter the 6-digit TOTP code for <strong>{{ data.entityName || data.entityType }}</strong> to {{ data.actionReason?.toLowerCase() || 'authorize this action' }}.</p>
+          <p [innerHTML]="t.get('app.dialogs.totp-prompt', { name: data.entityName || data.entityType, reason: resolvedReason.toLowerCase() || t.get('app.dialogs.authorize').toLowerCase() })"></p>
         </div>
-        <app-totp-code-input [(ngModel)]="code" (submitted)="onSubmit()"></app-totp-code-input>
+        <app-totp-code-input [(ngModel)]="code" [label]="'app.dialogs.totp-code-label' | transloco" (submitted)="onSubmit()"></app-totp-code-input>
       </div>
     </hy-dialog>
   `,
@@ -58,9 +59,14 @@ export interface TotpPromptDialogData {
 export class TotpPromptDialogComponent {
   code = '';
 
+  get resolvedReason(): string {
+    return this.data.actionReason ? this.t.get(this.data.actionReason) : '';
+  }
+
   constructor(
     private dialogRef: MatDialogRef<TotpPromptDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TotpPromptDialogData,
+    public t: HyTranslateService,
   ) {}
 
   onSubmit(): void {

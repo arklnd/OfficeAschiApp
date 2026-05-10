@@ -10,6 +10,7 @@ import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule
 import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyToastService, HyToastModule } from '@hyland/ui/toast';
 import { HyTagModule } from '@hyland/ui/tag';
+import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from '../services/booking.service';
@@ -30,38 +31,39 @@ export interface JoinTeamDialogData {
     MatFormFieldModule, MatInputModule, MatIconModule,
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule,
     HyDialogModule, HyToastModule, HyTagModule, TotpCodeInputComponent,
+    HyTranslateModule,
   ],
   template: `
     <hy-dialog
-      [header]="'Join ' + data.teamName"
-      [confirmLabel]="joining() ? 'Joining...' : 'Join Team'"
-      dismissLabel="Cancel"
+      [header]="t.get('app.dialogs.join-team', { team: data.teamName })"
+      [confirmLabel]="joining() ? t.get('app.dialogs.joining') : t.get('app.dialogs.join-team-btn')"
+      [dismissLabel]="t.get('app.common.cancel')"
       (confirmed)="joinTeam()"
       (dismissed)="dialogRef.close(null)"
     >
       <form [formGroup]="form">
         <mat-form-field hyFormField class="full-width">
-          <mat-label>Your Friendly Name</mat-label>
-          <input matInput formControlName="friendlyName" placeholder="How the team knows you" />
+          <mat-label>{{ 'app.dialogs.friendly-name' | transloco }}</mat-label>
+          <input matInput formControlName="friendlyName" [placeholder]="'app.dialogs.friendly-name-placeholder' | transloco" />
         </mat-form-field>
 
         <div class="totp-section">
-          <p>Scan this QR code with your authenticator app, or save the secret key.</p>
+          <p>{{ 'app.dialogs.scan-qr' | transloco }}</p>
           <div class="qr-container">
             @if (qrDataUrl()) {
-              <img [src]="qrDataUrl()" alt="TOTP QR Code" width="200" height="200" />
+              <img [src]="qrDataUrl()" [alt]="'app.dialogs.totp-qr-alt' | transloco" width="200" height="200" />
             }
           </div>
           <hy-tag color="blue">{{ secret() }}</hy-tag>
           <div class="qr-actions">
             <button mat-stroked-button hyIconLabelButton type="button" (click)="downloadQr()">
-              <mat-icon hyIcon>download</mat-icon> Download QR
+              <mat-icon hyIcon>download</mat-icon> {{ 'app.dialogs.download-qr' | transloco }}
             </button>
             <button mat-stroked-button hyIconLabelButton type="button" (click)="copySecret()">
-              <mat-icon hyIcon>copy</mat-icon> Copy Secret
+              <mat-icon hyIcon>copy</mat-icon> {{ 'app.dialogs.copy-secret' | transloco }}
             </button>
           </div>
-          <app-totp-code-input formControlName="verifyCode" label="Enter 6-digit code to verify" fieldClass="full-width"></app-totp-code-input>
+          <app-totp-code-input formControlName="verifyCode" [label]="'app.dialogs.verify-code' | transloco" fieldClass="full-width"></app-totp-code-input>
             @if (verifyError()) {
               <mat-error>{{ verifyError() }}</mat-error>
             }
@@ -93,6 +95,7 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private toastService: HyToastService,
     private totpService: TotpService,
+    public t: HyTranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -159,11 +162,11 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
   joinTeam(): void {
     if (this.joining()) return;
     const name = this.form.get('friendlyName')!.value?.trim();
-    if (!name) { this.toastService.error('Name is required'); return; }
+    if (!name) { this.toastService.error(this.t.get('app.dialogs.name-required')); return; }
 
     const code = this.form.get('verifyCode')!.value ?? '';
     if (!code || code.length !== 6) {
-      this.verifyError.set('Enter a 6-digit code');
+      this.verifyError.set(this.t.get('app.dialogs.enter-6-digit-code'));
       return;
     }
     this.verifyError.set('');
@@ -177,11 +180,11 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
       next: r => {
         this.totpService.storeSecret('reportee', r.id, this.secret());
         localStorage.setItem(`reportee_${this.data.teamId}`, String(r.id));
-        this.toastService.success(`Joined as ${r.friendlyName}!`);
+        this.toastService.success(this.t.get('app.dialogs.joined-as', { name: r.friendlyName }));
         this.dialogRef.close(r);
       },
       error: err => {
-        this.toastService.error(err.error?.error || 'Failed to join');
+        this.toastService.error(err.error?.error || this.t.get('app.dialogs.failed-join'));
         this.joining.set(false);
       },
     });

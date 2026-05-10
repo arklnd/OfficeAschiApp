@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HyMaterialButtonModule, HyMaterialIconModule } from '@hyland/ui/material';
 import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyUserProfileModule } from '@hyland/ui/user-profile';
+import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { ReporteeResponse } from '../models';
 
 export interface ReporteePickerData {
@@ -19,11 +20,12 @@ export interface ReporteePickerData {
     CommonModule, MatButtonModule, MatIconModule,
     HyMaterialButtonModule, HyMaterialIconModule,
     HyDialogModule, HyUserProfileModule,
+    HyTranslateModule,
   ],
   template: `
     <hy-dialog
-      header="Select Member"
-      dismissLabel="Cancel"
+      [header]="t.get('app.dialogs.select-member')"
+      [dismissLabel]="t.get('app.common.cancel')"
       confirmLabel=""
       (dismissed)="dialogRef.close(null)"
     >
@@ -48,6 +50,7 @@ export class ReporteePickerDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ReporteePickerDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ReporteePickerData,
+    public t: HyTranslateService,
   ) {}
 
   select(r: ReporteeResponse): void {

@@ -4,6 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyMaterialFormFieldModule } from '@hyland/ui/material';
 import { HyComboBoxModule } from '@hyland/ui/combo-box';
+import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { ReporteeResponse } from '../models';
 
 export interface BookSeatDialogData {
@@ -22,23 +23,21 @@ export interface BookSeatDialogResult {
 @Component({
   selector: 'app-book-seat-dialog',
   standalone: true,
-  imports: [HyDialogModule, MatFormFieldModule, HyMaterialFormFieldModule, HyComboBoxModule],
+  imports: [HyDialogModule, MatFormFieldModule, HyMaterialFormFieldModule, HyComboBoxModule, HyTranslateModule],
   template: `
     <hy-dialog
-      [header]="'Book ' + data.seatLabel"
-      [confirmLabel]="data.currentReporteeName ? 'Confirm Booking' : 'Book Seat'"
-      dismissLabel="Cancel"
+      [header]="t.get('app.dialogs.book-seat', { seat: data.seatLabel })"
+      [confirmLabel]="data.currentReporteeName ? t.get('app.dialogs.confirm-booking') : t.get('app.dialogs.book-seat-btn')"
+      [dismissLabel]="t.get('app.common.cancel')"
       (confirmed)="onConfirm()"
       (dismissed)="onDismiss()"
     >
       @if (data.currentReporteeName) {
-        Book <strong>{{ data.currentReporteeName }}</strong> on
-        <strong>{{ data.seatLabel }}</strong> for
-        <strong>{{ data.date }}</strong>?
+        <span [innerHTML]="t.get('app.dialogs.book-seat-self', { name: data.currentReporteeName, seat: data.seatLabel, date: data.date })"></span>
       } @else {
-        <p>Select a member to assign to <strong>{{ data.seatLabel }}</strong> for <strong>{{ data.date }}</strong>.</p>
+        <p [innerHTML]="t.get('app.dialogs.book-seat-select', { seat: data.seatLabel, date: data.date })"></p>
         <mat-form-field hyFormField style="width:100%">
-          <mat-label>Member</mat-label>
+          <mat-label>{{ 'app.common.member' | transloco }}</mat-label>
           <hy-combo-box
             [options]="filteredReportees()"
             [displayWith]="displayReporteeName"
@@ -68,6 +67,7 @@ export class BookSeatDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<BookSeatDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: BookSeatDialogData,
+    public t: HyTranslateService,
   ) {}
 
   onConfirm(): void {

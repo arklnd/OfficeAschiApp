@@ -1,0 +1,90 @@
+{
+  "hy-shell": {
+    "about": "के बारे में",
+    "application-logo": "हाइलैंड सॉफ्टवेयर लोगो",
+    "aria-app-home": "एप्लिकेशन लोगो। होम पर जाने के लिए क्लिक करें।",
+    "aria-x-home": "{{appName}} लोगो। होम पर जाने के लिए क्लिक करें।",
+    "back-button-default": "वापस जाएं",
+    "clear-search": "खोज साफ़ करें",
+    "close": "बंद करें",
+    "close-keyboard-shortcut-list": "कीबोर्ड शॉर्टकट सूची बंद करें",
+    "close-search": "खोज बंद करें",
+    "help": "सहायता",
+    "home": "होम",
+    "info": "जानकारी",
+    "keyboard-shortcuts": "कीबोर्ड शॉर्टकट",
+    "licenses-button-label": "तृतीय-पक्ष नोटिस देखें",
+    "licenses-link": "नए टैब में तृतीय-पक्ष नोटिस देखें",
+    "loading": "लोड हो रहा है",
+    "logout": "लॉग आउट",
+    "menu": "मेनू",
+    "page-not-found": "पृष्ठ नहीं मिला",
+    "page-not-found-title": "पृष्ठ नहीं मिला",
+    "page-not-found-description": "आप जिस पृष्ठ की तलाश कर रहे हैं वह नहीं मिला।",
+    "page-not-found-guide": "कुछ सहायता चाहिए? हमारे सहायता पृष्ठ पर जाएं।",
+    "privacy-policy-label": "गोपनीयता नीति देखें",
+    "privacy-policy-link": "नए टैब में गोपनीयता नीति देखें",
+    "search": "खोज",
+    "search-input": "खोज इनपुट",
+    "search-button": "खोज",
+    "aria-main-sidenav": "मुख्य",
+    "aria-sidenav-list": "नेविगेशन सूची",
+    "skip-to-content": "मुख्य सामग्री पर जाएं",
+    "settings": "सेटिंग्स",
+    "terms-conditions-label": "नियम और शर्तें देखें",
+    "terms-conditions-link": "नए टैब में नियम और शर्तें देखें",
+    "usage-policy-label": "उपयोग नीति देखें",
+    "usage-policy-link": "नए टैब में उपयोग नीति देखें",
+    "user-menu": "उपयोगकर्ता मेनू",
+    "aria-role-button": "बटन",
+    "aria-role-link": "लिंक",
+    "unable-to-reach-idp": "लॉगिन सेवा से कनेक्ट नहीं हो सका।",
+    "hy-shell-auth": {
+      "session-expiring": "सत्र समाप्त हो रहा है",
+      "stay-logged-in": "लॉग इन रहें",
+      "logged-out-in-x-minutes": "निष्क्रियता के कारण, आप {{minutes}} मिनट और {{seconds}} सेकंड में लॉग आउट हो जाएंगे।",
+      "logged-out-in-x-seconds": "निष्क्रियता के कारण, आप {{seconds}} सेकंड में लॉग आउट हो जाएंगे।"
+    },
+    "hy-shell-unauthenticated": {
+      "logged-out": "लॉग आउट",
+      "logged-out-title": "लॉग आउट",
+      "logged-out-text": "आप अब लॉग आउट हो गए हैं। आप इस विंडो को बंद कर सकते हैं।",
+      "sign-in": "साइन इन"
+    },
+    "hy-shell-about": {
+      "title": "हाइलैंड एक्सपीरियंस के बारे में",
+      "close-button": "बंद करें",
+      "version": "संस्करण"
+    },
+    "hy-shell-settings": {
+      "settings-title": "सेटिंग्स",
+      "general": "सामान्य",
+      "general-settings": "सामान्य सेटिंग्स",
+      "global-settings": "वैश्विक सेटिंग्स",
+      "general-settings-hint": "आपके खाते से संबंधित भाषा, थीम और अन्य सामान्य सेटिंग्स",
+      "language-selection-label": "भाषा",
+      "theme-selection-label": "थीम",
+      "density-selection-label": "घनत्व",
+      "density-option-default": "डिफ़ॉल्ट",
+      "density-option-comfortable": "आरामदायक",
+      "density-option-compact": "कॉम्पैक्ट",
+      "theme-option-light": "हल्का",
+      "theme-option-dark": "गहरा",
+      "theme-option-default": "सिस्टम सेटिंग",
+      "language-option-default": "सिस्टम डिफ़ॉल्ट",
+      "close-button": "बंद करें",
+      "cancel-button": "रद्द करें",
+      "save-button": "सहेजें"
+    },
+    "hy-header-env-menu": {
+      "environment-selector": "परिवेश चयनकर्ता"
+    },
+    "hy-header-menu": {
+      "app-switcher": "ऐप स्विचर"
+    },
+    "profile-menu": {
+      "profile-image": "{{user}} की प्रोफ़ाइल छवि",
+      "unauthenticated": "अप्रमाणित"
+    }
+  }
+}

@@ -1,12 +1,12 @@
-<hy-shell-view [title]="notFound() ? 'Not Found' : (team()?.name ?? 'Team')" backRoute="/" backTitle="Teams" />
+<hy-shell-view [title]="notFound() ? ('app.team-detail.not-found' | transloco) : (team()?.name ?? ('app.team-detail.team' | transloco))" backRoute="/" [backTitle]="'app.team-detail.back-teams' | transloco" />
 
 @if (notFound()) {
   <hy-error-layout>
-    <hy-error-layout-title>Team not found</hy-error-layout-title>
-    <hy-error-layout-content>The team you're looking for doesn't exist or may have been removed.</hy-error-layout-content>
+    <hy-error-layout-title>{{ 'app.team-detail.team-not-found' | transloco }}</hy-error-layout-title>
+    <hy-error-layout-content>{{ 'app.team-detail.team-not-found-desc' | transloco }}</hy-error-layout-content>
     <hy-error-layout-actions>
       <button mat-flat-button hyIconLabelButton color="primary" (click)="router.navigate(['/'])">
-        <mat-icon hyIcon>arrow_back</mat-icon> Back to Teams
+        <mat-icon hyIcon>arrow_back</mat-icon> {{ 'app.team-detail.back-to-teams' | transloco }}
       </button>
     </hy-error-layout-actions>
   </hy-error-layout>
@@ -18,20 +18,20 @@
     <div class="team-info">
       <h2>{{ team()?.name }}</h2>
       <div class="team-tags">
-        <hy-tag color="blue">{{ seats().length }} seats</hy-tag>
-        <hy-tag color="green">{{ approvedReportees().length }} members</hy-tag>
+        <hy-tag color="blue">{{ seats().length }} {{ 'app.common.seats' | transloco }}</hy-tag>
+        <hy-tag color="green">{{ approvedReportees().length }} {{ 'app.common.members' | transloco }}</hy-tag>
         @if (pendingReportees().length > 0) {
-          <hy-tag color="orange">{{ pendingReportees().length }} pending</hy-tag>
+          <hy-tag color="orange">{{ pendingReportees().length }} {{ 'app.common.pending' | transloco }}</hy-tag>
         }
       </div>
     </div>
     <div class="team-actions">
-      <button mat-stroked-button hyIconLabelButton (click)="copyTeamUrl()" matTooltip="Copy team link">
-        <mat-icon hyIcon>share</mat-icon> Share
+      <button mat-stroked-button hyIconLabelButton (click)="copyTeamUrl()" [matTooltip]="'app.team-detail.copy-team-link' | transloco">
+        <mat-icon hyIcon>share</mat-icon> {{ 'app.common.share' | transloco }}
       </button>
       @if (!currentReporteeId()) {
         <button mat-stroked-button hyIconLabelButton (click)="openJoinDialog()">
-          <mat-icon hyIcon>add_user</mat-icon> Join Team
+          <mat-icon hyIcon>add_user</mat-icon> {{ 'app.team-detail.join-team' | transloco }}
         </button>
       }
     </div>
@@ -40,12 +40,12 @@
   <!-- Tabs -->
   <mat-tab-group hyTabGroup>
     <!-- Booking Tab -->
-    <mat-tab label="Bookings">
+    <mat-tab [label]="'app.team-detail.tab-bookings' | transloco">
       <div class="tab-content">
         <!-- Date selector -->
         <div class="hero">
           <div class="hero-date">
-            <button mat-icon-button (click)="goToPreviousDay()" matTooltip="Previous day">
+            <button mat-icon-button (click)="goToPreviousDay()" [matTooltip]="'app.team-detail.previous-day' | transloco">
               <mat-icon hyIcon>chevron_left</mat-icon>
             </button>
             <div class="hero-date-display" (click)="picker.open()">
@@ -55,24 +55,24 @@
                 <span class="hero-weekday">{{ displayDayOfWeek() }}</span>
               </div>
             </div>
-            <button mat-icon-button (click)="goToNextDay()" matTooltip="Next day">
+            <button mat-icon-button (click)="goToNextDay()" [matTooltip]="'app.team-detail.next-day' | transloco">
               <mat-icon hyIcon>chevron_right</mat-icon>
             </button>
             @if (!isToday()) {
-              <button mat-button hyIconLabelButton (click)="goToToday()" matTooltip="Jump to today">
-                <mat-icon hyIcon>calendar</mat-icon> Today
+              <button mat-button hyIconLabelButton (click)="goToToday()" [matTooltip]="'app.team-detail.jump-to-today' | transloco">
+                <mat-icon hyIcon>calendar</mat-icon> {{ 'app.common.today' | transloco }}
               </button>
             }
             <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" class="hidden-input" />
             <mat-datepicker #picker></mat-datepicker>
           </div>
           <div class="hero-stats">
-            <hy-tag color="blue">{{ bookedCount() }} booked</hy-tag>
-            <hy-tag color="green">{{ availableCount() }} available</hy-tag>
+            <hy-tag color="blue">{{ bookedCount() }} {{ 'app.common.booked' | transloco }}</hy-tag>
+            <hy-tag color="green">{{ availableCount() }} {{ 'app.common.available' | transloco }}</hy-tag>
             @if (waitlistedCount() > 0) {
-              <hy-tag color="orange">{{ waitlistedCount() }} waitlisted</hy-tag>
+              <hy-tag color="orange">{{ waitlistedCount() }} {{ 'app.common.waitlisted' | transloco }}</hy-tag>
             }
-            <hy-tag color="grey">{{ totalSeats() }} total</hy-tag>
+            <hy-tag color="grey">{{ totalSeats() }} {{ 'app.common.total' | transloco }}</hy-tag>
           </div>
         </div>
 
@@ -92,7 +92,7 @@
                 <mat-card-header>
                   <mat-card-title>{{ seat.label }}</mat-card-title>
                   @if (seat.status === 'booked') {
-                    <button mat-icon-button (click)="cancelBooking(seat.booking!)" matTooltip="Cancel booking">
+                    <button mat-icon-button (click)="cancelBooking(seat.booking!)" [matTooltip]="'app.team-detail.cancel-booking' | transloco">
                       <mat-icon hyIcon>close</mat-icon>
                     </button>
                   }
@@ -105,7 +105,7 @@
                     </div>
                   } @else {
                     <button mat-stroked-button hyIconLabelButton class="book-btn" (click)="openBookDialog(seat.seatId, seat.label)">
-                      <mat-icon hyIcon>add</mat-icon> Book
+                      <mat-icon hyIcon>add</mat-icon> {{ 'app.common.book' | transloco }}
                     </button>
                   }
                 </mat-card-content>
@@ -117,21 +117,21 @@
           @if (availableCount() === 0 && totalSeats() > 0) {
             <mat-card appearance="outlined" class="waitlist-section">
               <mat-card-header>
-                <mat-card-title>All seats are booked</mat-card-title>
+                <mat-card-title>{{ 'app.team-detail.all-seats-booked' | transloco }}</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p>All seats are taken. You can wait for a specific seat.</p>
+                <p>{{ 'app.team-detail.all-seats-taken-desc' | transloco }}</p>
                 <div class="seat-grid">
                   @for (b of bookedSeats(); track b.id) {
                     <mat-card appearance="outlined">
-                      <mat-card-header><mat-card-title>{{ b.seatLabel }} by</mat-card-title></mat-card-header>
+                      <mat-card-header><mat-card-title>{{ b.seatLabel }} {{ 'app.common.by' | transloco }}</mat-card-title></mat-card-header>
                       <mat-card-content>
                         <div class="person-info">
                           <hy-user-profile [name]="b.reporteeName" [size]="profileSize" bgColor="teal"></hy-user-profile>
                           <span>{{ b.reporteeName }}</span>
                         </div>
                         <button mat-stroked-button hyIconLabelButton class="full-width mt-8" (click)="waitlistSeat(b.seatId, b.seatLabel)">
-                          <mat-icon hyIcon>clock</mat-icon> Wait for it
+                          <mat-icon hyIcon>clock</mat-icon> {{ 'app.team-detail.wait-for-it' | transloco }}
                         </button>
                       </mat-card-content>
                     </mat-card>
@@ -144,16 +144,16 @@
           <!-- Current waitlist -->
           @if (waitlist().length > 0) {
             <mat-card appearance="outlined" class="waitlist-info">
-              <mat-card-header><mat-card-title>Waitlist</mat-card-title></mat-card-header>
+              <mat-card-header><mat-card-title>{{ 'app.team-detail.waitlist' | transloco }}</mat-card-title></mat-card-header>
               <mat-card-content>
                 @for (w of waitlist(); track w.bookingId; let i = $index) {
                   <div class="waitlist-row">
                     <hy-user-profile [name]="w.reporteeName" [size]="profileSize" bgColor="orange"></hy-user-profile>
                     <div class="waitlist-detail">
                       <span class="waitlist-title">#{{ i + 1 }} — {{ w.reporteeName }}</span>
-                      <span class="waitlist-sub">waiting for seat {{ w.desiredSeatLabel }} · since {{ w.waitlistedSince | date:'short' }}</span>
+                      <span class="waitlist-sub">{{ 'app.team-detail.waiting-for-seat' | transloco }} {{ w.desiredSeatLabel }} · {{ 'app.team-detail.since' | transloco }} {{ w.waitlistedSince | date:'short' }}</span>
                     </div>
-                    <button mat-icon-button (click)="cancelWaitlist(w)" matTooltip="Cancel waitlist">
+                    <button mat-icon-button (click)="cancelWaitlist(w)" [matTooltip]="'app.team-detail.cancel-waitlist' | transloco">
                       <mat-icon hyIcon>close</mat-icon>
                     </button>
                   </div>
@@ -166,17 +166,17 @@
     </mat-tab>
 
     <!-- Manage Tab (Manager) -->
-    <mat-tab label="Manage">
+    <mat-tab [label]="'app.team-detail.tab-manage' | transloco">
       <div class="tab-content">
         <!-- Seats -->
         <mat-card appearance="outlined" class="manage-card">
-          <mat-card-header><mat-card-title>Seats</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>{{ 'app.team-detail.manage-seats' | transloco }}</mat-card-title></mat-card-header>
           <mat-card-content>
             <div class="seat-chips">
               @for (s of seats(); track s.id) {
                 <mat-chip-row hyTag [removable]="false">
                   {{ s.label }}
-                  <button matChipRemove matTooltip="Delete seat" (click)="deleteSeat(s)">
+                  <button matChipRemove [matTooltip]="'app.team-detail.delete-seat' | transloco" (click)="deleteSeat(s)">
                     <mat-icon hyIcon>close</mat-icon>
                   </button>
                 </mat-chip-row>
@@ -184,13 +184,13 @@
             </div>
             <div class="add-seat-row">
               <mat-form-field hyFormField class="add-seat-field">
-                <mat-label>Add seat</mat-label>
-                <input matInput #seatInput placeholder="e.g. S1, Window-1"
+                <mat-label>{{ 'app.team-detail.add-seat' | transloco }}</mat-label>
+                <input matInput #seatInput [placeholder]="'app.team-detail.add-seat-placeholder' | transloco"
                   (keydown.enter)="addSeatFromInput(seatInput)" />
               </mat-form-field>
               <button mat-flat-button hyIconLabelButton color="primary"
                 (click)="addSeatFromInput(seatInput)" [disabled]="addingSeat()">
-                <mat-icon hyIcon>add</mat-icon> Add
+                <mat-icon hyIcon>add</mat-icon> {{ 'app.common.add' | transloco }}
               </button>
             </div>
           </mat-card-content>
@@ -199,15 +199,15 @@
         <!-- Pending approvals -->
         @if (pendingReportees().length > 0) {
           <mat-card appearance="outlined" class="manage-card">
-            <mat-card-header><mat-card-title>Pending Approvals</mat-card-title></mat-card-header>
+            <mat-card-header><mat-card-title>{{ 'app.team-detail.pending-approvals' | transloco }}</mat-card-title></mat-card-header>
             <mat-card-content>
               @for (r of pendingReportees(); track r.id) {
                 <div class="pending-row">
                   <hy-user-profile [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
                   <span class="pending-name">{{ r.friendlyName }}</span>
                   <span class="pending-actions">
-                    <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
-                    <button mat-stroked-button color="warn" (click)="denyReportee(r)">Deny</button>
+                    <button mat-flat-button color="primary" (click)="approveReportee(r.id)">{{ 'app.common.approve' | transloco }}</button>
+                    <button mat-stroked-button color="warn" (click)="denyReportee(r)">{{ 'app.common.deny' | transloco }}</button>
                   </span>
                 </div>
               }
@@ -217,7 +217,7 @@
 
         <!-- Members list -->
         <mat-card appearance="outlined" class="manage-card">
-          <mat-card-header><mat-card-title>Members</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>{{ 'app.team-detail.members-title' | transloco }}</mat-card-title></mat-card-header>
           <mat-card-content>
               <mat-list hyList>
                 @for (r of approvedReportees(); track r.id) {
@@ -227,7 +227,7 @@
                       [bgColor]="profileColors[r.id % profileColors.length]"></hy-user-profile>
                     <span matListItemTitle>{{ r.friendlyName }}</span>
                     <span matListItemMeta>
-                      <button mat-icon-button color="warn" (click)="removeReportee(r)" matTooltip="Remove member">
+                      <button mat-icon-button color="warn" (click)="removeReportee(r)" [matTooltip]="'app.team-detail.remove-member' | transloco">
                         <mat-icon hyIcon>delete</mat-icon>
                       </button>
                     </span>
@@ -236,18 +236,18 @@
                 }
               </mat-list>
               @if (approvedReportees().length === 0) {
-                <p class="muted">No approved members yet.</p>
+                <p class="muted">{{ 'app.team-detail.no-approved-members' | transloco }}</p>
               }
             </mat-card-content>
         </mat-card>
 
         <!-- Delete team -->
         <mat-card appearance="outlined" class="manage-card">
-          <mat-card-header><mat-card-title>Danger Zone</mat-card-title></mat-card-header>
+          <mat-card-header><mat-card-title>{{ 'app.team-detail.danger-zone' | transloco }}</mat-card-title></mat-card-header>
           <mat-card-content>
-            <p>Permanently delete this team and all its members, seats, and bookings.</p>
+            <p>{{ 'app.team-detail.danger-zone-desc' | transloco }}</p>
             <button mat-flat-button color="warn" hyIconLabelButton (click)="deleteTeam()">
-              <mat-icon hyIcon>delete</mat-icon> Delete Team
+              <mat-icon hyIcon>delete</mat-icon> {{ 'app.team-detail.delete-team' | transloco }}
             </button>
           </mat-card-content>
         </mat-card>

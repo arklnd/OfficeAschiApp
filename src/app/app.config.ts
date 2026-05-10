@@ -10,6 +10,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { HyShellModule, HY_SHELL_CONFIG_INITIALIZER } from '@hyland/ui-shell';
 import { HyAuthService } from '@hyland/ui/auth';
+import { HY_TRANSLATE_CONFIG } from '@hyland/ui/language';
 import { NoopAuthService } from './services/noop-auth.service';
 
 import { routes } from './app.routes';
@@ -25,6 +26,17 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     importProvidersFrom(HyShellModule.forRoot()),
     { provide: HyAuthService, useClass: NoopAuthService },
+    {
+      provide: HY_TRANSLATE_CONFIG,
+      useValue: {
+        availableLangs: [
+          { id: 'en', label: 'English' },
+          { id: 'bn', label: 'বাংলা' },
+          { id: 'hi', label: 'हिन्दी' },
+        ],
+        defaultLang: 'en',
+      },
+    },
     {
       provide: HY_SHELL_CONFIG_INITIALIZER,
       useValue: {

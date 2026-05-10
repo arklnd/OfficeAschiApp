@@ -60,7 +60,7 @@ export class ApiService implements OnDestroy {
     return this.http.post<TeamResponse>(`${this.base}/teams`, req);
   }
   deleteTeam(id: number, teamName = ''): Observable<unknown> {
-    return this.http.delete(`${this.base}/teams/${id}`, this.managerCtx(id, teamName, 'Delete team'));
+    return this.http.delete(`${this.base}/teams/${id}`, this.managerCtx(id, teamName, 'app.dialogs.reason-delete-team'));
   }
 
   // Seats
@@ -68,10 +68,10 @@ export class ApiService implements OnDestroy {
     return this.http.get<SeatResponse[]>(`${this.base}/teams/${teamId}/seats`);
   }
   addSeat(teamId: number, req: AddSeatRequest, teamName = ''): Observable<SeatResponse> {
-    return this.http.post<SeatResponse>(`${this.base}/teams/${teamId}/seats`, req, this.managerCtx(teamId, teamName, 'Add seat'));
+    return this.http.post<SeatResponse>(`${this.base}/teams/${teamId}/seats`, req, this.managerCtx(teamId, teamName, 'app.dialogs.reason-add-seat'));
   }
   deleteSeat(teamId: number, seatId: number, teamName = ''): Observable<unknown> {
-    return this.http.delete(`${this.base}/teams/${teamId}/seats/${seatId}`, this.managerCtx(teamId, teamName, 'Delete seat'));
+    return this.http.delete(`${this.base}/teams/${teamId}/seats/${seatId}`, this.managerCtx(teamId, teamName, 'app.dialogs.reason-delete-seat'));
   }
 
   // Reportees
@@ -82,13 +82,13 @@ export class ApiService implements OnDestroy {
     return this.http.post<ReporteeResponse>(`${this.base}/teams/${teamId}/reportees`, req);
   }
   approveReportee(teamId: number, reporteeId: number, teamName = ''): Observable<ReporteeResponse> {
-    return this.http.put<ReporteeResponse>(`${this.base}/teams/${teamId}/reportees/${reporteeId}/approve`, {}, this.managerCtx(teamId, teamName, 'Approve member'));
+    return this.http.put<ReporteeResponse>(`${this.base}/teams/${teamId}/reportees/${reporteeId}/approve`, {}, this.managerCtx(teamId, teamName, 'app.dialogs.reason-approve-member'));
   }
   denyReportee(teamId: number, reporteeId: number, teamName = ''): Observable<unknown> {
-    return this.http.delete(`${this.base}/teams/${teamId}/reportees/${reporteeId}/deny`, this.managerCtx(teamId, teamName, 'Deny join request'));
+    return this.http.delete(`${this.base}/teams/${teamId}/reportees/${reporteeId}/deny`, this.managerCtx(teamId, teamName, 'app.dialogs.reason-deny-join'));
   }
   removeReportee(teamId: number, reporteeId: number, teamName = ''): Observable<unknown> {
-    return this.http.delete(`${this.base}/teams/${teamId}/reportees/${reporteeId}`, this.managerCtx(teamId, teamName, 'Remove member'));
+    return this.http.delete(`${this.base}/teams/${teamId}/reportees/${reporteeId}`, this.managerCtx(teamId, teamName, 'app.dialogs.reason-remove-member'));
   }
 
   // Bookings
@@ -96,10 +96,10 @@ export class ApiService implements OnDestroy {
     return this.http.get<AvailabilityResponse>(`${this.base}/bookings/availability/${teamId}`, { params: { date } });
   }
   bookSeat(req: BookSeatRequest, reporteeId: number, reporteeName = ''): Observable<BookingResponse> {
-    return this.http.post<BookingResponse>(`${this.base}/bookings`, req, this.reporteeCtx(reporteeId, reporteeName, 'Book seat'));
+    return this.http.post<BookingResponse>(`${this.base}/bookings`, req, this.reporteeCtx(reporteeId, reporteeName, 'app.dialogs.reason-book-seat'));
   }
   cancelBooking(bookingId: number, reporteeId: number, reporteeName = ''): Observable<any> {
-    return this.http.delete(`${this.base}/bookings/${bookingId}`, this.reporteeCtx(reporteeId, reporteeName, 'Cancel booking'));
+    return this.http.delete(`${this.base}/bookings/${bookingId}`, this.reporteeCtx(reporteeId, reporteeName, 'app.dialogs.reason-cancel-booking'));
   }
 
   // Health

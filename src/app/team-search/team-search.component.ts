@@ -10,6 +10,7 @@ import { HyShellModule } from '@hyland/ui-shell';
 import { HyTagModule } from '@hyland/ui/tag';
 import { HyGhostModule } from '@hyland/ui/ghost';
 import { HySearchInputModule } from '@hyland/ui/search-input';
+import { HyTranslateModule } from '@hyland/ui/language';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { ApiService } from '../services/booking.service';
 import { TeamSearchResult, TeamResponse } from '../models';
@@ -23,20 +24,21 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CommonModule, MatButtonModule, MatCardModule, MatIconModule,
     HyMaterialButtonModule, HyMaterialIconModule,
     HyShellModule, HyTagModule, HyGhostModule, HySearchInputModule,
+    HyTranslateModule,
   ],
   template: `
-    <hy-shell-view title="Teams" />
+    <hy-shell-view [title]="'app.team-search.title' | transloco" />
     <div class="container">
       <div class="header-row">
         <hy-search-input
           [(value)]="searchQuery"
-          placeholder="Search teams..."
-          ariaLabel="Teams"
+          [placeholder]="'app.team-search.search-placeholder' | transloco"
+          [ariaLabel]="'app.team-search.search-aria' | transloco"
           (search)="onSearch()"
           (valueChange)="onSearch()"
         ></hy-search-input>
         <button mat-flat-button hyIconLabelButton color="primary" (click)="openCreateDialog()">
-          <mat-icon hyIcon>add</mat-icon> Create Team
+          <mat-icon hyIcon>add</mat-icon> {{ 'app.team-search.create-team' | transloco }}
         </button>
       </div>
 
@@ -51,7 +53,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       } @else if (teams().length === 0) {
         <div class="empty">
           <mat-icon hyIcon class="empty-icon">group_work</mat-icon>
-          <p>No teams found. Create one or adjust your search.</p>
+          <p>{{ 'app.team-search.empty-text' | transloco }}</p>
         </div>
       } @else {
         <div class="team-grid">
@@ -62,8 +64,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
               </mat-card-header>
               <mat-card-content>
                 <div class="team-stats">
-                  <hy-tag color="blue">{{ team.seatCount }} seats</hy-tag>
-                  <hy-tag color="green">{{ team.memberCount }} members</hy-tag>
+                  <hy-tag color="blue">{{ team.seatCount }} {{ 'app.common.seats' | transloco }}</hy-tag>
+                  <hy-tag color="green">{{ team.memberCount }} {{ 'app.common.members' | transloco }}</hy-tag>
                 </div>
               </mat-card-content>
             </mat-card>

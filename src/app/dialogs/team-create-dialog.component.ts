@@ -10,6 +10,7 @@ import { HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule
 import { HyDialogModule } from '@hyland/ui/dialog';
 import { HyToastService, HyToastModule } from '@hyland/ui/toast';
 import { HyTagModule } from '@hyland/ui/tag';
+import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from '../services/booking.service';
@@ -26,38 +27,39 @@ import * as QRCode from 'qrcode';
     MatFormFieldModule, MatInputModule, MatIconModule,
     HyMaterialFormFieldModule, HyMaterialButtonModule, HyMaterialIconModule,
     HyDialogModule, HyToastModule, HyTagModule, TotpCodeInputComponent,
+    HyTranslateModule,
   ],
   template: `
     <hy-dialog
-      header="Create Team"
-      [confirmLabel]="creating() ? 'Creating...' : 'Create Team'"
-      dismissLabel="Cancel"
+      [header]="t.get('app.dialogs.create-team')"
+      [confirmLabel]="creating() ? t.get('app.dialogs.creating') : t.get('app.dialogs.create-team-btn')"
+      [dismissLabel]="t.get('app.common.cancel')"
       (confirmed)="createTeam()"
       (dismissed)="dialogRef.close(null)"
     >
       <form [formGroup]="form">
         <mat-form-field hyFormField class="full-width">
-          <mat-label>Team Name (optional)</mat-label>
-          <input matInput formControlName="teamName" placeholder="Leave blank for auto-generated name" />
+          <mat-label>{{ 'app.dialogs.team-name-label' | transloco }}</mat-label>
+          <input matInput formControlName="teamName" [placeholder]="'app.dialogs.team-name-placeholder' | transloco" />
         </mat-form-field>
 
         <div class="totp-section">
-          <p>Scan this QR code with your authenticator app, or save the secret key.</p>
+          <p>{{ 'app.dialogs.scan-qr' | transloco }}</p>
           <div class="qr-container">
             @if (qrDataUrl()) {
-              <img [src]="qrDataUrl()" alt="TOTP QR Code" width="200" height="200" />
+              <img [src]="qrDataUrl()" [alt]="'app.dialogs.totp-qr-alt' | transloco" width="200" height="200" />
             }
           </div>
           <hy-tag color="blue">{{ secret() }}</hy-tag>
           <div class="qr-actions">
             <button mat-stroked-button hyIconLabelButton type="button" (click)="downloadQr()">
-              <mat-icon hyIcon>download</mat-icon> Download QR
+              <mat-icon hyIcon>download</mat-icon> {{ 'app.dialogs.download-qr' | transloco }}
             </button>
             <button mat-stroked-button hyIconLabelButton type="button" (click)="copySecret()">
-              <mat-icon hyIcon>copy</mat-icon> Copy Secret
+              <mat-icon hyIcon>copy</mat-icon> {{ 'app.dialogs.copy-secret' | transloco }}
             </button>
           </div>
-          <app-totp-code-input formControlName="verifyCode" label="Enter 6-digit code to verify" fieldClass="full-width"></app-totp-code-input>
+          <app-totp-code-input formControlName="verifyCode" [label]="'app.dialogs.verify-code' | transloco" fieldClass="full-width"></app-totp-code-input>
             @if (verifyError()) {
               <mat-error>{{ verifyError() }}</mat-error>
             }
@@ -88,6 +90,7 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private toastService: HyToastService,
     private totpService: TotpService,
+    public t: HyTranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -155,7 +158,7 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
     if (this.creating()) return;
     const code = this.form.get('verifyCode')!.value ?? '';
     if (!code || code.length !== 6) {
-      this.verifyError.set('Enter a 6-digit code');
+      this.verifyError.set(this.t.get('app.dialogs.enter-6-digit-code'));
       return;
     }
     this.verifyError.set('');
@@ -168,11 +171,11 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: team => {
         this.totpService.storeSecret('manager', team.id, this.secret());
-        this.toastService.success(`Team "${team.name}" created!`);
+        this.toastService.success(this.t.get('app.dialogs.team-created', { name: team.name }));
         this.dialogRef.close(team);
       },
       error: err => {
-        this.toastService.error(err.error?.error || 'Failed to create team');
+        this.toastService.error(err.error?.error || this.t.get('app.dialogs.failed-create-team'));
         this.creating.set(false);
       },
     });
