@@ -26,7 +26,6 @@
     "@hyland/ui": "11.0.1",
     "@hyland/ui-shell": "11.0.1",
     "@jsverse/transloco": "7.6.1",
-    "@microsoft/signalr": "10.0.0",
     "angular-imask": "7.6.1",
     "angular-oauth2-oidc": "20.0.2",
     "imask": "7.6.1",

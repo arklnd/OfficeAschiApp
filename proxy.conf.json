@@ -6,10 +6,5 @@
   "/health": {
     "target": "http://localhost:5079",
     "secure": false
-  },
-  "/hubs": {
-    "target": "http://localhost:5079",
-    "secure": false,
-    "ws": true
   }
 }

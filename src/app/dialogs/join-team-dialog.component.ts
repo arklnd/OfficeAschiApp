@@ -14,7 +14,6 @@ import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from '../services/booking.service';
-import { PushNotificationService } from '../services/push-notification.service';
 import { TotpService } from '../totp/totp.service';
 import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
 import * as QRCode from 'qrcode';
@@ -96,7 +95,6 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private toastService: HyToastService,
     private totpService: TotpService,
-    private pushService: PushNotificationService,
     public t: HyTranslateService,
   ) {}
 
@@ -183,7 +181,6 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
         this.totpService.storeSecret('reportee', r.id, this.secret());
         localStorage.setItem(`reportee_${this.data.teamId}`, String(r.id));
         this.toastService.success(this.t.get('app.dialogs.joined-as', { name: r.friendlyName }));
-        this.pushService.subscribe('reportee', r.id, r.friendlyName);
         this.dialogRef.close(r);
       },
       error: err => {

@@ -14,7 +14,6 @@ import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from '../services/booking.service';
-import { PushNotificationService } from '../services/push-notification.service';
 import { TeamResponse } from '../models';
 import { TotpService } from '../totp/totp.service';
 import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
@@ -91,7 +90,6 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private toastService: HyToastService,
     private totpService: TotpService,
-    private pushService: PushNotificationService,
     public t: HyTranslateService,
   ) {}
 
@@ -174,7 +172,6 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
       next: team => {
         this.totpService.storeSecret('manager', team.id, this.secret());
         this.toastService.success(this.t.get('app.dialogs.team-created', { name: team.name }));
-        this.pushService.subscribe('manager', team.id, team.name);
         this.dialogRef.close(team);
       },
       error: err => {
