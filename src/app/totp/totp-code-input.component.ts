@@ -1,8 +1,9 @@
 import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { HyMaterialFormFieldModule } from '@hyland/ui/material';
+import { HyMaterialFormFieldModule, HyMaterialIconModule } from '@hyland/ui/material';
 import { IMaskModule } from 'angular-imask';
 
 const TOTP_MASK = {
@@ -12,7 +13,7 @@ const TOTP_MASK = {
 @Component({
   selector: 'app-totp-code-input',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, HyMaterialFormFieldModule, IMaskModule],
+  imports: [MatFormFieldModule, MatIconModule, MatInputModule, HyMaterialFormFieldModule, HyMaterialIconModule, IMaskModule],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
     useExisting: forwardRef(() => TotpCodeInputComponent),
@@ -21,6 +22,7 @@ const TOTP_MASK = {
   template: `
     <mat-form-field hyFormField [class]="fieldClass">
       <mat-label>{{ label }}</mat-label>
+      <mat-icon matPrefix hyIcon>key</mat-icon>
       <input matInput
         [imask]="totpMask"
         (accept)="onAccept($event)"
