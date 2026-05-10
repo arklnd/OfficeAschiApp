@@ -201,20 +201,16 @@
           <mat-card appearance="outlined" class="manage-card">
             <mat-card-header><mat-card-title>Pending Approvals</mat-card-title></mat-card-header>
             <mat-card-content>
-              <mat-list hyList>
-                @for (r of pendingReportees(); track r.id) {
-                  <div class="list-item-pad">
-                  <mat-list-item hyListItem>
-                    <hy-user-profile matListItemAvatar [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
-                    <span matListItemTitle>{{ r.friendlyName }}</span>
-                    <span matListItemMeta>
-                      <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
-                      <button mat-stroked-button color="warn" (click)="denyReportee(r)" style="margin-left: 8px;">Deny</button>
-                    </span>
-                  </mat-list-item>
-                  </div>
-                }
-              </mat-list>
+              @for (r of pendingReportees(); track r.id) {
+                <div class="pending-row">
+                  <hy-user-profile [name]="r.friendlyName" [size]="profileSize" bgColor="orange"></hy-user-profile>
+                  <span class="pending-name">{{ r.friendlyName }}</span>
+                  <span class="pending-actions">
+                    <button mat-flat-button color="primary" (click)="approveReportee(r.id)">Approve</button>
+                    <button mat-stroked-button color="warn" (click)="denyReportee(r)">Deny</button>
+                  </span>
+                </div>
+              }
             </mat-card-content>
           </mat-card>
         }
