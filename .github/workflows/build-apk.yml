@@ -2,6 +2,15 @@ name: Build & Release APK
 
 on:
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
 
 permissions:
   contents: write
@@ -13,6 +22,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get build metadata
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "version_code=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
         run: npm ci --ignore-scripts || npm install
@@ -20,32 +37,45 @@ jobs:
       - name: Set server URL in Capacitor config
         run: sed -i "s|CAPACITOR_SERVER_URL_PLACEHOLDER|${{ vars.API_BASEURL }}|g" capacitor.config.ts
 
+      - name: Stamp commit hash into Android versionName and versionCode
+        run: |
+          sed -i "s|versionCode 1|versionCode ${{ steps.vars.outputs.version_code }}|" android/app/build.gradle
+          sed -i "s|versionName \"1.0\"|versionName \"1.0-${{ steps.vars.outputs.sha_short }}\"|" android/app/build.gradle
+
       - name: Build Angular app
         run: npx ng build --configuration production
 
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Build debug APK
+      - name: Build APK (${{ inputs.build_type }})
         working-directory: android
-        run: chmod +x gradlew && ./gradlew assembleDebug
-
-      - name: Get short commit hash
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        run: |
+          chmod +x gradlew
+          if [ "${{ inputs.build_type }}" = "release" ]; then
+            ./gradlew assembleRelease
+          else
+            ./gradlew assembleDebug
+          fi
 
       - name: Rename APK
         run: |
-          mv android/app/build/outputs/apk/debug/app-debug.apk \
-             android/app/build/outputs/apk/debug/office-aschi-${{ steps.vars.outputs.sha_short }}.apk
+          if [ "${{ inputs.build_type }}" = "release" ]; then
+            mv android/app/build/outputs/apk/release/app-release-unsigned.apk \
+               android/app/build/outputs/apk/release/office-aschi-${{ steps.vars.outputs.sha_short }}.apk
+          else
+            mv android/app/build/outputs/apk/debug/app-debug.apk \
+               android/app/build/outputs/apk/debug/office-aschi-${{ steps.vars.outputs.sha_short }}.apk
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ steps.vars.outputs.sha_short }}
-          name: Office Aschi APK (${{ steps.vars.outputs.sha_short }})
+          name: Office Aschi APK (${{ steps.vars.outputs.sha_short }}) [${{ inputs.build_type }}]
           body: |
-            Debug APK built from commit `${{ github.sha }}`
+            **${{ inputs.build_type }}** APK built from commit `${{ github.sha }}`
+            Version: `1.0-${{ steps.vars.outputs.sha_short }}` (code: ${{ steps.vars.outputs.version_code }})
             Branch: `${{ github.ref_name }}`
             Triggered by: `${{ github.actor }}`
-          files: android/app/build/outputs/apk/debug/office-aschi-${{ steps.vars.outputs.sha_short }}.apk
+          files: android/app/build/outputs/apk/${{ inputs.build_type }}/**/office-aschi-${{ steps.vars.outputs.sha_short }}.apk
