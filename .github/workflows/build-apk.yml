@@ -17,6 +17,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts || npm install
 
+      - name: Set server URL in Capacitor config
+        run: sed -i "s|CAPACITOR_SERVER_URL_PLACEHOLDER|${{ vars.API_BASEURL }}|g" capacitor.config.ts
+
       - name: Build Angular app
         run: npx ng build --configuration production
 
