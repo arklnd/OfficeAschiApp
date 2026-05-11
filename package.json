@@ -25,6 +25,8 @@
     "@capacitor/android": "8.3.3",
     "@capacitor/cli": "8.3.3",
     "@capacitor/core": "8.3.3",
+    "@capacitor/filesystem": "8.1.2",
+    "@capacitor/share": "8.0.1",
     "@hyland/icons": "4.1.6",
     "@hyland/ui": "11.0.1",
     "@hyland/ui-shell": "11.0.1",

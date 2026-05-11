@@ -14,6 +14,7 @@ import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from '../services/booking.service';
+import { DownloadService } from '../services/download.service';
 import { TeamResponse } from '../models';
 import { TotpService } from '../totp/totp.service';
 import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
@@ -88,6 +89,7 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<TeamCreateDialogComponent>,
     private api: ApiService,
+    private downloadService: DownloadService,
     private toastService: HyToastService,
     private totpService: TotpService,
     public t: HyTranslateService,
@@ -144,10 +146,8 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
   }
 
   downloadQr(): void {
-    const link = document.createElement('a');
-    link.href = this.qrDataUrl();
-    link.download = `totp-${this.form.get('teamName')!.value || 'team'}-manager.png`;
-    link.click();
+    const filename = `totp-${this.form.get('teamName')!.value || 'team'}-manager.png`;
+    this.downloadService.downloadDataUrl(this.qrDataUrl(), filename);
   }
 
   copySecret(): void {

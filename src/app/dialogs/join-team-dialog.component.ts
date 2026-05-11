@@ -14,6 +14,7 @@ import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { ApiService } from '../services/booking.service';
+import { DownloadService } from '../services/download.service';
 import { TotpService } from '../totp/totp.service';
 import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
 import * as QRCode from 'qrcode';
@@ -93,6 +94,7 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<JoinTeamDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: JoinTeamDialogData,
     private api: ApiService,
+    private downloadService: DownloadService,
     private toastService: HyToastService,
     private totpService: TotpService,
     public t: HyTranslateService,
@@ -149,10 +151,8 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
   }
 
   downloadQr(): void {
-    const link = document.createElement('a');
-    link.href = this.qrDataUrl();
-    link.download = `totp-${this.form.get('friendlyName')!.value}.png`;
-    link.click();
+    const filename = `totp-${this.form.get('friendlyName')!.value}.png`;
+    this.downloadService.downloadDataUrl(this.qrDataUrl(), filename);
   }
 
   copySecret(): void {
