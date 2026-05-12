@@ -1,12 +1,14 @@
-import { Component, inject, isDevMode } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject, isDevMode, NgZone } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { Router, RouterOutlet } from '@angular/router';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
 import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
 import { HyTranslateModule } from '@hyland/ui/language';
 import { ApiService } from './services/booking.service';
+import { App as CapApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-root',
@@ -42,6 +44,9 @@ export class App {
   sideNavMode = HyShellSideNavModes.Side;
   devMode = isDevMode();
   private swUpdate = inject(SwUpdate);
+  private router = inject(Router);
+  private location = inject(Location);
+  private ngZone = inject(NgZone);
 
   constructor(public api: ApiService) {
     if (this.swUpdate.isEnabled) {
@@ -52,5 +57,21 @@ export class App {
       // Check for updates every 5 minutes for long-running sessions
       setInterval(() => this.swUpdate.checkForUpdate(), 5 * 60 * 1000);
     }
+
+    this.registerBackButton();
+  }
+
+  private registerBackButton() {
+    if (!Capacitor.isNativePlatform()) return;
+
+    CapApp.addListener('backButton', ({ canGoBack }) => {
+      this.ngZone.run(() => {
+        if (canGoBack) {
+          this.location.back();
+        } else {
+          CapApp.exitApp();
+        }
+      });
+    });
   }
 }
