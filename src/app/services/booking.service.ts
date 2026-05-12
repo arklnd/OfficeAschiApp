@@ -7,10 +7,12 @@ import {
   BookSeatRequest, BookingResponse, AvailabilityResponse,
 } from '../models';
 import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from '../totp/totp.context';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService implements OnDestroy {
-  private base = '/api';
+  private serverBase = Capacitor.isNativePlatform() ? 'API_BASEURL_PLACEHOLDER' : '';
+  private base = `${this.serverBase}/api`;
 
   /** Reactive health state — components can read this signal */
   readonly backendDown = signal(false);
@@ -104,6 +106,6 @@ export class ApiService implements OnDestroy {
 
   // Health
   checkHealth(): Observable<{ status: string; timestamp: string }> {
-    return this.http.get<{ status: string; timestamp: string }>('/health');
+    return this.http.get<{ status: string; timestamp: string }>(`${this.serverBase}/health`);
   }
 }

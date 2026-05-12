@@ -12,10 +12,27 @@ import { HyShellModule, HY_SHELL_CONFIG_INITIALIZER } from '@hyland/ui-shell';
 import { HyAuthService } from '@hyland/ui/auth';
 import { HY_TRANSLATE_CONFIG } from '@hyland/ui/language';
 import { NoopAuthService } from './services/noop-auth.service';
+import { App as CapApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 
 import { routes } from './app.routes';
 import { provideServiceWorker } from '@angular/service-worker';
 import { totpInterceptor } from './totp/totp.interceptor';
+
+async function shellConfigFactory() {
+  let version = 'APP_VERSION_PLACEHOLDER';
+  if (Capacitor.isNativePlatform()) {
+    const info = await CapApp.getInfo();
+    version = info.version;
+  }
+  return {
+    appInfo: {
+      name: 'OfficeAschi',
+      version,
+      copyrightYear: 2026,
+    },
+  };
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -39,13 +56,7 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: HY_SHELL_CONFIG_INITIALIZER,
-      useValue: {
-        appInfo: {
-          name: 'OfficeAschi',
-          version: 'APP_VERSION_PLACEHOLDER',
-          copyrightYear: 2026,
-        },
-      },
+      useValue: shellConfigFactory,
     },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
