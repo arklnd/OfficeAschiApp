@@ -5,7 +5,14 @@ const config: CapacitorConfig = {
   appName: 'Office Aschi',
   webDir: 'dist/office-aschi/browser',
   server: {
+    hostname: 'officeaschi.app',
+    androidScheme: 'https',
     cleartext: true,
+  },
+  plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
   },
 };
 
