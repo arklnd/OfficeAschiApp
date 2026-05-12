@@ -76,8 +76,20 @@ export class App {
   }
 
   private applyStatusBarFromTheme(isDark: boolean) {
-    StatusBar.setBackgroundColor({ color: isDark ? '#374151' : '#d1d5db' });
+    const toolbar = document.querySelector('.hy-shell-header.mat-toolbar');
+    if (toolbar) {
+      const bg = getComputedStyle(toolbar).backgroundColor;
+      const hex = this.rgbToHex(bg);
+      StatusBar.setBackgroundColor({ color: hex });
+    }
     StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light });
+  }
+
+  private rgbToHex(rgb: string): string {
+    const match = rgb.match(/\d+/g);
+    if (!match || match.length < 3) return '#ffffff';
+    const [r, g, b] = match.map(Number);
+    return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('');
   }
 
   private registerBackButton() {
