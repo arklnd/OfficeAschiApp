@@ -62,20 +62,20 @@ jobs:
         run: |
           if [ "${{ inputs.build_type }}" = "release" ]; then
             mv android/app/build/outputs/apk/release/app-release-unsigned.apk \
-               android/app/build/outputs/apk/release/office-aschi-${{ inputs.build_type }}-${{ steps.vars.outputs.sha_short }}.apk
+               android/app/build/outputs/apk/release/office-aschi-${{ inputs.build_type }}-${{ steps.vars.outputs.build_number }}.0.0-${{ steps.vars.outputs.sha_short }}.apk
           else
             mv android/app/build/outputs/apk/debug/app-debug.apk \
-               android/app/build/outputs/apk/debug/office-aschi-${{ inputs.build_type }}-${{ steps.vars.outputs.sha_short }}.apk
+               android/app/build/outputs/apk/debug/office-aschi-${{ inputs.build_type }}-${{ steps.vars.outputs.build_number }}.0.0-${{ steps.vars.outputs.sha_short }}.apk
           fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.vars.outputs.build_number }}-${{ steps.vars.outputs.sha_short }}
+          tag_name: v${{ steps.vars.outputs.build_number }}-${{ inputs.build_type }}-${{ steps.vars.outputs.sha_short }}
           name: "Build #${{ steps.vars.outputs.build_number }} — Office Aschi (${{ inputs.build_type }})"
           body: |
             **${{ inputs.build_type }}** APK built from commit `${{ github.sha }}`
             Version: `${{ steps.vars.outputs.build_number }}.0.0-${{ steps.vars.outputs.sha_short }}` (code: ${{ steps.vars.outputs.build_number }})
             Branch: `${{ github.ref_name }}`
             Triggered by: `${{ github.actor }}`
-          files: android/app/build/outputs/apk/${{ inputs.build_type }}/**/office-aschi-${{ inputs.build_type }}-${{ steps.vars.outputs.sha_short }}.apk
+          files: android/app/build/outputs/apk/${{ inputs.build_type }}/**/office-aschi-${{ inputs.build_type }}-${{ steps.vars.outputs.build_number }}.0.0-${{ steps.vars.outputs.sha_short }}.apk
