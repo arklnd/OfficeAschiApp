@@ -37,6 +37,9 @@ jobs:
       - name: Set server URL in Capacitor config
         run: sed -i "s|CAPACITOR_SERVER_URL_PLACEHOLDER|${{ vars.API_BASEURL }}|g" capacitor.config.ts
 
+      - name: Stamp app version into Angular config
+        run: sed -i "s|APP_VERSION_PLACEHOLDER|${{ steps.vars.outputs.build_number }}.0.0-${{ steps.vars.outputs.sha_short }}|g" src/app/app.config.ts
+
       - name: Stamp sequential version into Android versionName and versionCode
         run: |
           sed -i "s|versionCode 1|versionCode ${{ steps.vars.outputs.build_number }}|" android/app/build.gradle
