@@ -7,14 +7,11 @@ import {
   BookSeatRequest, BookingResponse, AvailabilityResponse,
 } from '../models';
 import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from '../totp/totp.context';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService implements OnDestroy {
-  // CI replaces API_BASEURL_PLACEHOLDER with the real URL; on web (ng serve) the proxy handles it
-  private serverBase = (() => {
-    const placeholder = 'API_BASEURL_PLACEHOLDER';
-    return placeholder.startsWith('http') ? placeholder : '';
-  })();
+  private serverBase = Capacitor.isNativePlatform() ? 'API_BASEURL_PLACEHOLDER' : '';
   private base = `${this.serverBase}/api`;
 
   /** Reactive health state — components can read this signal */
