@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
+import { HyToastService } from '@hyland/ui/toast';
 
 @Injectable({ providedIn: 'root' })
 export class DownloadService {
+  private toast = inject(HyToastService);
 
   async downloadDataUrl(dataUrl: string, filename: string): Promise<void> {
     if (Capacitor.isNativePlatform()) {
@@ -24,15 +25,14 @@ export class DownloadService {
   private async nativeDownload(dataUrl: string, filename: string): Promise<void> {
     const base64Data = dataUrl.split(',')[1];
 
-    const result = await Filesystem.writeFile({
+    this.toast.info(`Downloading ${filename}…`);
+
+    await Filesystem.writeFile({
       path: filename,
       data: base64Data,
-      directory: Directory.Cache,
+      directory: Directory.Documents,
     });
 
-    await Share.share({
-      title: filename,
-      url: result.uri,
-    });
+    this.toast.success(`${filename} saved to Documents`);
   }
 }
