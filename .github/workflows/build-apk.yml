@@ -29,7 +29,6 @@ jobs:
         id: vars
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-          echo "version_code=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
           echo "build_number=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Install dependencies
@@ -38,10 +37,10 @@ jobs:
       - name: Set server URL in Capacitor config
         run: sed -i "s|CAPACITOR_SERVER_URL_PLACEHOLDER|${{ vars.API_BASEURL }}|g" capacitor.config.ts
 
-      - name: Stamp commit hash into Android versionName and versionCode
+      - name: Stamp sequential version into Android versionName and versionCode
         run: |
-          sed -i "s|versionCode 1|versionCode ${{ steps.vars.outputs.version_code }}|" android/app/build.gradle
-          sed -i "s|versionName \"1.0\"|versionName \"1.0-${{ steps.vars.outputs.sha_short }}\"|" android/app/build.gradle
+          sed -i "s|versionCode 1|versionCode ${{ steps.vars.outputs.build_number }}|" android/app/build.gradle
+          sed -i "s|versionName \"1.0\"|versionName \"${{ steps.vars.outputs.build_number }}.0.0-${{ steps.vars.outputs.sha_short }}\"|" android/app/build.gradle
 
       - name: Build Angular app
         run: npx ng build --configuration production
@@ -76,7 +75,7 @@ jobs:
           name: "Build #${{ steps.vars.outputs.build_number }} — Office Aschi (${{ inputs.build_type }})"
           body: |
             **${{ inputs.build_type }}** APK built from commit `${{ github.sha }}`
-            Version: `1.0-${{ steps.vars.outputs.sha_short }}` (code: ${{ steps.vars.outputs.version_code }})
+            Version: `${{ steps.vars.outputs.build_number }}.0.0-${{ steps.vars.outputs.sha_short }}` (code: ${{ steps.vars.outputs.build_number }})
             Branch: `${{ github.ref_name }}`
             Triggered by: `${{ github.actor }}`
           files: android/app/build/outputs/apk/${{ inputs.build_type }}/**/office-aschi-${{ inputs.build_type }}-${{ steps.vars.outputs.sha_short }}.apk
