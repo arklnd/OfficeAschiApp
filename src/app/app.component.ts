@@ -6,6 +6,7 @@ import { filter } from 'rxjs';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
 import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
 import { HyTranslateModule } from '@hyland/ui/language';
+import { HyThemingService } from '@hyland/ui/theming';
 import { ApiService } from './services/booking.service';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
@@ -48,6 +49,7 @@ export class App {
   private router = inject(Router);
   private location = inject(Location);
   private ngZone = inject(NgZone);
+  private themingService = inject(HyThemingService);
 
   constructor(public api: ApiService) {
     if (this.swUpdate.isEnabled) {
@@ -66,11 +68,10 @@ export class App {
   private syncStatusBarWithTheme() {
     if (!Capacitor.isNativePlatform()) return;
 
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    // Wait for the shell toolbar to render, then read its computed background
-    setTimeout(() => this.applyStatusBarFromTheme(prefersDark.matches), 0);
-    prefersDark.addEventListener('change', (e) => {
-      this.applyStatusBarFromTheme(e.matches);
+    this.themingService.currentColorScheme$.subscribe((scheme) => {
+      const isDark = scheme === 'hy-dark-theme';
+      // Allow DOM to update with new theme before reading computed styles
+      setTimeout(() => this.applyStatusBarFromTheme(isDark), 0);
     });
   }
 
