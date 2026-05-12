@@ -9,6 +9,7 @@ import { HyTranslateModule } from '@hyland/ui/language';
 import { ApiService } from './services/booking.service';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
   selector: 'app-root',
@@ -59,6 +60,35 @@ export class App {
     }
 
     this.registerBackButton();
+    this.syncStatusBarWithTheme();
+  }
+
+  private syncStatusBarWithTheme() {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    // Wait for the shell toolbar to render, then read its computed background
+    setTimeout(() => this.applyStatusBarFromTheme(prefersDark.matches), 0);
+    prefersDark.addEventListener('change', (e) => {
+      this.applyStatusBarFromTheme(e.matches);
+    });
+  }
+
+  private applyStatusBarFromTheme(isDark: boolean) {
+    const toolbar = document.querySelector('.hy-shell-header.mat-toolbar');
+    if (toolbar) {
+      const bg = getComputedStyle(toolbar).backgroundColor;
+      const hex = this.rgbToHex(bg);
+      StatusBar.setBackgroundColor({ color: hex });
+    }
+    StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light });
+  }
+
+  private rgbToHex(rgb: string): string {
+    const match = rgb.match(/\d+/g);
+    if (!match || match.length < 3) return '#ffffff';
+    const [r, g, b] = match.map(Number);
+    return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('');
   }
 
   private registerBackButton() {
