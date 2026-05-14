@@ -12,18 +12,16 @@ import {
   HyMaterialTabsModule,
 } from '@hyland/ui/material';
 import { HyShellModule } from '@hyland/ui-shell';
-import { HyTagModule } from '@hyland/ui/tag';
 import { HyTranslateModule } from '@hyland/ui/language';
 import { HyGhostModule } from '@hyland/ui/ghost';
 import { HyComboBoxModule } from '@hyland/ui/combo-box';
 import { ApiService } from '../services/booking.service';
-import { TotpService } from '../totp/totp.service';
 import { TotpCodeInputComponent } from '../totp/totp-code-input.component';
 import { TeamSearchResult, ReporteeResponse } from '../models';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-totp-verify',
+  selector: 'app-totp-sync-check',
   standalone: true,
   imports: [
     CommonModule, FormsModule,
@@ -31,25 +29,25 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatFormFieldModule, MatInputModule,
     HyMaterialButtonModule, HyMaterialIconModule, HyMaterialFormFieldModule,
     HyMaterialTabsModule,
-    HyShellModule, HyTagModule, HyTranslateModule, HyGhostModule,
+    HyShellModule, HyTranslateModule, HyGhostModule,
     HyComboBoxModule,
     TotpCodeInputComponent,
   ],
   template: `
-    <hy-shell-view [title]="'app.totp-verify.title' | transloco" backRoute="/" [backTitle]="'app.totp-verify.back' | transloco" />
+    <hy-shell-view [title]="'app.totp-sync-check.title' | transloco" backRoute="/" [backTitle]="'app.totp-sync-check.back' | transloco" />
 
     <div class="container">
       <mat-tab-group hyTabGroup (selectedTabChange)="onTabChange($event)">
         <!-- Team (Manager) Tab -->
-        <mat-tab [label]="'app.totp-verify.tab-team' | transloco">
+        <mat-tab [label]="'app.totp-sync-check.tab-team' | transloco">
           <div class="tab-content">
             <mat-card appearance="outlined">
               <mat-card-header>
-                <mat-card-title>{{ 'app.totp-verify.select-team' | transloco }}</mat-card-title>
+                <mat-card-title>{{ 'app.totp-sync-check.select-team' | transloco }}</mat-card-title>
               </mat-card-header>
               <mat-card-content>
                 <mat-form-field hyFormField style="width:100%">
-                  <mat-label>{{ 'app.totp-verify.search-team' | transloco }}</mat-label>
+                  <mat-label>{{ 'app.totp-sync-check.search-team' | transloco }}</mat-label>
                   <hy-combo-box
                     [options]="filteredTeams()"
                     [displayWith]="displayTeam"
@@ -64,22 +62,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             @if (selectedTeam()) {
               <mat-card appearance="outlined" class="verify-card">
                 <mat-card-header>
-                  <mat-card-title>{{ 'app.totp-verify.verify-manager-totp' | transloco }}</mat-card-title>
+                  <mat-card-title>{{ 'app.totp-sync-check.check-manager-totp' | transloco }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="selected-info">
                     <mat-icon hyIcon>group_work</mat-icon>
                     <span class="selected-name">{{ selectedTeam()!.name }}</span>
-                    @if (hasManagerSecret()) {
-                      <hy-tag color="green">{{ 'app.totp-verify.secret-stored' | transloco }}</hy-tag>
-                    } @else {
-                      <hy-tag color="orange">{{ 'app.totp-verify.no-secret' | transloco }}</hy-tag>
-                    }
                   </div>
 
                   <div class="verify-row">
                     <app-totp-code-input
-                      [label]="'app.totp-verify.enter-code' | transloco"
+                      [label]="'app.totp-sync-check.enter-code' | transloco"
                       fieldClass="full-width"
                       [(ngModel)]="managerCode"
                       (submitted)="verifyManagerCode()">
@@ -87,14 +80,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                     <button mat-flat-button hyIconLabelButton color="primary"
                       [disabled]="managerCode.length !== 6 || managerVerifying()"
                       (click)="verifyManagerCode()">
-                      <mat-icon hyIcon>check</mat-icon> {{ 'app.totp-verify.verify' | transloco }}
+                      <mat-icon hyIcon>check</mat-icon> {{ 'app.totp-sync-check.check' | transloco }}
                     </button>
                   </div>
 
                   @if (managerResult() !== null) {
                     <div class="result" [class.success]="managerResult()" [class.error]="!managerResult()">
                       <mat-icon hyIcon>{{ managerResult() ? 'check_circle' : 'error' }}</mat-icon>
-                      <span>{{ managerResult() ? ('app.totp-verify.code-valid' | transloco) : ('app.totp-verify.code-invalid' | transloco) }}</span>
+                      <span>{{ managerResult() ? ('app.totp-sync-check.code-valid' | transloco) : ('app.totp-sync-check.code-invalid' | transloco) }}</span>
                     </div>
                   }
                 </mat-card-content>
@@ -104,15 +97,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         </mat-tab>
 
         <!-- Member (Reportee) Tab -->
-        <mat-tab [label]="'app.totp-verify.tab-member' | transloco">
+        <mat-tab [label]="'app.totp-sync-check.tab-member' | transloco">
           <div class="tab-content">
             <mat-card appearance="outlined">
               <mat-card-header>
-                <mat-card-title>{{ 'app.totp-verify.select-team-first' | transloco }}</mat-card-title>
+                <mat-card-title>{{ 'app.totp-sync-check.select-team-first' | transloco }}</mat-card-title>
               </mat-card-header>
               <mat-card-content>
                 <mat-form-field hyFormField style="width:100%">
-                  <mat-label>{{ 'app.totp-verify.search-team' | transloco }}</mat-label>
+                  <mat-label>{{ 'app.totp-sync-check.search-team' | transloco }}</mat-label>
                   <hy-combo-box
                     [options]="filteredTeamsForMember()"
                     [displayWith]="displayTeam"
@@ -127,14 +120,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             @if (selectedMemberTeam()) {
               <mat-card appearance="outlined">
                 <mat-card-header>
-                  <mat-card-title>{{ 'app.totp-verify.select-member' | transloco }}</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
+                <mat-card-title>{{ 'app.totp-sync-check.select-member' | transloco }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
                   @if (loadingReportees()) {
                     <hy-ghost-block style="height: 48px;"></hy-ghost-block>
                   } @else {
                     <mat-form-field hyFormField style="width:100%">
-                      <mat-label>{{ 'app.totp-verify.search-member' | transloco }}</mat-label>
+                      <mat-label>{{ 'app.totp-sync-check.search-member' | transloco }}</mat-label>
                       <hy-combo-box
                         [options]="filteredMembers()"
                         [displayWith]="displayMember"
@@ -151,22 +144,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
             @if (selectedMember()) {
               <mat-card appearance="outlined" class="verify-card">
                 <mat-card-header>
-                  <mat-card-title>{{ 'app.totp-verify.verify-member-totp' | transloco }}</mat-card-title>
+                  <mat-card-title>{{ 'app.totp-sync-check.check-member-totp' | transloco }}</mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                   <div class="selected-info">
                     <mat-icon hyIcon>person</mat-icon>
                     <span class="selected-name">{{ selectedMember()!.friendlyName }}</span>
-                    @if (hasMemberSecret()) {
-                      <hy-tag color="green">{{ 'app.totp-verify.secret-stored' | transloco }}</hy-tag>
-                    } @else {
-                      <hy-tag color="orange">{{ 'app.totp-verify.no-secret' | transloco }}</hy-tag>
-                    }
                   </div>
 
                   <div class="verify-row">
                     <app-totp-code-input
-                      [label]="'app.totp-verify.enter-code' | transloco"
+                      [label]="'app.totp-sync-check.enter-code' | transloco"
                       fieldClass="full-width"
                       [(ngModel)]="memberCode"
                       (submitted)="verifyMemberCode()">
@@ -174,14 +162,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                     <button mat-flat-button hyIconLabelButton color="primary"
                       [disabled]="memberCode.length !== 6 || memberVerifying()"
                       (click)="verifyMemberCode()">
-                      <mat-icon hyIcon>check</mat-icon> {{ 'app.totp-verify.verify' | transloco }}
+                      <mat-icon hyIcon>check</mat-icon> {{ 'app.totp-sync-check.check' | transloco }}
                     </button>
                   </div>
 
                   @if (memberResult() !== null) {
                     <div class="result" [class.success]="memberResult()" [class.error]="!memberResult()">
                       <mat-icon hyIcon>{{ memberResult() ? 'check_circle' : 'error' }}</mat-icon>
-                      <span>{{ memberResult() ? ('app.totp-verify.code-valid' | transloco) : ('app.totp-verify.code-invalid' | transloco) }}</span>
+                      <span>{{ memberResult() ? ('app.totp-sync-check.code-valid' | transloco) : ('app.totp-sync-check.code-invalid' | transloco) }}</span>
                     </div>
                   }
                 </mat-card-content>
@@ -218,9 +206,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     .option-pending { color: orange; }
   `],
 })
-export class TotpVerifyComponent implements OnInit {
+export class TotpSyncCheckComponent implements OnInit {
   private api = inject(ApiService);
-  private totpService = inject(TotpService);
   private destroyRef = inject(DestroyRef);
 
   // Team tab state
@@ -258,16 +245,6 @@ export class TotpVerifyComponent implements OnInit {
     return q ? this.reportees().filter(r => r.friendlyName.toLowerCase().includes(q)) : this.reportees();
   });
 
-  hasManagerSecret = computed(() => {
-    const team = this.selectedTeam();
-    return team ? !!this.totpService.getSecret('manager', team.id) : false;
-  });
-
-  hasMemberSecret = computed(() => {
-    const member = this.selectedMember();
-    return member ? !!this.totpService.getSecret('reportee', member.id) : false;
-  });
-
   ngOnInit(): void {
     this.loadTeams();
   }
@@ -296,13 +273,19 @@ export class TotpVerifyComponent implements OnInit {
     const team = this.selectedTeam();
     if (!team || this.managerCode.length !== 6) return;
 
-    const secret = this.totpService.getSecret('manager', team.id);
-    if (secret) {
-      this.managerResult.set(this.totpService.validate(secret, this.managerCode));
-    } else {
-      // No local secret — code cannot be verified client-side
-      this.managerResult.set(false);
-    }
+    this.managerVerifying.set(true);
+    this.api.verifyTotp('manager', team.id, this.managerCode)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.managerResult.set(res.valid);
+          this.managerVerifying.set(false);
+        },
+        error: () => {
+          this.managerResult.set(false);
+          this.managerVerifying.set(false);
+        },
+      });
   }
 
   // --- Member tab ---
@@ -338,12 +321,19 @@ export class TotpVerifyComponent implements OnInit {
     const member = this.selectedMember();
     if (!member || this.memberCode.length !== 6) return;
 
-    const secret = this.totpService.getSecret('reportee', member.id);
-    if (secret) {
-      this.memberResult.set(this.totpService.validate(secret, this.memberCode));
-    } else {
-      this.memberResult.set(false);
-    }
+    this.memberVerifying.set(true);
+    this.api.verifyTotp('reportee', member.id, this.memberCode)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.memberResult.set(res.valid);
+          this.memberVerifying.set(false);
+        },
+        error: () => {
+          this.memberResult.set(false);
+          this.memberVerifying.set(false);
+        },
+      });
   }
 
   onTabChange(_event: any): void {

@@ -106,7 +106,7 @@
   "app": {
     "nav": {
       "teams": "टीमें",
-      "totp-verify": "TOTP सत्यापन",
+      "totp-sync-check": "TOTP सिंक चेक",
       "dev-menu": "डेव मेनू"
     },
     "banner": {
@@ -203,8 +203,8 @@
       "failed-cancel-waitlist": "प्रतीक्षा सूची रद्द करने में विफल",
       "waitlisted": "{{name}} को {{seat}} के लिए प्रतीक्षा सूची में रखा गया"
     },
-    "totp-verify": {
-      "title": "TOTP सत्यापन",
+    "totp-sync-check": {
+      "title": "TOTP सिंक चेक",
       "back": "टीमें",
       "tab-team": "टीम (प्रबंधक)",
       "tab-member": "सदस्य (रिपोर्टी)",
@@ -215,14 +215,12 @@
       "select-member": "सदस्य चुनें",
       "search-member": "सदस्य खोजें",
       "search-member-placeholder": "सदस्य खोजने के लिए टाइप करें...",
-      "verify-manager-totp": "प्रबंधक TOTP सत्यापित करें",
-      "verify-member-totp": "सदस्य TOTP सत्यापित करें",
+      "check-manager-totp": "प्रबंधक TOTP चेक करें",
+      "check-member-totp": "सदस्य TOTP चेक करें",
       "enter-code": "TOTP कोड",
-      "verify": "सत्यापित करें",
-      "secret-stored": "सीक्रेट संग्रहीत",
-      "no-secret": "कोई सीक्रेट नहीं",
+      "check": "चेक करें",
       "code-valid": "कोड मान्य है!",
-      "code-invalid": "कोड अमान्य है या कोई सीक्रेट संग्रहीत नहीं है।"
+      "code-invalid": "कोड अमान्य है।"
     },
     "dialogs": {
       "book-seat": "{{seat}} बुक करें",

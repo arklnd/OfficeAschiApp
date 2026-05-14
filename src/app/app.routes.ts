@@ -7,6 +7,6 @@ export const routes: Routes = [
   { path: '', redirectTo: 'teams', pathMatch: 'full' },
   { path: 'teams', component: TeamSearchComponent },
   { path: 'team/:id', component: TeamDetailComponent },
-  { path: 'totp-verify', loadComponent: () => import('./totp-verify/totp-verify.component').then(m => m.TotpVerifyComponent) },
+  { path: 'totp-sync-check', loadComponent: () => import('./totp-verify/totp-verify.component').then(m => m.TotpSyncCheckComponent) },
   ...(isDevMode() ? [{ path: 'dev', loadComponent: () => import('./dev-menu/dev-menu.component').then(m => m.DevMenuComponent) }] : []),
 ];

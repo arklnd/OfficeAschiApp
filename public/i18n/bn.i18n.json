@@ -106,7 +106,7 @@
   "app": {
     "nav": {
       "teams": "দলসমূহ",
-      "totp-verify": "TOTP যাচাই",
+      "totp-sync-check": "TOTP সিঙ্ক চেক",
       "dev-menu": "ডেভ মেনু"
     },
     "banner": {
@@ -203,8 +203,8 @@
       "failed-cancel-waitlist": "অপেক্ষা তালিকা বাতিল করতে ব্যর্থ",
       "waitlisted": "{{name}}-কে {{seat}}-এর জন্য অপেক্ষা তালিকায় রাখা হয়েছে"
     },
-    "totp-verify": {
-      "title": "TOTP যাচাই",
+    "totp-sync-check": {
+      "title": "TOTP সিঙ্ক চেক",
       "back": "দলসমূহ",
       "tab-team": "দল (প্রবন্ধক)",
       "tab-member": "সদস্য (রিপোর্টি)",
@@ -215,14 +215,12 @@
       "select-member": "একজন সদস্য নির্বাচন করুন",
       "search-member": "সদস্য অনুসন্ধান",
       "search-member-placeholder": "সদস্য খুঁজতে টাইপ করুন...",
-      "verify-manager-totp": "প্রবন্ধক TOTP যাচাই করুন",
-      "verify-member-totp": "সদস্য TOTP যাচাই করুন",
+      "check-manager-totp": "প্রবন্ধক TOTP চেক করুন",
+      "check-member-totp": "সদস্য TOTP চেক করুন",
       "enter-code": "TOTP কোড",
-      "verify": "যাচাই করুন",
-      "secret-stored": "সিক্রেট সংরক্ষিত",
-      "no-secret": "কোনো সিক্রেট নেই",
+      "check": "চেক করুন",
       "code-valid": "কোড বৈধ!",
-      "code-invalid": "কোড অবৈধ বা কোনো সিক্রেট সংরক্ষিত নেই।"
+      "code-invalid": "কোড অবৈধ।"
     },
     "dialogs": {
       "book-seat": "{{seat}} বুক করুন",

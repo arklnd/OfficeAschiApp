@@ -104,6 +104,11 @@ export class ApiService implements OnDestroy {
     return this.http.delete(`${this.base}/bookings/${bookingId}`, this.reporteeCtx(reporteeId, reporteeName, 'app.dialogs.reason-cancel-booking'));
   }
 
+  // TOTP
+  verifyTotp(entityType: string, entityId: number, code: string): Observable<{ valid: boolean }> {
+    return this.http.post<{ valid: boolean }>(`${this.base}/totp/verify`, { entityType, entityId, code });
+  }
+
   // Health
   checkHealth(): Observable<{ status: string; timestamp: string }> {
     return this.http.get<{ status: string; timestamp: string }>(`${this.serverBase}/health`);
