@@ -108,6 +108,7 @@
       "teams": "দলসমূহ",
       "totp-sync-check": "TOTP সিঙ্ক চেক",
       "implant-secret": "সিক্রেট ইমপ্ল্যান্ট",
+      "set-active-member": "সক্রিয় সদস্য নির্ধারণ",
       "dev-menu": "ডেভ মেনু"
     },
     "banner": {
@@ -243,8 +244,20 @@
       "no-secret": "কোনো সিক্রেট নেই",
       "implant-success": "কোড যাচাই হয়েছে — সিক্রেট সংরক্ষিত!",
       "implant-failed": "কোড অবৈধ — সিক্রেট সংরক্ষিত হয়নি।"
-    },
-    "dialogs": {
+    },    "set-active-member": {
+      "title": "সক্রিয় সদস্য নির্ধারণ",
+      "back": "দলসমূহ",
+      "select-team": "একটি দল নির্বাচন করুন",
+      "search-team": "দল অনুসন্ধান",
+      "select-member": "একজন সদস্য নির্বাচন করুন",
+      "search-member": "সদস্য অনুসন্ধান",
+      "no-members": "এই দলে কোনো অনুমোদিত সদস্য নেই।",
+      "current-status": "সক্রিয় সদস্যের অবস্থা",
+      "active": "সক্রিয়",
+      "none-set": "কোনো সক্রিয় সদস্য নির্ধারিত নেই",
+      "set-active": "সক্রিয় করুন",
+      "clear": "মুছুন"
+    },    "dialogs": {
       "book-seat": "{{seat}} বুক করুন",
       "confirm-booking": "বুকিং নিশ্চিত করুন",
       "book-seat-btn": "আসন বুক করুন",

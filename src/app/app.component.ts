@@ -30,6 +30,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
         <hy-shell-nav-item [name]="'app.nav.teams' | transloco" route="/teams"></hy-shell-nav-item>
         <hy-shell-nav-item [name]="'app.nav.totp-sync-check' | transloco" route="/totp-sync-check"></hy-shell-nav-item>
         <hy-shell-nav-item [name]="'app.nav.implant-secret' | transloco" route="/implant-secret"></hy-shell-nav-item>
+        <hy-shell-nav-item [name]="'app.nav.set-active-member' | transloco" route="/set-active-member"></hy-shell-nav-item>
       </hy-shell-nav>
       <router-outlet />
     </hy-shell>

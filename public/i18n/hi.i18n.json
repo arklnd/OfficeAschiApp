@@ -108,6 +108,7 @@
       "teams": "टीमें",
       "totp-sync-check": "TOTP सिंक चेक",
       "implant-secret": "सीक्रेट इम्प्लांट",
+      "set-active-member": "सक्रिय सदस्य निर्धारण",
       "dev-menu": "डेव मेनू"
     },
     "banner": {
@@ -243,8 +244,20 @@
       "no-secret": "कोई सीक्रेट नहीं",
       "implant-success": "कोड सत्यापित — सीक्रेट संग्रहीत!",
       "implant-failed": "कोड अमान्य — सीक्रेट संग्रहीत नहीं हुआ।"
-    },
-    "dialogs": {
+    },    "set-active-member": {
+      "title": "सक्रिय सदस्य निर्धारण",
+      "back": "टीमें",
+      "select-team": "टीम चुनें",
+      "search-team": "टीम खोजें",
+      "select-member": "सदस्य चुनें",
+      "search-member": "सदस्य खोजें",
+      "no-members": "इस टीम में कोई स्वीकृत सदस्य नहीं।",
+      "current-status": "सक्रिय सदस्य की स्थिति",
+      "active": "सक्रिय",
+      "none-set": "कोई सक्रिय सदस्य निर्धारित नहीं",
+      "set-active": "सक्रिय करें",
+      "clear": "हटाएं"
+    },    "dialogs": {
       "book-seat": "{{seat}} बुक करें",
       "confirm-booking": "बुकिंग की पुष्टि करें",
       "book-seat-btn": "सीट बुक करें",

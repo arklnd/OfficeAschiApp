@@ -9,4 +9,5 @@ export const routes: Routes = [
   { path: 'team/:id', component: TeamDetailComponent },
   { path: 'totp-sync-check', loadComponent: () => import('./totp-sync-check/totp-sync-check.component').then(m => m.TotpSyncCheckComponent) },
   { path: 'implant-secret', loadComponent: () => import('./implant-secret/implant-secret.component').then(m => m.ImplantSecretComponent) },
+  { path: 'set-active-member', loadComponent: () => import('./set-active-member/set-active-member.component').then(m => m.SetActiveMemberComponent) },
 ];

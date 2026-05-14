@@ -108,6 +108,7 @@
       "teams": "Teams",
       "totp-sync-check": "TOTP Sync Check",
       "implant-secret": "Implant Secret",
+      "set-active-member": "Set Active Member",
       "dev-menu": "Dev Menu"
     },
     "banner": {
@@ -243,8 +244,20 @@
       "no-secret": "No secret",
       "implant-success": "Code verified — secret stored!",
       "implant-failed": "Code invalid — secret not stored."
-    },
-    "dialogs": {
+    },    "set-active-member": {
+      "title": "Set Active Member",
+      "back": "Teams",
+      "select-team": "Select a Team",
+      "search-team": "Search Team",
+      "select-member": "Select a Member",
+      "search-member": "Search Member",
+      "no-members": "No approved members in this team.",
+      "current-status": "Active Member Status",
+      "active": "Active",
+      "none-set": "No active member set",
+      "set-active": "Set Active",
+      "clear": "Clear"
+    },    "dialogs": {
       "book-seat": "Book {{seat}}",
       "confirm-booking": "Confirm Booking",
       "book-seat-btn": "Book Seat",
