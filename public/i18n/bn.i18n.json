@@ -107,6 +107,7 @@
     "nav": {
       "teams": "দলসমূহ",
       "totp-sync-check": "TOTP সিঙ্ক চেক",
+      "implant-secret": "সিক্রেট ইমপ্ল্যান্ট",
       "dev-menu": "ডেভ মেনু"
     },
     "banner": {
@@ -221,6 +222,27 @@
       "check": "চেক করুন",
       "code-valid": "কোড বৈধ!",
       "code-invalid": "কোড অবৈধ।"
+    },
+    "implant-secret": {
+      "title": "সিক্রেট ইমপ্ল্যান্ট",
+      "back": "দলসমূহ",
+      "tab-team": "দল (প্রবন্ধক)",
+      "tab-member": "সদস্য (রিপোর্টি)",
+      "select-team": "একটি দল নির্বাচন করুন",
+      "search-team": "দল অনুসন্ধান",
+      "select-team-first": "প্রথমে একটি দল নির্বাচন করুন",
+      "select-member": "একজন সদস্য নির্বাচন করুন",
+      "search-member": "সদস্য অনুসন্ধান",
+      "implant-manager": "প্রবন্ধক সিক্রেট ইমপ্ল্যান্ট",
+      "implant-member": "সদস্য সিক্রেট ইমপ্ল্যান্ট",
+      "enter-secret": "সিক্রেট (Base32)",
+      "secret-placeholder": "TOTP সিক্রেট পেস্ট করুন",
+      "enter-code": "TOTP কোড",
+      "implant": "ইমপ্ল্যান্ট",
+      "secret-stored": "সিক্রেট সংরক্ষিত",
+      "no-secret": "কোনো সিক্রেট নেই",
+      "implant-success": "কোড যাচাই হয়েছে — সিক্রেট সংরক্ষিত!",
+      "implant-failed": "কোড অবৈধ — সিক্রেট সংরক্ষিত হয়নি।"
     },
     "dialogs": {
       "book-seat": "{{seat}} বুক করুন",

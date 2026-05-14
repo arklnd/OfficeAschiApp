@@ -107,6 +107,7 @@
     "nav": {
       "teams": "टीमें",
       "totp-sync-check": "TOTP सिंक चेक",
+      "implant-secret": "सीक्रेट इम्प्लांट",
       "dev-menu": "डेव मेनू"
     },
     "banner": {
@@ -221,6 +222,27 @@
       "check": "चेक करें",
       "code-valid": "कोड मान्य है!",
       "code-invalid": "कोड अमान्य है।"
+    },
+    "implant-secret": {
+      "title": "सीक्रेट इम्प्लांट",
+      "back": "टीमें",
+      "tab-team": "टीम (प्रबंधक)",
+      "tab-member": "सदस्य (रिपोर्टी)",
+      "select-team": "टीम चुनें",
+      "search-team": "टीम खोजें",
+      "select-team-first": "पहले टीम चुनें",
+      "select-member": "सदस्य चुनें",
+      "search-member": "सदस्य खोजें",
+      "implant-manager": "प्रबंधक सीक्रेट इम्प्लांट",
+      "implant-member": "सदस्य सीक्रेट इम्प्लांट",
+      "enter-secret": "सीक्रेट (Base32)",
+      "secret-placeholder": "TOTP सीक्रेट पेस्ट करें",
+      "enter-code": "TOTP कोड",
+      "implant": "इम्प्लांट",
+      "secret-stored": "सीक्रेट संग्रहीत",
+      "no-secret": "कोई सीक्रेट नहीं",
+      "implant-success": "कोड सत्यापित — सीक्रेट संग्रहीत!",
+      "implant-failed": "कोड अमान्य — सीक्रेट संग्रहीत नहीं हुआ।"
     },
     "dialogs": {
       "book-seat": "{{seat}} बुक करें",

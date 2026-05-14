@@ -107,6 +107,7 @@
     "nav": {
       "teams": "Teams",
       "totp-sync-check": "TOTP Sync Check",
+      "implant-secret": "Implant Secret",
       "dev-menu": "Dev Menu"
     },
     "banner": {
@@ -221,6 +222,27 @@
       "check": "Check",
       "code-valid": "Code is valid!",
       "code-invalid": "Code is invalid."
+    },
+    "implant-secret": {
+      "title": "Implant Secret",
+      "back": "Teams",
+      "tab-team": "Team (Manager)",
+      "tab-member": "Member (Reportee)",
+      "select-team": "Select a Team",
+      "search-team": "Search Team",
+      "select-team-first": "Select a Team First",
+      "select-member": "Select a Member",
+      "search-member": "Search Member",
+      "implant-manager": "Implant Manager Secret",
+      "implant-member": "Implant Member Secret",
+      "enter-secret": "Secret (Base32)",
+      "secret-placeholder": "Paste the TOTP secret",
+      "enter-code": "TOTP Code",
+      "implant": "Implant",
+      "secret-stored": "Secret stored",
+      "no-secret": "No secret",
+      "implant-success": "Code verified — secret stored!",
+      "implant-failed": "Code invalid — secret not stored."
     },
     "dialogs": {
       "book-seat": "Book {{seat}}",

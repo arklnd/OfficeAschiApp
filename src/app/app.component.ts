@@ -1,4 +1,4 @@
-import { Component, inject, isDevMode, NgZone } from '@angular/core';
+import { Component, inject, NgZone } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
@@ -29,9 +29,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
       <hy-shell-nav [mode]="sideNavMode">
         <hy-shell-nav-item [name]="'app.nav.teams' | transloco" route="/teams"></hy-shell-nav-item>
         <hy-shell-nav-item [name]="'app.nav.totp-sync-check' | transloco" route="/totp-sync-check"></hy-shell-nav-item>
-        @if (devMode) {
-          <hy-shell-nav-item [name]="'app.nav.dev-menu' | transloco" route="/dev"></hy-shell-nav-item>
-        }
+        <hy-shell-nav-item [name]="'app.nav.implant-secret' | transloco" route="/implant-secret"></hy-shell-nav-item>
       </hy-shell-nav>
       <router-outlet />
     </hy-shell>
@@ -45,7 +43,6 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 })
 export class App {
   sideNavMode = HyShellSideNavModes.Side;
-  devMode = isDevMode();
   private swUpdate = inject(SwUpdate);
   private router = inject(Router);
   private location = inject(Location);
