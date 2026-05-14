@@ -99,11 +99,10 @@
                 </mat-card-header>
                 <mat-card-content>
                   @if (seat.status === 'booked') {
-                    <div class="person-info">
+                    <div class="person-info" [matTooltip]="seat.booking!.createdAt | date:'medium'">
                       <hy-user-profile [name]="seat.personName" [size]="profileSize" bgColor="blue"></hy-user-profile>
                       <span>{{ seat.personName }}</span>
                     </div>
-                    <div class="booking-time">{{ seat.booking!.createdAt | date:'short' }}</div>
                   } @else {
                     <button mat-stroked-button hyIconLabelButton class="book-btn" (click)="openBookDialog(seat.seatId, seat.label)">
                       <mat-icon hyIcon>add</mat-icon> {{ 'app.common.book' | transloco }}
