@@ -76,7 +76,7 @@
           </div>
         </div>
 
-        @if (loading()) {
+        @if (loading() || availabilityLoading()) {
           <div class="seat-grid">
             @for (i of [1,2,3,4]; track i) {
               <mat-card appearance="outlined"><mat-card-content>

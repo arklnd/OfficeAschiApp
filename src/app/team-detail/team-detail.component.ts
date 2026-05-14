@@ -24,7 +24,8 @@ import { HyErrorLayoutModule } from '@hyland/ui/error-layout';
 import { HyComboBoxModule } from '@hyland/ui/combo-box';
 import { HyTranslateModule, HyTranslateService } from '@hyland/ui/language';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
-import { forkJoin, finalize } from 'rxjs';
+import { forkJoin, finalize, Subject } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../services/booking.service';
 import {
@@ -58,8 +59,11 @@ export class TeamDetailComponent implements OnInit {
   reportees = signal<ReporteeResponse[]>([]);
   availability = signal<AvailabilityResponse | null>(null);
   loading = signal(false);
+  availabilityLoading = signal(false);
   notFound = signal(false);
   selectedDate = signal<string>(this.todayString());
+
+  private dateChange$ = new Subject<string>();
 
   // Manager actions
   addingSeat = signal(false);
@@ -123,6 +127,17 @@ export class TeamDetailComponent implements OnInit {
     this.teamId = Number(this.route.snapshot.paramMap.get('id'));
     const savedId = localStorage.getItem(`reportee_${this.teamId}`);
     if (savedId) this.currentReporteeId.set(Number(savedId));
+    this.dateChange$.pipe(
+      debounceTime(250),
+      switchMap(date => {
+        this.availabilityLoading.set(true);
+        return this.api.getAvailability(this.teamId, date);
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: a => { this.availability.set(a); this.availabilityLoading.set(false); this.loading.set(false); },
+      error: () => { this.toastService.error(this.t.get('app.toasts.failed-load-availability')); this.availabilityLoading.set(false); this.loading.set(false); },
+    });
     this.loadAll();
     this.api.backendRecovered$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAll());
   }
@@ -152,10 +167,8 @@ export class TeamDetailComponent implements OnInit {
   }
 
   loadAvailability(): void {
-    this.api.getAvailability(this.teamId, this.selectedDate()).subscribe({
-      next: a => { this.availability.set(a); this.loading.set(false); },
-      error: () => { this.toastService.error(this.t.get('app.toasts.failed-load-availability')); this.loading.set(false); },
-    });
+    this.availabilityLoading.set(true);
+    this.dateChange$.next(this.selectedDate());
   }
 
   get dateAsDate(): Date { return new Date(this.selectedDate() + 'T00:00:00'); }
