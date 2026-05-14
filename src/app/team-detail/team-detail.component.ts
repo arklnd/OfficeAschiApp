@@ -92,6 +92,7 @@ export class TeamDetailComponent implements OnInit {
   availableCount = computed(() => this.availability()?.availableCount ?? 0);
   totalSeats = computed(() => this.availability()?.totalSeats ?? 0);
   waitlistedCount = computed(() => this.availability()?.waitlistedCount ?? 0);
+  skeletonSlots = computed(() => Array.from({ length: this.seats().length || 4 }, (_, i) => i));
 
   allSeats = computed(() => {
     const booked = this.bookedSeats().map(b => ({

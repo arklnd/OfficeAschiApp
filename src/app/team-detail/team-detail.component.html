@@ -78,7 +78,7 @@
 
         @if (loading() || availabilityLoading()) {
           <div class="seat-grid">
-            @for (i of [1,2,3,4]; track i) {
+            @for (i of skeletonSlots(); track i) {
               <mat-card appearance="outlined"><mat-card-content>
                 <hy-ghost-block style="height: 80px;"></hy-ghost-block>
               </mat-card-content></mat-card>
