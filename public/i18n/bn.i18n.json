@@ -106,6 +106,7 @@
   "app": {
     "nav": {
       "teams": "দলসমূহ",
+      "totp-verify": "TOTP যাচাই",
       "dev-menu": "ডেভ মেনু"
     },
     "banner": {
@@ -201,6 +202,27 @@
       "removed-waitlist": "{{name}}-কে {{seat}}-এর অপেক্ষা তালিকা থেকে সরানো হয়েছে",
       "failed-cancel-waitlist": "অপেক্ষা তালিকা বাতিল করতে ব্যর্থ",
       "waitlisted": "{{name}}-কে {{seat}}-এর জন্য অপেক্ষা তালিকায় রাখা হয়েছে"
+    },
+    "totp-verify": {
+      "title": "TOTP যাচাই",
+      "back": "দলসমূহ",
+      "tab-team": "দল (প্রবন্ধক)",
+      "tab-member": "সদস্য (রিপোর্টি)",
+      "select-team": "একটি দল নির্বাচন করুন",
+      "search-team": "দল অনুসন্ধান",
+      "search-team-placeholder": "দল খুঁজতে টাইপ করুন...",
+      "select-team-first": "প্রথমে একটি দল নির্বাচন করুন",
+      "select-member": "একজন সদস্য নির্বাচন করুন",
+      "search-member": "সদস্য অনুসন্ধান",
+      "search-member-placeholder": "সদস্য খুঁজতে টাইপ করুন...",
+      "verify-manager-totp": "প্রবন্ধক TOTP যাচাই করুন",
+      "verify-member-totp": "সদস্য TOTP যাচাই করুন",
+      "enter-code": "TOTP কোড",
+      "verify": "যাচাই করুন",
+      "secret-stored": "সিক্রেট সংরক্ষিত",
+      "no-secret": "কোনো সিক্রেট নেই",
+      "code-valid": "কোড বৈধ!",
+      "code-invalid": "কোড অবৈধ বা কোনো সিক্রেট সংরক্ষিত নেই।"
     },
     "dialogs": {
       "book-seat": "{{seat}} বুক করুন",

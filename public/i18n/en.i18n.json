@@ -106,6 +106,7 @@
   "app": {
     "nav": {
       "teams": "Teams",
+      "totp-verify": "TOTP Verify",
       "dev-menu": "Dev Menu"
     },
     "banner": {
@@ -201,6 +202,27 @@
       "removed-waitlist": "Removed {{name}} from waitlist for {{seat}}",
       "failed-cancel-waitlist": "Failed to cancel waitlist",
       "waitlisted": "Waitlisted {{name}} for {{seat}}"
+    },
+    "totp-verify": {
+      "title": "TOTP Verify",
+      "back": "Teams",
+      "tab-team": "Team (Manager)",
+      "tab-member": "Member (Reportee)",
+      "select-team": "Select a Team",
+      "search-team": "Search Team",
+      "search-team-placeholder": "Type to search teams...",
+      "select-team-first": "Select a Team First",
+      "select-member": "Select a Member",
+      "search-member": "Search Member",
+      "search-member-placeholder": "Type to search members...",
+      "verify-manager-totp": "Verify Manager TOTP",
+      "verify-member-totp": "Verify Member TOTP",
+      "enter-code": "TOTP Code",
+      "verify": "Verify",
+      "secret-stored": "Secret stored",
+      "no-secret": "No secret",
+      "code-valid": "Code is valid!",
+      "code-invalid": "Code is invalid or no secret stored."
     },
     "dialogs": {
       "book-seat": "Book {{seat}}",

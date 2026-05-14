@@ -27,7 +27,8 @@ import { StatusBar, Style } from '@capacitor/status-bar';
     }
     <hy-shell toolbarTitle="OfficeAschi" homeRoute="/" logo="icons/icon-96x96.png">
       <hy-shell-nav [mode]="sideNavMode">
-        <hy-shell-nav-item [name]="'app.nav.teams' | transloco" route="/"></hy-shell-nav-item>
+        <hy-shell-nav-item [name]="'app.nav.teams' | transloco" route="/teams"></hy-shell-nav-item>
+        <hy-shell-nav-item [name]="'app.nav.totp-verify' | transloco" route="/totp-verify"></hy-shell-nav-item>
         @if (devMode) {
           <hy-shell-nav-item [name]="'app.nav.dev-menu' | transloco" route="/dev"></hy-shell-nav-item>
         }
