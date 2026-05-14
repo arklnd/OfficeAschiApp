@@ -1,6 +1,6 @@
 import { Component, inject, NgZone, signal } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
 import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
@@ -67,6 +67,15 @@ export class App {
       // Check for updates every 5 minutes for long-running sessions
       setInterval(() => this.swUpdate.checkForUpdate(), 5 * 60 * 1000);
     }
+
+    const savedPath = localStorage.getItem('oa_last_path');
+    if (savedPath && savedPath !== '/' && savedPath !== '/teams') {
+      this.router.navigateByUrl(savedPath);
+    }
+
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(e => localStorage.setItem('oa_last_path', e.urlAfterRedirects));
 
     this.registerBackButton();
     this.syncStatusBarWithTheme();
