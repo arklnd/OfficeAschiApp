@@ -30,6 +30,8 @@ async function shellConfigFactory() {
       name: 'OfficeAschi',
       version,
       copyrightYear: 2026,
+      licensesUrl: 'https://github.com/arklnd/OfficeAschiApi',
+      privacyPolicyUrl: 'https://github.com/arklnd/OfficeAschiApp',
     },
   };
 }
