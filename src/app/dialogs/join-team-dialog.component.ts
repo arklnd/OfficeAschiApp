@@ -55,12 +55,14 @@ export interface JoinTeamDialogData {
               <img [src]="qrDataUrl()" [alt]="'app.dialogs.totp-qr-alt' | transloco" width="200" height="200" />
             }
           </div>
-          <hy-tag color="blue">{{ secret() }}</hy-tag>
+          @if (secret()) {
+            <hy-tag color="blue">{{ secret() }}</hy-tag>
+          }
           <div class="qr-actions">
-            <button mat-stroked-button hyIconLabelButton type="button" (click)="downloadQr()">
+            <button mat-stroked-button hyIconLabelButton type="button" (click)="downloadQr()" [disabled]="!qrDataUrl()">
               <mat-icon hyIcon>download</mat-icon> {{ 'app.dialogs.download-qr' | transloco }}
             </button>
-            <button mat-stroked-button hyIconLabelButton type="button" (click)="copySecret()">
+            <button mat-stroked-button hyIconLabelButton type="button" (click)="copySecret()" [disabled]="!secret()">
               <mat-icon hyIcon>copy</mat-icon> {{ 'app.dialogs.copy-secret' | transloco }}
             </button>
           </div>
@@ -81,7 +83,7 @@ export interface JoinTeamDialogData {
 })
 export class JoinTeamDialogComponent implements OnInit, OnDestroy {
   form = new FormGroup({
-    friendlyName: new FormControl(`Member-${Date.now()}`, Validators.required),
+    friendlyName: new FormControl('', Validators.required),
     verifyCode: new FormControl(''),
   });
   joining = signal(false);
@@ -112,11 +114,17 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
   }
 
   private generateSecret(): void {
+    const name = this.form.get('friendlyName')!.value?.trim();
+    if (!name) {
+      this.secret.set('');
+      this.qrDataUrl.set('');
+      this.form.get('verifyCode')!.reset('');
+      return;
+    }
     const secret = this.totpService.generateSecret();
     this.secret.set(secret);
     this.form.get('verifyCode')!.reset('');
     this.verifyError.set('');
-    const name = this.form.get('friendlyName')!.value || `Member-${Date.now()}`;
     const uri = this.totpService.getOtpAuthUri(secret, `${name} @ ${this.data.teamName}`);
     this.generateQrWithLogo(uri).then(url => this.qrDataUrl.set(url));
   }
