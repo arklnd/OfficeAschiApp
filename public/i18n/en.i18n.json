@@ -279,7 +279,7 @@
       "select-member": "Select Member",
       "join-team": "Join {{team}}",
       "joining": "Joining...",
-      "join-team-btn": "Join Team",
+      "join-team-btn": "Request Join",
       "friendly-name": "Your Friendly Name",
       "friendly-name-placeholder": "How the team knows you",
       "scan-qr": "Scan this QR code with your authenticator app, or save the secret key.",
