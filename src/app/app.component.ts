@@ -47,7 +47,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
   `,
 })
 export class App {
-  sideNavMode = HyShellSideNavModes.Side;
+  sideNavMode = HyShellSideNavModes.Over;
   devMode = signal(localStorage.getItem('oa_dev_mode') === '1');
   private tapCount = 0;
   private tapTimer: ReturnType<typeof setTimeout> | null = null;

@@ -67,8 +67,20 @@
             <mat-datepicker #picker></mat-datepicker>
           </div>
           <div class="hero-stats">
-            <hy-tag color="blue">{{ bookedCount() }} {{ 'app.common.booked' | transloco }}</hy-tag>
-            <hy-tag color="green">{{ availableCount() }} {{ 'app.common.available' | transloco }}</hy-tag>
+            <hy-tag color="blue">
+              @if (loading() || availabilityLoading()) {
+                <hy-ghost-block style="width: 60px; height: 16px; margin: 0; display: inline-block; vertical-align: middle;"></hy-ghost-block>
+              } @else {
+                {{ bookedCount() }} {{ 'app.common.booked' | transloco }}
+              }
+            </hy-tag>
+            <hy-tag color="green">
+              @if (loading() || availabilityLoading()) {
+                <hy-ghost-block style="width: 60px; height: 16px; margin: 0; display: inline-block; vertical-align: middle;"></hy-ghost-block>
+              } @else {
+                {{ availableCount() }} {{ 'app.common.available' | transloco }}
+              }
+            </hy-tag>
             @if (waitlistedCount() > 0) {
               <hy-tag color="orange">{{ waitlistedCount() }} {{ 'app.common.waitlisted' | transloco }}</hy-tag>
             }
