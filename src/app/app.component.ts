@@ -64,6 +64,7 @@ export class App {
     this.profileMenuService.setProfileMenuEntries([
       { name: 'Report a Bug', href: 'https://github.com/arklnd/OfficeAschiApi/issues' },
       { name: 'Download APK', href: 'https://github.com/arklnd/OfficeAschiFlutter/releases' },
+      { name: 'User Guide', href: 'https://hyland.atlassian.net/wiki/x/kZwo8w' },
     ]);
 
     if (this.swUpdate.isEnabled) {
