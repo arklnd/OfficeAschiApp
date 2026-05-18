@@ -170,7 +170,7 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
   joinTeam(): void {
     if (this.joining()) return;
     const name = this.form.get('friendlyName')!.value?.trim();
-    if (!name) { this.toastService.error(this.t.get('app.dialogs.name-required')); return; }
+    if (!name) { this.toastService.error(this.t.get('app.dialogs.name-required'), { duration: 30000 }); return; }
 
     const code = this.form.get('verifyCode')!.value ?? '';
     if (!code || code.length !== 6) {
@@ -188,11 +188,11 @@ export class JoinTeamDialogComponent implements OnInit, OnDestroy {
       next: r => {
         this.totpService.storeSecret('reportee', r.id, this.secret());
         localStorage.setItem(`reportee_${this.data.teamId}`, String(r.id));
-        this.toastService.success(this.t.get('app.dialogs.joined-as', { name: r.friendlyName }));
+        this.toastService.success(this.t.get('app.dialogs.joined-as', { name: r.friendlyName }), { duration: 30000 });
         this.dialogRef.close(r);
       },
       error: err => {
-        this.toastService.error(err.error?.error || this.t.get('app.dialogs.failed-join'));
+        this.toastService.error(err.error?.error || this.t.get('app.dialogs.failed-join'), { duration: 30000 });
         this.joining.set(false);
       },
     });

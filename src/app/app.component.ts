@@ -103,11 +103,11 @@ export class App {
       if (isActive) {
         localStorage.removeItem('oa_dev_mode');
         this.devMode.set(false);
-        this.toast.info('Developer mode deactivated');
+        this.toast.info('Developer mode deactivated', { duration: 30000 });
       } else {
         localStorage.setItem('oa_dev_mode', '1');
         this.devMode.set(true);
-        this.toast.success('Developer mode activated');
+        this.toast.success('Developer mode activated', { duration: 30000 });
       }
     }
   }
@@ -170,6 +170,7 @@ export class App {
     const ref = this.toast.info('Download OfficeAschi native Android app — choose latest RELEASE build', {
       action: 'Download',
       canBeDismissed: true,
+      duration: 30000,
     });
     ref.onAction().subscribe(() => {
       window.open('https://github.com/arklnd/OfficeAschiFlutter/releases', '_blank', 'noopener');

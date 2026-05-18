@@ -25,7 +25,7 @@ export class DownloadService {
   private async nativeDownload(dataUrl: string, filename: string): Promise<void> {
     const base64Data = dataUrl.split(',')[1];
 
-    this.toast.info(`Downloading ${filename}…`);
+    this.toast.info(`Downloading ${filename}…`, { duration: 30000 });
 
     await Filesystem.writeFile({
       path: filename,
@@ -33,6 +33,6 @@ export class DownloadService {
       directory: Directory.Documents,
     });
 
-    this.toast.success(`${filename} saved to Documents`);
+    this.toast.success(`${filename} saved to Documents`, { duration: 30000 });
   }
 }

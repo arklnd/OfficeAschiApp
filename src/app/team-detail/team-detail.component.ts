@@ -137,7 +137,7 @@ export class TeamDetailComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: a => { this.availability.set(a); this.availabilityLoading.set(false); this.loading.set(false); },
-      error: () => { this.toastService.error(this.t.get('app.toasts.failed-load-availability')); this.availabilityLoading.set(false); this.loading.set(false); },
+      error: () => { this.toastService.error(this.t.get('app.toasts.failed-load-availability'), { duration: 30000 }); this.availabilityLoading.set(false); this.loading.set(false); },
     });
     this.loadAll();
     this.api.backendRecovered$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadAll());
@@ -161,7 +161,7 @@ export class TeamDetailComponent implements OnInit {
         if (err.status === 404) {
           this.notFound.set(true);
         } else {
-          this.toastService.error(this.t.get('app.toasts.failed-load-team'));
+          this.toastService.error(this.t.get('app.toasts.failed-load-team'), { duration: 30000 });
         }
       },
     });
@@ -200,12 +200,12 @@ export class TeamDetailComponent implements OnInit {
       finalize(() => this.addingSeat.set(false)),
     ).subscribe({
       next: seat => {
-        this.toastService.success(this.t.get('app.toasts.seat-added', { label: seat.label }));
+        this.toastService.success(this.t.get('app.toasts.seat-added', { label: seat.label }), { duration: 30000 });
         input.value = '';
         this.loadAll();
       },
       error: err => {
-        this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-add-seat'));
+        this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-add-seat'), { duration: 30000 });
       },
     });
   }
@@ -213,17 +213,17 @@ export class TeamDetailComponent implements OnInit {
   deleteSeat(seat: SeatResponse): void {
     this.api.deleteSeat(this.teamId, seat.id, this.team()?.name).subscribe({
       next: () => {
-        this.toastService.success(this.t.get('app.toasts.seat-deleted', { label: seat.label }));
+        this.toastService.success(this.t.get('app.toasts.seat-deleted', { label: seat.label }), { duration: 30000 });
         this.loadAll();
       },
-      error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-delete-seat')),
+      error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-delete-seat'), { duration: 30000 }),
     });
   }
 
   approveReportee(reporteeId: number): void {
     this.api.approveReportee(this.teamId, reporteeId, this.team()?.name).subscribe({
-      next: () => { this.toastService.success(this.t.get('app.toasts.reportee-approved')); this.loadAll(); },
-      error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-approve')),
+      next: () => { this.toastService.success(this.t.get('app.toasts.reportee-approved'), { duration: 30000 }); this.loadAll(); },
+      error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-approve'), { duration: 30000 }),
     });
   }
 
@@ -234,8 +234,8 @@ export class TeamDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.denyReportee(this.teamId, reportee.id, this.team()?.name).subscribe({
-        next: () => { this.toastService.success(this.t.get('app.toasts.denied-join', { name: reportee.friendlyName })); this.loadAll(); },
-        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-deny')),
+        next: () => { this.toastService.success(this.t.get('app.toasts.denied-join', { name: reportee.friendlyName }), { duration: 30000 }); this.loadAll(); },
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-deny'), { duration: 30000 }),
       });
     });
   }
@@ -247,8 +247,8 @@ export class TeamDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.removeReportee(this.teamId, reportee.id, this.team()?.name).subscribe({
-        next: () => { this.toastService.success(this.t.get('app.toasts.removed-member', { name: reportee.friendlyName })); this.loadAll(); },
-        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-remove')),
+        next: () => { this.toastService.success(this.t.get('app.toasts.removed-member', { name: reportee.friendlyName }), { duration: 30000 }); this.loadAll(); },
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-remove'), { duration: 30000 }),
       });
     });
   }
@@ -262,10 +262,10 @@ export class TeamDetailComponent implements OnInit {
       if (!confirmed) return;
       this.api.deleteTeam(this.teamId, teamName).subscribe({
         next: () => {
-          this.toastService.success(this.t.get('app.toasts.team-deleted', { name: teamName }));
+          this.toastService.success(this.t.get('app.toasts.team-deleted', { name: teamName }), { duration: 30000 });
           this.router.navigate(['/']);
         },
-        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-delete-team')),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-delete-team'), { duration: 30000 }),
       });
     });
   }
@@ -295,10 +295,10 @@ export class TeamDetailComponent implements OnInit {
 
       this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
         next: () => {
-          this.toastService.success(this.t.get('app.toasts.booked-success', { name: resolvedName, seat: seatLabel, date: this.selectedDate() }));
+          this.toastService.success(this.t.get('app.toasts.booked-success', { name: resolvedName, seat: seatLabel, date: this.selectedDate() }), { duration: 30000 });
           this.loadAvailability();
         },
-        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.booking-failed')),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.booking-failed'), { duration: 30000 }),
       });
     });
   }
@@ -316,8 +316,8 @@ export class TeamDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) return;
       this.api.cancelBooking(booking.id, booking.reporteeId, booking.reporteeName).subscribe({
-        next: () => { this.toastService.success(this.t.get('app.toasts.cancelled-booking', { name: booking.reporteeName, seat: booking.seatLabel, date: booking.date })); this.loadAvailability(); },
-        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.cancel-failed')),
+        next: () => { this.toastService.success(this.t.get('app.toasts.cancelled-booking', { name: booking.reporteeName, seat: booking.seatLabel, date: booking.date }), { duration: 30000 }); this.loadAvailability(); },
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.cancel-failed'), { duration: 30000 }),
       });
     });
   }
@@ -346,10 +346,10 @@ export class TeamDetailComponent implements OnInit {
 
       this.api.bookSeat({ reporteeId: resolvedId, seatId, date: this.selectedDate() }, resolvedId, resolvedName).subscribe({
         next: b => {
-          this.toastService.success(this.t.get('app.toasts.waitlisted', { name: resolvedName, seat: b.seatLabel }));
+          this.toastService.success(this.t.get('app.toasts.waitlisted', { name: resolvedName, seat: b.seatLabel }), { duration: 30000 });
           this.loadAvailability();
         },
-        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.booking-failed')),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.booking-failed'), { duration: 30000 }),
       });
     });
   }
@@ -357,14 +357,14 @@ export class TeamDetailComponent implements OnInit {
   copyTeamUrl(): void {
     const url = `${location.origin}/team/${this.teamId}`;
     navigator.clipboard.writeText(url).then(() => {
-      this.toastService.success(this.t.get('app.toasts.team-link-copied'));
+      this.toastService.success(this.t.get('app.toasts.team-link-copied'), { duration: 30000 });
     });
   }
 
   openJoinDialog(): void {
     const savedId = localStorage.getItem(`reportee_${this.teamId}`);
     if (savedId) {
-      this.toastService.info(this.t.get('app.toasts.already-joined'));
+      this.toastService.info(this.t.get('app.toasts.already-joined'), { duration: 30000 });
       return;
     }
     const dialogRef = this.dialog.open(JoinTeamDialogComponent, configureHyDialogOptions({
@@ -382,7 +382,7 @@ export class TeamDetailComponent implements OnInit {
   cancelWaitlist(w: WaitlistInfo): void {
     const reporteeId = w.reporteeId || this.reportees().find(r => r.friendlyName === w.reporteeName)?.id;
     if (!reporteeId) {
-      this.toastService.error(this.t.get('app.toasts.cannot-identify-reportee'));
+      this.toastService.error(this.t.get('app.toasts.cannot-identify-reportee'), { duration: 30000 });
       return;
     }
     const dialogRef = this.dialog.open(CancelBookConfirmDialogComponent, configureHyDialogOptions({
@@ -398,10 +398,10 @@ export class TeamDetailComponent implements OnInit {
       if (!confirmed) return;
       this.api.cancelBooking(w.bookingId, reporteeId, w.reporteeName).subscribe({
         next: () => {
-          this.toastService.success(this.t.get('app.toasts.removed-waitlist', { name: w.reporteeName, seat: w.desiredSeatLabel }));
+          this.toastService.success(this.t.get('app.toasts.removed-waitlist', { name: w.reporteeName, seat: w.desiredSeatLabel }), { duration: 30000 });
           this.loadAvailability();
         },
-        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-cancel-waitlist')),
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.toasts.failed-cancel-waitlist'), { duration: 30000 }),
       });
     });
   }

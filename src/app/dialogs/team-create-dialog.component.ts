@@ -171,11 +171,11 @@ export class TeamCreateDialogComponent implements OnInit, OnDestroy {
     }).subscribe({
       next: team => {
         this.totpService.storeSecret('manager', team.id, this.secret());
-        this.toastService.success(this.t.get('app.dialogs.team-created', { name: team.name }));
+        this.toastService.success(this.t.get('app.dialogs.team-created', { name: team.name }), { duration: 30000 });
         this.dialogRef.close(team);
       },
       error: err => {
-        this.toastService.error(err.error?.error || this.t.get('app.dialogs.failed-create-team'));
+        this.toastService.error(err.error?.error || this.t.get('app.dialogs.failed-create-team'), { duration: 30000 });
         this.creating.set(false);
       },
     });
