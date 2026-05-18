@@ -3,7 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SwUpdate, VersionReadyEvent } from '@angular/service-worker';
 import { filter } from 'rxjs';
-import { HyShellModule, HyShellSideNavModes } from '@hyland/ui-shell';
+import { HyShellModule, HyShellSideNavModes, HyShellProfileMenuService } from '@hyland/ui-shell';
 import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
 import { HyTranslateModule } from '@hyland/ui/language';
 import { HyThemingService } from '@hyland/ui/theming';
@@ -58,7 +58,14 @@ export class App {
   private themingService = inject(HyThemingService);
   private toast = inject(HyToastService);
 
+  private profileMenuService = inject(HyShellProfileMenuService);
+
   constructor(public api: ApiService) {
+    this.profileMenuService.setProfileMenuEntries([
+      { name: 'Report a Bug', href: 'https://github.com/arklnd/OfficeAschiApi/issues' },
+      { name: 'Download APK', href: 'https://github.com/arklnd/OfficeAschiFlutter/releases' },
+    ]);
+
     if (this.swUpdate.isEnabled) {
       this.swUpdate.versionUpdates
         .pipe(filter((evt): evt is VersionReadyEvent => evt.type === 'VERSION_READY'))
@@ -79,6 +86,7 @@ export class App {
 
     this.registerBackButton();
     this.syncStatusBarWithTheme();
+    this.startIdleWatch();
   }
 
   onTitleClick(event: MouseEvent): void {
@@ -117,6 +125,55 @@ export class App {
   private applyStatusBarFromTheme(isDark: boolean) {
     StatusBar.setBackgroundColor({ color: isDark ? '#374151' : '#d1d5db' });
     StatusBar.setStyle({ style: isDark ? Style.Dark : Style.Light });
+  }
+
+  private idleTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly idleEvents = ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+  private readonly idleListenerBound = () => this.resetIdleTimer();
+
+  private startIdleWatch(): void {
+    if (Capacitor.isNativePlatform()) return;
+    this.idleEvents.forEach(e => document.addEventListener(e, this.idleListenerBound, { passive: true }));
+    // Start timer if already on a team page
+    if (this.router.url.startsWith('/team')) {
+      this.resetIdleTimer();
+    }
+    // Watch navigation to start/stop idle timer on team pages
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(e => {
+        if (e.urlAfterRedirects.startsWith('/team')) {
+          this.resetIdleTimer();
+        } else {
+          this.clearIdleTimer();
+        }
+      });
+  }
+
+  private clearIdleTimer(): void {
+    if (this.idleTimer) { clearTimeout(this.idleTimer); this.idleTimer = null; }
+  }
+
+  private resetIdleTimer(): void {
+    this.clearIdleTimer();
+    this.ngZone.runOutsideAngular(() => {
+      this.idleTimer = setTimeout(() => {
+        this.ngZone.run(() => this.showAndroidAppToast());
+      }, 3 * 60 * 1000); // 3 minutes
+    });
+  }
+
+  private showAndroidAppToast(): void {
+    // Stop watching after showing once
+    this.idleEvents.forEach(e => document.removeEventListener(e, this.idleListenerBound));
+    this.clearIdleTimer();
+    const ref = this.toast.info('Download OfficeAschi native Android app — choose latest RELEASE build', {
+      action: 'Download',
+      canBeDismissed: true,
+    });
+    ref.onAction().subscribe(() => {
+      window.open('https://github.com/arklnd/OfficeAschiFlutter/releases', '_blank', 'noopener');
+    });
   }
 
   private registerBackButton() {
