@@ -13,6 +13,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'teams', pathMatch: 'full' },
   { path: 'teams', component: TeamSearchComponent },
   { path: 'team/:id', component: TeamDetailComponent },
+  { path: 'seats', loadComponent: () => import('./seat-search/seat-search.component').then(m => m.SeatSearchComponent) },
   { path: 'totp-sync-check', loadComponent: () => import('./totp-sync-check/totp-sync-check.component').then(m => m.TotpSyncCheckComponent) },
   { path: 'implant-secret', canActivate: [devModeGuard], loadComponent: () => import('./implant-secret/implant-secret.component').then(m => m.ImplantSecretComponent) },
   { path: 'set-active-member', canActivate: [devModeGuard], loadComponent: () => import('./set-active-member/set-active-member.component').then(m => m.SetActiveMemberComponent) },

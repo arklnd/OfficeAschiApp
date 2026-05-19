@@ -30,6 +30,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
     <hy-shell toolbarTitle="OfficeAschi" homeRoute="/" logo="icons/icon-96x96.png" (click)="onTitleClick($event)">
       <hy-shell-nav [mode]="sideNavMode">
         <hy-shell-nav-item [name]="'app.nav.teams' | transloco" route="/teams"></hy-shell-nav-item>
+        <hy-shell-nav-item [name]="'app.nav.seats' | transloco" route="/seats"></hy-shell-nav-item>
         <hy-shell-nav-item [name]="'app.nav.totp-sync-check' | transloco" route="/totp-sync-check"></hy-shell-nav-item>
         @if (devMode()) {
           <hy-shell-nav-item [name]="'app.nav.implant-secret' | transloco" route="/implant-secret"></hy-shell-nav-item>

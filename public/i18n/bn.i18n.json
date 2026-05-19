@@ -109,7 +109,8 @@
       "totp-sync-check": "TOTP সিঙ্ক চেক",
       "implant-secret": "সিক্রেট ইমপ্ল্যান্ট",
       "set-active-member": "সক্রিয় সদস্য নির্ধারণ",
-      "dev-menu": "ডেভ মেনু"
+      "dev-menu": "ডেভ মেনু",
+      "seats": "আসন অনুসন্ধান"
     },
     "banner": {
       "backend-down": "ব্যাকএন্ড অনুপলব্ধ। কিছু বৈশিষ্ট্য কাজ নাও করতে পারে।"
@@ -141,6 +142,18 @@
       "search-aria": "দলসমূহ",
       "create-team": "দল তৈরি করুন",
       "empty-text": "কোনো দল পাওয়া যায়নি। একটি তৈরি করুন বা আপনার অনুসন্ধান পরিবর্তন করুন।"
+    },
+    "seat-search": {
+      "title": "আসন অনুসন্ধান",
+      "search-placeholder": "আসন লেবেল বা দল দিয়ে খুঁজুন...",
+      "search-aria": "আসনসমূহ",
+      "date": "তারিখ",
+      "filter-all": "সব",
+      "filter-vacant": "খালি",
+      "filter-engaged": "ব্যস্ত",
+      "engaged": "ব্যস্ত",
+      "vacant": "খালি",
+      "empty-text": "কোনো আসন পাওয়া যায়নি। আপনার অনুসন্ধান বা ফিল্টার পরিবর্তন করুন।"
     },
     "team-detail": {
       "seat-booking": "আসন বুকিং",

@@ -25,3 +25,7 @@ export interface AvailabilityResponse {
   availableCount: number; waitlistedCount: number;
   bookings: BookingResponse[]; availableSeats: SeatResponse[]; waitlist: WaitlistInfo[];
 }
+
+// --- All Seats Overview ---
+export interface SeatOverviewBooking { reporteeId: number; reporteeName: string; bookingId: number; status: string; createdAt: string; }
+export interface SeatOverviewResponse { id: number; label: string; teamId: number; teamName: string; isEngaged: boolean; engagedBy: SeatOverviewBooking | null; }

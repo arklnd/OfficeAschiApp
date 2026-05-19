@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import {
   TeamSearchResult, TeamResponse, CreateTeamRequest,
   SeatResponse, AddSeatRequest, ReporteeResponse, JoinTeamRequest,
-  BookSeatRequest, BookingResponse, AvailabilityResponse,
+  BookSeatRequest, BookingResponse, AvailabilityResponse, SeatOverviewResponse,
 } from '../models';
 import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from '../totp/totp.context';
 import { Capacitor } from '@capacitor/core';
@@ -74,6 +74,11 @@ export class ApiService implements OnDestroy {
   }
   deleteSeat(teamId: number, seatId: number, teamName = ''): Observable<unknown> {
     return this.http.delete(`${this.base}/teams/${teamId}/seats/${seatId}`, this.managerCtx(teamId, teamName, 'app.dialogs.reason-delete-seat'));
+  }
+
+  // All Seats Overview
+  getAllSeats(date: string): Observable<SeatOverviewResponse[]> {
+    return this.http.get<SeatOverviewResponse[]>(`${this.base}/seats`, { params: { date } });
   }
 
   // Reportees
