@@ -47,6 +47,8 @@
     "!/**/*__*/**",
     "!/swagger",
     "!/swagger/**",
-    "!/health"
+    "!/health",
+    "!/mcp",
+    "!/mcp/**"
   ]
 }
