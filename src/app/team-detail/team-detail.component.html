@@ -40,7 +40,11 @@
   <!-- Tabs -->
   <mat-tab-group hyTabGroup>
     <!-- Booking Tab -->
-    <mat-tab [label]="'app.team-detail.tab-bookings' | transloco">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon hyIcon style="margin-right: 6px;">calendar</mat-icon>
+        {{ 'app.team-detail.tab-bookings' | transloco }}
+      </ng-template>
       <div class="tab-content">
         <!-- Date selector -->
         <div class="hero">
@@ -94,7 +98,7 @@
             <mat-icon hyIcon>calendar</mat-icon> {{ showRangeView() ? ('app.range.hide-range' | transloco) : ('app.range.range-view' | transloco) }}
           </button>
           <button mat-stroked-button hyIconLabelButton (click)="openRangeBookDialog()">
-            <mat-icon hyIcon>date_range</mat-icon> {{ 'app.range.book-date-range' | transloco }}
+            <mat-icon hyIcon>fit_horizontal</mat-icon> {{ 'app.range.book-date-range' | transloco }}
           </button>
         </div>
 
@@ -267,7 +271,14 @@
     </mat-tab>
 
     <!-- Manage Tab (Manager) -->
-    <mat-tab [label]="'app.team-detail.tab-manage' | transloco">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon hyIcon style="margin-right: 6px;">settings</mat-icon>
+        {{ 'app.team-detail.tab-manage' | transloco }}
+        @if (pendingReportees().length > 0) {
+          <hy-tag color="orange" style="margin-left: 6px;">{{ pendingReportees().length }}</hy-tag>
+        }
+      </ng-template>
       <div class="tab-content">
         <!-- Seats -->
         <mat-card appearance="outlined" class="manage-card">
