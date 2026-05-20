@@ -325,6 +325,7 @@
       "totp-code-label": "TOTP কোড",
       "range-book-header": "আসন বুক করুন — তারিখ পরিসর",
       "range-book-confirm": "পরিসর বুক করুন",
+      "range-book-select": "তারিখ পরিসর বুক করতে একজন সদস্য নির্বাচন করুন।",
       "range-book-member": "সদস্য",
       "range-book-booking-as": "বুকিং হচ্ছে",
       "range-book-seat": "আসন",

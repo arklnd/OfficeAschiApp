@@ -325,6 +325,7 @@
       "totp-code-label": "TOTP Code",
       "range-book-header": "Book Seat — Date Range",
       "range-book-confirm": "Book Range",
+      "range-book-select": "Select a member to book the date range.",
       "range-book-member": "Member",
       "range-book-booking-as": "Booking as",
       "range-book-seat": "Seat",

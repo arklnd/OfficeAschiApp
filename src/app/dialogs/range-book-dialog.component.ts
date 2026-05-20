@@ -48,7 +48,8 @@ export interface RangeBookDialogResult {
       (dismissed)="onDismiss()"
     >
       @if (!data.currentReporteeName) {
-        <mat-form-field hyFormField style="width:100%; margin-bottom: 8px">
+        <p>{{ 'app.dialogs.range-book-select' | transloco }}</p>
+        <mat-form-field hyFormField style="width:100%">
           <mat-label>{{ 'app.dialogs.range-book-member' | transloco }}</mat-label>
           <hy-combo-box
             [options]="filteredReportees()"

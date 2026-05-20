@@ -325,6 +325,7 @@
       "totp-code-label": "TOTP कोड",
       "range-book-header": "सीट बुक करें — तारीख सीमा",
       "range-book-confirm": "सीमा बुक करें",
+      "range-book-select": "तारीख सीमा बुक करने के लिए एक सदस्य चुनें।",
       "range-book-member": "सदस्य",
       "range-book-booking-as": "बुकिंग",
       "range-book-seat": "सीट",
