@@ -88,6 +88,95 @@
           </div>
         </div>
 
+        <!-- Action bar: Range view toggle + Range book -->
+        <div class="range-actions">
+          <button mat-stroked-button hyIconLabelButton (click)="toggleRangeView()" [class.active]="showRangeView()">
+            <mat-icon hyIcon>calendar</mat-icon> {{ showRangeView() ? ('app.range.hide-range' | transloco) : ('app.range.range-view' | transloco) }}
+          </button>
+          <button mat-stroked-button hyIconLabelButton (click)="openRangeBookDialog()">
+            <mat-icon hyIcon>date_range</mat-icon> {{ 'app.range.book-date-range' | transloco }}
+          </button>
+        </div>
+
+        <!-- Range Availability View -->
+        @if (showRangeView()) {
+          <mat-card appearance="outlined" class="range-card">
+            <mat-card-header>
+              <mat-card-title>{{ 'app.range.range-availability' | transloco }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="range-date-pickers">
+                <mat-form-field hyFormField>
+                  <mat-label>{{ 'app.range.date-range' | transloco }}</mat-label>
+                  <mat-date-range-input [rangePicker]="rangePickerCal">
+                    <input matStartDate [value]="rangeFrom() + 'T00:00:00'" [placeholder]="'app.range.start' | transloco" (dateChange)="onRangeFromChange($event)">
+                    <input matEndDate [value]="rangeTo() + 'T00:00:00'" [placeholder]="'app.range.end' | transloco" (dateChange)="onRangeToChange($event)">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matSuffix [for]="rangePickerCal"></mat-datepicker-toggle>
+                  <mat-date-range-picker #rangePickerCal></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+
+              @if (rangeLoading()) {
+                <div class="range-grid">
+                  @for (i of [1,2,3,4,5,6,7]; track i) {
+                    <div class="range-day-cell"><hy-ghost-block style="height: 48px;"></hy-ghost-block></div>
+                  }
+                </div>
+              } @else if (rangeAvailability(); as ra) {
+                <div class="range-grid">
+                  @for (day of ra.days; track day.date) {
+                    <div class="range-day-cell"
+                         [class.weekend]="isWeekend(day.date)"
+                         [class.full]="day.availableCount === 0 && day.totalSeats > 0"
+                         [class.empty]="day.bookedCount === 0"
+                         [class.has-availability]="day.availableCount > 0"
+                         (click)="jumpToDate(day.date)"
+                         [matTooltip]="t.get('app.range.booked-available-tooltip', { booked: day.bookedCount, available: day.availableCount })">
+                      <span class="range-day-dow">{{ dayOfWeekShort(day.date) }}</span>
+                      <span class="range-day-num">{{ dayOfMonth(day.date) }}</span>
+                      <span class="range-day-bar">
+                        <span class="range-bar-fill" [style.width.%]="day.totalSeats ? (day.bookedCount / day.totalSeats * 100) : 0"></span>
+                      </span>
+                      <span class="range-day-count">{{ day.availableCount }}/{{ day.totalSeats }}</span>
+                    </div>
+                  }
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+
+        <!-- Last range booking result -->
+        @if (lastRangeBookResult(); as rbr) {
+          <mat-card appearance="outlined" class="range-result-card">
+            <mat-card-header>
+              <mat-card-title>{{ t.get('app.range.range-result-title', { seat: rbr.seatLabel }) }}</mat-card-title>
+              <button mat-icon-button (click)="dismissRangeResult()" [matTooltip]="'app.range.dismiss' | transloco">
+                <mat-icon hyIcon>close</mat-icon>
+              </button>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="range-result-summary">
+                <hy-tag color="green">{{ t.get('app.range.confirmed-count', { count: rbr.confirmedCount }) }}</hy-tag>
+                @if (rbr.waitlistedCount > 0) { <hy-tag color="orange">{{ t.get('app.range.waitlisted-count', { count: rbr.waitlistedCount }) }}</hy-tag> }
+                @if (rbr.failedCount > 0) { <hy-tag color="red">{{ t.get('app.range.skipped-count', { count: rbr.failedCount }) }}</hy-tag> }
+              </div>
+              <div class="range-result-grid">
+                @for (r of rbr.results; track r.date) {
+                  <div class="range-result-item" [class.success]="r.success" [class.failed]="!r.success">
+                    <span class="rr-date">{{ r.date }}</span>
+                    <hy-tag [color]="r.status === 'Confirmed' ? 'green' : r.status === 'Waitlisted' ? 'orange' : 'grey'">{{ r.status }}</hy-tag>
+                    @if (r.error) {
+                      <span class="rr-error">{{ r.error }}</span>
+                    }
+                  </div>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+
         @if (loading() || availabilityLoading()) {
           <div class="seat-grid">
             @for (i of skeletonSlots(); track i) {

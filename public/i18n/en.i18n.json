@@ -322,7 +322,35 @@
       "name-required": "Name is required",
       "joined-as": "Joined as {{name}}!",
       "failed-join": "Failed to join",
-      "totp-code-label": "TOTP Code"
+      "totp-code-label": "TOTP Code",
+      "range-book-header": "Book Seat — Date Range",
+      "range-book-confirm": "Book Range",
+      "range-book-member": "Member",
+      "range-book-booking-as": "Booking as",
+      "range-book-seat": "Seat",
+      "range-book-date-range": "Date Range",
+      "range-book-start": "Start",
+      "range-book-end": "End",
+      "range-book-days-selected": "{{count}} day(s) selected",
+      "range-book-max-days": "Maximum 90 days allowed"
+    },
+    "range": {
+      "hide-range": "Hide Range",
+      "range-view": "Range View",
+      "book-date-range": "Book Date Range",
+      "range-availability": "Range Availability",
+      "date-range": "Date Range",
+      "start": "Start",
+      "end": "End",
+      "booked-available-tooltip": "{{booked}} booked / {{available}} available",
+      "range-result-title": "Range Booking Result — {{seat}}",
+      "dismiss": "Dismiss",
+      "confirmed-count": "{{count}} confirmed",
+      "waitlisted-count": "{{count}} waitlisted",
+      "skipped-count": "{{count}} skipped",
+      "failed-range-availability": "Failed to load range availability",
+      "range-booked-success": "Booked {{seat}} for {{name}}: {{confirmed}} confirmed, {{waitlisted}} waitlisted, {{failed}} skipped",
+      "range-booking-failed": "Range booking failed"
     }
   }
 }

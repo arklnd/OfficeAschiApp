@@ -29,3 +29,17 @@ export interface AvailabilityResponse {
 // --- All Seats Overview ---
 export interface SeatOverviewBooking { reporteeId: number; reporteeName: string; bookingId: number; status: string; createdAt: string; }
 export interface SeatOverviewResponse { id: number; label: string; teamId: number; teamName: string; isEngaged: boolean; engagedBy: SeatOverviewBooking | null; }
+
+// --- Range Availability ---
+export interface DateAvailabilitySummary { date: string; totalSeats: number; bookedCount: number; availableCount: number; waitlistedCount: number; }
+export interface RangeAvailabilityResponse { teamId: number; from: string; to: string; days: DateAvailabilitySummary[]; }
+
+// --- Range Booking ---
+export interface BookSeatRangeRequest { reporteeId: number; seatId: number; from: string; to: string; }
+export interface RangeBookingResult { date: string; success: boolean; status: string; bookingId: number | null; error: string | null; }
+export interface RangeBookingResponse {
+  seatId: number; seatLabel: string; reporteeId: number; reporteeName: string;
+  from: string; to: string;
+  confirmedCount: number; waitlistedCount: number; failedCount: number;
+  results: RangeBookingResult[];
+}

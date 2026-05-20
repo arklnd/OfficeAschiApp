@@ -31,10 +31,12 @@ import { ApiService } from '../services/booking.service';
 import {
   TeamResponse, SeatResponse, ReporteeResponse,
   AvailabilityResponse, BookingResponse, WaitlistInfo,
+  RangeAvailabilityResponse, DateAvailabilitySummary, RangeBookingResponse,
 } from '../models';
 import { CancelBookConfirmDialogComponent } from '../dialogs/cancel-book-confirm-dialog.component';
 import { JoinTeamDialogComponent } from '../dialogs/join-team-dialog.component';
 import { BookSeatDialogComponent, BookSeatDialogData } from '../dialogs/book-seat-dialog.component';
+import { RangeBookDialogComponent, RangeBookDialogData, RangeBookDialogResult } from '../dialogs/range-book-dialog.component';
 import { TotpService } from '../totp/totp.service';
 
 @Component({
@@ -62,6 +64,14 @@ export class TeamDetailComponent implements OnInit {
   availabilityLoading = signal(false);
   notFound = signal(false);
   selectedDate = signal<string>(this.todayString());
+
+  // Range availability
+  rangeAvailability = signal<RangeAvailabilityResponse | null>(null);
+  rangeLoading = signal(false);
+  showRangeView = signal(false);
+  rangeFrom = signal<string>(this.todayString());
+  rangeTo = signal<string>(this.addDaysStr(this.todayString(), 13));
+  lastRangeBookResult = signal<RangeBookingResponse | null>(null);
 
   private dateChange$ = new Subject<string>();
 
@@ -121,7 +131,7 @@ export class TeamDetailComponent implements OnInit {
     private toastService: HyToastService,
     private dialog: MatDialog,
     private totpService: TotpService,
-    private t: HyTranslateService,
+    public t: HyTranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -410,4 +420,101 @@ export class TeamDetailComponent implements OnInit {
   private formatDate(date: Date): string {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   }
+  private addDaysStr(dateStr: string, n: number): string {
+    const d = new Date(dateStr + 'T00:00:00'); d.setDate(d.getDate() + n); return this.formatDate(d);
+  }
+
+  // --- Range Availability ---
+  toggleRangeView(): void {
+    this.showRangeView.update(v => !v);
+    if (this.showRangeView() && !this.rangeAvailability()) this.loadRangeAvailability();
+  }
+
+  onRangeFromChange(event: any): void {
+    const d: Date = event.value;
+    if (d) { this.rangeFrom.set(this.formatDate(d)); this.loadRangeAvailability(); }
+  }
+  onRangeToChange(event: any): void {
+    const d: Date = event.value;
+    if (d) { this.rangeTo.set(this.formatDate(d)); this.loadRangeAvailability(); }
+  }
+
+  loadRangeAvailability(): void {
+    this.rangeLoading.set(true);
+    this.api.getAvailabilityRange(this.teamId, this.rangeFrom(), this.rangeTo()).subscribe({
+      next: r => { this.rangeAvailability.set(r); this.rangeLoading.set(false); },
+      error: err => {
+        this.toastService.error(err.error?.error || this.t.get('app.range.failed-range-availability'), { duration: 30000 });
+        this.rangeLoading.set(false);
+      },
+    });
+  }
+
+  jumpToDate(date: string): void {
+    this.selectedDate.set(date);
+    this.showRangeView.set(false);
+    this.loadAvailability();
+  }
+
+  isWeekend(dateStr: string): boolean {
+    const day = new Date(dateStr + 'T00:00:00').getDay();
+    return day === 0 || day === 6;
+  }
+
+  dayOfWeekShort(dateStr: string): string {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString(document.documentElement.lang || 'en', { weekday: 'short' });
+  }
+
+  dayOfMonth(dateStr: string): number {
+    return new Date(dateStr + 'T00:00:00').getDate();
+  }
+
+  monthLabel(dateStr: string): string {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString(document.documentElement.lang || 'en', { month: 'short', year: 'numeric' });
+  }
+
+  // --- Range Booking ---
+  openRangeBookDialog(): void {
+    const rid = this.currentReporteeId();
+    const currentName = rid ? (this.reportees().find(r => r.id === rid)?.friendlyName ?? null) : null;
+    const bookedIds = new Set(this.bookedSeats().map(b => b.reporteeId));
+    const availableReportees = this.approvedReportees().filter(r => !bookedIds.has(r.id));
+
+    const dialogRef = this.dialog.open(RangeBookDialogComponent, configureHyDialogOptions({
+      data: {
+        seats: this.seats(),
+        currentReporteeName: currentName,
+        reportees: availableReportees,
+        defaultDate: this.selectedDate(),
+      } as RangeBookDialogData,
+      width: '440px',
+    }));
+
+    dialogRef.afterClosed().subscribe((result: RangeBookDialogResult | null) => {
+      if (!result) return;
+      const resolvedId = rid ?? result.reportee?.id;
+      const resolvedName = currentName ?? result.reportee?.friendlyName ?? '';
+      if (!resolvedId) return;
+
+      this.api.bookSeatRange(
+        { reporteeId: resolvedId, seatId: result.seatId, from: result.from, to: result.to },
+        resolvedId, resolvedName,
+      ).subscribe({
+        next: res => {
+          this.lastRangeBookResult.set(res);
+          const msg = this.t.get('app.range.range-booked-success', { seat: res.seatLabel, name: resolvedName, confirmed: res.confirmedCount, waitlisted: res.waitlistedCount, failed: res.failedCount });
+          if (res.failedCount > 0) {
+            this.toastService.warning(msg, { duration: 30000 });
+          } else {
+            this.toastService.success(msg, { duration: 30000 });
+          }
+          this.loadAvailability();
+          if (this.showRangeView()) this.loadRangeAvailability();
+        },
+        error: err => this.toastService.error(err.error?.error || this.t.get('app.range.range-booking-failed'), { duration: 30000 }),
+      });
+    });
+  }
+
+  dismissRangeResult(): void { this.lastRangeBookResult.set(null); }
 }

@@ -5,6 +5,7 @@ import {
   TeamSearchResult, TeamResponse, CreateTeamRequest,
   SeatResponse, AddSeatRequest, ReporteeResponse, JoinTeamRequest,
   BookSeatRequest, BookingResponse, AvailabilityResponse, SeatOverviewResponse,
+  RangeAvailabilityResponse, BookSeatRangeRequest, RangeBookingResponse,
 } from '../models';
 import { TOTP_ENTITY_TYPE, TOTP_ENTITY_ID, TOTP_ENTITY_NAME, TOTP_ACTION_REASON } from '../totp/totp.context';
 import { Capacitor } from '@capacitor/core';
@@ -102,8 +103,14 @@ export class ApiService implements OnDestroy {
   getAvailability(teamId: number, date: string): Observable<AvailabilityResponse> {
     return this.http.get<AvailabilityResponse>(`${this.base}/bookings/availability/${teamId}`, { params: { date } });
   }
+  getAvailabilityRange(teamId: number, from: string, to: string): Observable<RangeAvailabilityResponse> {
+    return this.http.get<RangeAvailabilityResponse>(`${this.base}/bookings/availability/${teamId}/range`, { params: { from, to } });
+  }
   bookSeat(req: BookSeatRequest, reporteeId: number, reporteeName = ''): Observable<BookingResponse> {
     return this.http.post<BookingResponse>(`${this.base}/bookings`, req, this.reporteeCtx(reporteeId, reporteeName, 'app.dialogs.reason-book-seat'));
+  }
+  bookSeatRange(req: BookSeatRangeRequest, reporteeId: number, reporteeName = ''): Observable<RangeBookingResponse> {
+    return this.http.post<RangeBookingResponse>(`${this.base}/bookings/range`, req, this.reporteeCtx(reporteeId, reporteeName, 'app.dialogs.reason-book-seat'));
   }
   cancelBooking(bookingId: number, reporteeId: number, reporteeName = ''): Observable<any> {
     return this.http.delete(`${this.base}/bookings/${bookingId}`, this.reporteeCtx(reporteeId, reporteeName, 'app.dialogs.reason-cancel-booking'));

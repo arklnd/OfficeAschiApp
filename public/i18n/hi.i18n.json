@@ -322,7 +322,35 @@
       "name-required": "नाम आवश्यक है",
       "joined-as": "{{name}} के रूप में शामिल हुए!",
       "failed-join": "शामिल होने में विफल",
-      "totp-code-label": "TOTP कोड"
+      "totp-code-label": "TOTP कोड",
+      "range-book-header": "सीट बुक करें — तारीख सीमा",
+      "range-book-confirm": "सीमा बुक करें",
+      "range-book-member": "सदस्य",
+      "range-book-booking-as": "बुकिंग",
+      "range-book-seat": "सीट",
+      "range-book-date-range": "तारीख सीमा",
+      "range-book-start": "शुरू",
+      "range-book-end": "अंत",
+      "range-book-days-selected": "{{count}} दिन चयनित",
+      "range-book-max-days": "अधिकतम 90 दिन अनुमत"
+    },
+    "range": {
+      "hide-range": "सीमा छिपाएं",
+      "range-view": "सीमा दृश्य",
+      "book-date-range": "तारीख सीमा बुक करें",
+      "range-availability": "सीमा उपलब्धता",
+      "date-range": "तारीख सीमा",
+      "start": "शुरू",
+      "end": "अंत",
+      "booked-available-tooltip": "{{booked}} बुक / {{available}} उपलब्ध",
+      "range-result-title": "सीमा बुकिंग परिणाम — {{seat}}",
+      "dismiss": "खारिज करें",
+      "confirmed-count": "{{count}} पुष्टि",
+      "waitlisted-count": "{{count}} प्रतीक्षा सूची",
+      "skipped-count": "{{count}} छोड़ा गया",
+      "failed-range-availability": "सीमा उपलब्धता लोड करने में विफल",
+      "range-booked-success": "{{seat}} {{name}} के लिए बुक किया गया: {{confirmed}} पुष्टि, {{waitlisted}} प्रतीक्षा सूची, {{failed}} छोड़ा गया",
+      "range-booking-failed": "सीमा बुकिंग विफल"
     }
   }
 }
