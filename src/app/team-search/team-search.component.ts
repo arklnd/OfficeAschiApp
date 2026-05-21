@@ -11,6 +11,7 @@ import { HyTagModule } from '@hyland/ui/tag';
 import { HyGhostModule } from '@hyland/ui/ghost';
 import { HySearchInputModule } from '@hyland/ui/search-input';
 import { HyTranslateModule } from '@hyland/ui/language';
+import { HyFeedbackBannerModule } from '@hyland/ui/feedback-banner';
 import { configureHyDialogOptions } from '@hyland/ui/dialog';
 import { ApiService } from '../services/booking.service';
 import { TeamSearchResult, TeamResponse } from '../models';
@@ -24,7 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     CommonModule, MatButtonModule, MatCardModule, MatIconModule,
     HyMaterialButtonModule, HyMaterialIconModule,
     HyShellModule, HyTagModule, HyGhostModule, HySearchInputModule,
-    HyTranslateModule,
+    HyTranslateModule, HyFeedbackBannerModule,
   ],
   template: `
     <hy-shell-view [title]="'app.team-search.title' | transloco" />
@@ -41,6 +42,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
           <mat-icon hyIcon>add</mat-icon> {{ 'app.team-search.create-team' | transloco }}
         </button>
       </div>
+
+      @if (showMcpBanner()) {
+        <hy-feedback-banner
+          type="info"
+          [dismissible]="true"
+          message="Try OfficeAschi MCP in VS Code!"
+          (dismiss)="dismissMcpBanner()"
+        >
+          <div #hyFeedbackBannerDetails>
+            <p>Add to your VS Code MCP settings:</p>
+            <pre><code>{{ mcpConfig }}</code></pre>
+          </div>
+        </hy-feedback-banner>
+      }
 
       @if (loading()) {
         <div class="team-grid">
@@ -79,6 +94,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     .container { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
     .header-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
     hy-search-input { flex: 1; min-width: 200px; }
+    hy-feedback-banner { margin-bottom: 16px; }
+    hy-feedback-banner pre { background: #00000033; padding: 8px 12px; border-radius: 6px; margin: 4px 0 0; overflow-x: auto; font-size: 12px; }
+    hy-feedback-banner code { font-family: 'Cascadia Code', 'Fira Code', monospace; }
     .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
     .team-card { cursor: pointer; padding: 16px; }
     .team-card:hover { border-color: var(--mat-option-selected-state-label-text-color, #3288de); }
@@ -96,6 +114,8 @@ export class TeamSearchComponent implements OnInit {
   searchQuery = '';
   teams = signal<TeamSearchResult[]>([]);
   loading = signal(false);
+  showMcpBanner = signal(!sessionStorage.getItem('mcp-banner-dismissed'));
+  mcpConfig = JSON.stringify({ 'officeaschi-mcp': { type: 'http', url: 'https://officeaschi.azurewebsites.net/mcp' } }, null, 2);
   private destroyRef = inject(DestroyRef);
 
   constructor(
@@ -118,6 +138,11 @@ export class TeamSearchComponent implements OnInit {
   }
 
   onSearch(): void { this.loadTeams(); }
+
+  dismissMcpBanner(): void {
+    sessionStorage.setItem('mcp-banner-dismissed', '1');
+    this.showMcpBanner.set(false);
+  }
 
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(TeamCreateDialogComponent, configureHyDialogOptions({ width: '360px' }));
