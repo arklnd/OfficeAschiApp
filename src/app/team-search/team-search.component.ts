@@ -60,6 +60,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
           @for (team of teams(); track team.id) {
             <mat-card appearance="outlined" class="team-card" (click)="router.navigate(['/team', team.id])">
               <mat-card-header>
+                <div mat-card-avatar class="team-avatar" [style.background-color]="getAvatarColor(team.name)">{{ team.name.charAt(0).toUpperCase() }}</div>
                 <mat-card-title>{{ team.name }}</mat-card-title>
               </mat-card-header>
               <mat-card-content>
@@ -83,6 +84,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     .team-card:hover { border-color: var(--mat-option-selected-state-label-text-color, #3288de); }
     .team-stats { display: flex; gap: 8px; margin-top: 8px; }
     mat-card-header, mat-card-content { padding: 0; }
+    .team-avatar {
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 18px; font-weight: 600; color: #fff;
+    }
     .empty { text-align: center; padding: 48px 0; opacity: 0.6; }
     .empty-icon { font-size: 48px; width: 48px; height: 48px; }
   `],
@@ -102,6 +107,14 @@ export class TeamSearchComponent implements OnInit {
   ngOnInit(): void {
     this.loadTeams();
     this.api.backendRecovered$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.loadTeams());
+  }
+
+  private avatarColors = ['#e91e63','#9c27b0','#673ab7','#3f51b5','#2196f3','#009688','#4caf50','#ff9800','#795548','#607d8b'];
+
+  getAvatarColor(name: string): string {
+    let hash = 0;
+    for (const ch of name) hash = ch.charCodeAt(0) + ((hash << 5) - hash);
+    return this.avatarColors[Math.abs(hash) % this.avatarColors.length];
   }
 
   onSearch(): void { this.loadTeams(); }
