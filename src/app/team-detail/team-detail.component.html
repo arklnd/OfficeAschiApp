@@ -46,52 +46,6 @@
         {{ 'app.team-detail.tab-bookings' | transloco }}
       </ng-template>
       <div class="tab-content">
-        <!-- Date selector -->
-        <div class="hero">
-          <div class="hero-date">
-            <button mat-icon-button (click)="goToPreviousDay()" [matTooltip]="'app.team-detail.previous-day' | transloco">
-              <mat-icon hyIcon>chevron_left</mat-icon>
-            </button>
-            <div class="hero-date-display" (click)="picker.open()">
-              <span class="hero-day">{{ displayDay() }}</span>
-              <div class="hero-meta">
-                <span class="hero-month-year">{{ displayMonth() }} {{ displayYear() }}</span>
-                <span class="hero-weekday">{{ displayDayOfWeek() }}</span>
-              </div>
-            </div>
-            <button mat-icon-button (click)="goToNextDay()" [matTooltip]="'app.team-detail.next-day' | transloco">
-              <mat-icon hyIcon>chevron_right</mat-icon>
-            </button>
-            @if (!isToday()) {
-              <button mat-button hyIconLabelButton (click)="goToToday()" [matTooltip]="'app.team-detail.jump-to-today' | transloco">
-                <mat-icon hyIcon>calendar</mat-icon> {{ 'app.common.today' | transloco }}
-              </button>
-            }
-            <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" class="hidden-input" />
-            <mat-datepicker #picker></mat-datepicker>
-          </div>
-          <div class="hero-stats">
-            <hy-tag color="blue">
-              @if (loading() || availabilityLoading()) {
-                <hy-ghost-block style="width: 60px; height: 16px; margin: 0; display: inline-block; vertical-align: middle;"></hy-ghost-block>
-              } @else {
-                {{ bookedCount() }} {{ 'app.common.booked' | transloco }}
-              }
-            </hy-tag>
-            <hy-tag color="green">
-              @if (loading() || availabilityLoading()) {
-                <hy-ghost-block style="width: 60px; height: 16px; margin: 0; display: inline-block; vertical-align: middle;"></hy-ghost-block>
-              } @else {
-                {{ availableCount() }} {{ 'app.common.available' | transloco }}
-              }
-            </hy-tag>
-            @if (waitlistedCount() > 0) {
-              <hy-tag color="orange">{{ waitlistedCount() }} {{ 'app.common.waitlisted' | transloco }}</hy-tag>
-            }
-            <hy-tag color="grey">{{ totalSeats() }} {{ 'app.common.total' | transloco }}</hy-tag>
-          </div>
-        </div>
-
         <!-- Action bar: Range view toggle + Range book -->
         <div class="range-actions">
           <button mat-stroked-button hyIconLabelButton (click)="toggleRangeView()" [class.active]="showRangeView()">
@@ -150,6 +104,52 @@
             </mat-card-content>
           </mat-card>
         }
+
+        <!-- Date selector -->
+        <div class="hero">
+          <div class="hero-date">
+            <button mat-icon-button (click)="goToPreviousDay()" [matTooltip]="'app.team-detail.previous-day' | transloco">
+              <mat-icon hyIcon>chevron_left</mat-icon>
+            </button>
+            <div class="hero-date-display" (click)="picker.open()">
+              <span class="hero-day">{{ displayDay() }}</span>
+              <div class="hero-meta">
+                <span class="hero-month-year">{{ displayMonth() }} {{ displayYear() }}</span>
+                <span class="hero-weekday">{{ displayDayOfWeek() }}</span>
+              </div>
+            </div>
+            <button mat-icon-button (click)="goToNextDay()" [matTooltip]="'app.team-detail.next-day' | transloco">
+              <mat-icon hyIcon>chevron_right</mat-icon>
+            </button>
+            @if (!isToday()) {
+              <button mat-button hyIconLabelButton (click)="goToToday()" [matTooltip]="'app.team-detail.jump-to-today' | transloco">
+                <mat-icon hyIcon>calendar</mat-icon> {{ 'app.common.today' | transloco }}
+              </button>
+            }
+            <input matInput [matDatepicker]="picker" [value]="dateAsDate" (dateChange)="onDateChange($event)" class="hidden-input" />
+            <mat-datepicker #picker></mat-datepicker>
+          </div>
+          <div class="hero-stats">
+            <hy-tag color="blue">
+              @if (loading() || availabilityLoading()) {
+                <hy-ghost-block style="width: 60px; height: 16px; margin: 0; display: inline-block; vertical-align: middle;"></hy-ghost-block>
+              } @else {
+                {{ bookedCount() }} {{ 'app.common.booked' | transloco }}
+              }
+            </hy-tag>
+            <hy-tag color="green">
+              @if (loading() || availabilityLoading()) {
+                <hy-ghost-block style="width: 60px; height: 16px; margin: 0; display: inline-block; vertical-align: middle;"></hy-ghost-block>
+              } @else {
+                {{ availableCount() }} {{ 'app.common.available' | transloco }}
+              }
+            </hy-tag>
+            @if (waitlistedCount() > 0) {
+              <hy-tag color="orange">{{ waitlistedCount() }} {{ 'app.common.waitlisted' | transloco }}</hy-tag>
+            }
+            <hy-tag color="grey">{{ totalSeats() }} {{ 'app.common.total' | transloco }}</hy-tag>
+          </div>
+        </div>
 
         <!-- Last range booking result -->
         @if (lastRangeBookResult(); as rbr) {

@@ -96,7 +96,7 @@ mat-card {
 
 // --- Range view styles ---
 .range-actions {
-  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; justify-content: center;
   .active { border-color: var(--mat-option-selected-state-label-text-color, #3288de); }
 }
 
