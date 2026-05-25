@@ -102,6 +102,7 @@ mat-card {
 
 .range-card {
   margin-bottom: 24px;
+  touch-action: pan-y;
 
   mat-card-header {
     display: flex;
@@ -189,6 +190,8 @@ mat-card {
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 12px;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 // Flutter-style day cell
@@ -200,6 +203,7 @@ mat-card {
   cursor: pointer;
   transition: transform 0.15s;
   min-width: 56px;
+  touch-action: pan-y;
 
   &:hover { transform: scale(1.08); }
   &.weekend { opacity: 0.5; }
