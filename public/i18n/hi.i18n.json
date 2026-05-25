@@ -351,7 +351,10 @@
       "skipped-count": "{{count}} छोड़ा गया",
       "failed-range-availability": "सीमा उपलब्धता लोड करने में विफल",
       "range-booked-success": "{{seat}} {{name}} के लिए बुक किया गया: {{confirmed}} पुष्टि, {{waitlisted}} प्रतीक्षा सूची, {{failed}} छोड़ा गया",
-      "range-booking-failed": "सीमा बुकिंग विफल"
+      "range-booking-failed": "सीमा बुकिंग विफल",
+      "days": "दिन",
+      "full": "पूर्ण",
+      "weekend": "सप्ताहांत"
     }
   }
 }

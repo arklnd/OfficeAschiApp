@@ -351,7 +351,10 @@
       "skipped-count": "{{count}} বাদ দেওয়া",
       "failed-range-availability": "পরিসর উপলব্ধতা লোড করতে ব্যর্থ",
       "range-booked-success": "{{seat}} {{name}}-এর জন্য বুক করা হয়েছে: {{confirmed}} নিশ্চিত, {{waitlisted}} অপেক্ষা তালিকায়, {{failed}} বাদ দেওয়া",
-      "range-booking-failed": "পরিসর বুকিং ব্যর্থ"
+      "range-booking-failed": "পরিসর বুকিং ব্যর্থ",
+      "days": "দিন",
+      "full": "পূর্ণ",
+      "weekend": "সাপ্তাহিক ছুটি"
     }
   }
 }

@@ -351,7 +351,10 @@
       "skipped-count": "{{count}} skipped",
       "failed-range-availability": "Failed to load range availability",
       "range-booked-success": "Booked {{seat}} for {{name}}: {{confirmed}} confirmed, {{waitlisted}} waitlisted, {{failed}} skipped",
-      "range-booking-failed": "Range booking failed"
+      "range-booking-failed": "Range booking failed",
+      "days": "days",
+      "full": "Full",
+      "weekend": "Weekend"
     }
   }
 }

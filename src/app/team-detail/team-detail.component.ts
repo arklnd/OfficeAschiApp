@@ -73,6 +73,35 @@ export class TeamDetailComponent implements OnInit {
   rangeTo = signal<string>(this.addDaysStr(this.todayString(), 13));
   lastRangeBookResult = signal<RangeBookingResponse | null>(null);
 
+  groupedRangeDays = computed(() => {
+    const ra = this.rangeAvailability();
+    if (!ra) return [];
+    const groups: { label: string; days: DateAvailabilitySummary[] }[] = [];
+    for (const day of ra.days) {
+      const lbl = new Date(day.date + 'T00:00:00').toLocaleDateString(document.documentElement.lang || 'en', { month: 'long', year: 'numeric' });
+      const last = groups[groups.length - 1];
+      if (last && last.label === lbl) { last.days.push(day); }
+      else { groups.push({ label: lbl, days: [day] }); }
+    }
+    return groups;
+  });
+
+  rangeDayCount = computed(() => {
+    const ra = this.rangeAvailability();
+    return ra ? ra.days.length : 0;
+  });
+
+  rangeDisplayLabel = computed(() => {
+    const from = this.rangeFrom();
+    const to = this.rangeTo();
+    const f = new Date(from + 'T00:00:00');
+    const t = new Date(to + 'T00:00:00');
+    const locale = document.documentElement.lang || 'en';
+    const fStr = f.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+    const tStr = t.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
+    return `${fStr} – ${tStr}`;
+  });
+
   private dateChange$ = new Subject<string>();
 
   // Manager actions
