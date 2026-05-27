@@ -481,7 +481,7 @@ export class TeamDetailComponent implements OnInit {
 
   jumpToDate(date: string): void {
     this.selectedDate.set(date);
-    this.showRangeView.set(false);
+    // this.showRangeView.set(false);
     this.loadAvailability();
   }
 
