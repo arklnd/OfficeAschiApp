@@ -507,7 +507,11 @@ export class TeamDetailComponent implements OnInit {
     const rid = this.currentReporteeId();
     const currentName = rid ? (this.reportees().find(r => r.id === rid)?.friendlyName ?? null) : null;
     const bookedIds = new Set(this.bookedSeats().map(b => b.reporteeId));
-    const availableReportees = this.approvedReportees().filter(r => !bookedIds.has(r.id));
+    // Unlike single-day booking, range booking does NOT filter out reportees who already have a booking
+    // on the currently selected date. A reportee booked today may still need to book other days in the
+    // range. The backend handles per-day conflict detection — days where the reportee is already booked
+    // are skipped with a "cancel it first to rebook" message, while remaining days proceed normally.
+    const availableReportees = this.approvedReportees();
 
     const dialogRef = this.dialog.open(RangeBookDialogComponent, configureHyDialogOptions({
       data: {
